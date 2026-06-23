@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
-            $table->string('type');
+            $table->enum('type',['MCQ' ,'PAIR', 'FILL' , 'ARRANGE']);
             $table->integer('score');
             $table->string('title_question_en');
             $table->string('title_question_ar');
             $table->text('text_question');
-            $table->string('difficulty');
+            $table->enum('difficulty' , ['EASY' , 'MEDIUM' , 'HARD']);
             $table->timestamps();
         });
     }

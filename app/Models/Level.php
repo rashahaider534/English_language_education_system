@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class Level extends Model
 {
@@ -19,10 +22,20 @@ class Level extends Model
     ];
     public function users()
     {
-        return $this->belongsToMany(User::class, 'user_levels')
-            ->withPivot('status', 'enrolled_at', 'completed_at');
+        return $this->belongsToMany(User::class)
+            ->using(UserLevel::class)
+            ->withPivot(
+                'status',
+                'enrolled_at',
+                'completed_at'
+            );
     }
-    public function courses()
+
+    public function userLevels():HasMany
+    {
+        return $this->hasMany(UserLevel::class);
+    }
+    public function courses():HasMany
     {
         return $this->hasMany(Course::class);
     }
@@ -32,9 +45,12 @@ class Level extends Model
     }
     public function LevelException()
     {
-        return $this->hasMany(LevelException::class);
+        return $this->hasMany(LevelException::class,'requested_level_id');
     }
-    
 
+    public function podcasts():HasMany
+    {
+        return $this->hasMany(Podcast::class);
+    }
 
 }

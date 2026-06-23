@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('level_id')->constrained('levels')->onDelete('cascade');
-            $table->string('stripe_payment_intent_id');
+            $table->string('stripe_payment_intent_id')->unique();
             $table->decimal('amount', 8, 2);
             $table->string('currency');
             $table->enum('status', ['pending', 'paid', 'fail'])->default('pending');
