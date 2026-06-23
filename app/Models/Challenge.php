@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Challenge extends Model
 {
@@ -17,11 +19,11 @@ class Challenge extends Model
          'is_active',
          'created_by'
     ];
-    public function creator()
+    public function teacher(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
-       public function dailyChallenges()
+       public function dailyChallenges():HasMany
     {
         return $this->hasMany(DailyChallenge::class);
     }

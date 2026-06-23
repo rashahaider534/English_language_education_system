@@ -4,6 +4,10 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -21,77 +25,97 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'google_id',
+        'fcm_token',
     ];
 
-    public function studentProfile()
+    public function studentProfile():HasOne
     {
         return $this->hasOne(StudentProfile::class);
     }
 
-    public function teacherProfile()
+    public function teacherProfile():HasOne
     {
         return $this->hasOne(TeacherProfile::class);
     }
-    public function Levels()
+    public function levels()
     {
-        return $this->hasMany(Level::class);
+        return $this->belongsToMany(Level::class)
+            ->using(UserLevel::class)
+            ->withPivot(
+                'status',
+                'enrolled_at',
+                'completed_at'
+            );
     }
-     public function courses()
+
+    public function userLevels():HasMany
+    {
+        return $this->hasMany(UserLevel::class);
+    }
+     public function StudentCourses():BelongsToMany
     {
         return $this->belongsToMany(Course::class, 'user_courses')
-            ->withPivot('started_at', 'completed_at');
+            ->withPivot('status','started_at', 'completed_at');
     }
-     public function lessons()
+
+    public function TeacherCourses():HasMany
+    {
+        return $this->hasMany(Course::class);
+    }
+     public function lessons():BelongsToMany
     {
         return $this->belongsToMany(Lesson::class, 'user_lessons')
             ->withPivot('status', 'started_at', 'completed_at');
     }
-     public function words()
+     public function words():BelongsToMany
     {
         return $this->belongsToMany(Word::class, 'user_words')
             ->withPivot('status', 'added_at');
     }
-     public function DailyChallenge()
+     public function DailyChallenge():BelongsToMany
     {
-        return $this->belongsToMany(DailyChallenge::class, 'users_challenges')
-            ->withPivot('progress', 'is_completed', 'completed_at', 'reward_claimed');
+        return $this->belongsToMany(DailyChallenge::class, 'users_challenges' , 'user_id' , 'daily_challenge_id')
+            ->withPivot('progress', 'is_completed', 'completed_at', 'reward_claimed','reward_claimed_at');
     }
 
-    public function payments()
+    public function payments():HasMany
     {
         return $this->hasMany(Payment::class);
     }
-    public function levelExceptions()
+    public function levelExceptions():HasMany
     {
         return $this->hasMany(LevelException::class, 'user_id');
     }
-    public function ratings()
+    public function ratings():HasMany
     {
         return $this->hasMany(Rate::class);
     }
 
-    public function comments()
+    public function comments():HasMany
     {
         return $this->hasMany(Comment::class);
     }
 
-    public function testAttempts()
+    public function testAttempts():HasMany
     {
         return $this->hasMany(UserAttempt::class);
     }
 
-    public function contactUsMessages()
+    public function contactUsMessages():HasMany
     {
         return $this->hasMany(ContactUs::class);
     }
-    public function placementTestscreate()
+    public function placementTestsCreate():HasMany
     {
         return $this->hasMany(PlacementTest::class, 'created_by');
     }
-     public function LevelException()
+
+    public function lessonReviews():HasMany
     {
-        return $this->hasMany(LevelException::class);
+        return $this->hasMany(LessonReview::class , 'assigned_to');
     }
+
 
     /**
      * The attributes that should be hidden for serialization.

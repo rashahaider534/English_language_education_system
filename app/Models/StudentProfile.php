@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class StudentProfile extends Model
 {
@@ -12,7 +13,8 @@ class StudentProfile extends Model
         'streak',
         'last_activate_date'
     ];
-    public function user() {
+    public function user():BelongsTo
+    {
         return $this->belongsTo(User::class);
     }
 }

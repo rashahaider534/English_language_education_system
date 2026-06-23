@@ -3,16 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Comment extends Model
 {
     protected $fillable = [
         'comment '
     ];
-    public function user() {
+    public function user():BelongsTo
+    {
         return $this->belongsTo(User::class);
     }
-    public function lesson(){
+    public function lesson():BelongsTo
+    {
         return $this->belongsTo(Lesson::class);
     }
 }

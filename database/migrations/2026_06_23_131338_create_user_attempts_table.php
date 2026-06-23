@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('user_attempts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('test_id')->constrained('test')->onDelete('cascade');
+            $table->foreignId('test_id')->constrained('tests')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->integer('score');
             $table->enum('status', ['completed', 'abandoned'])->default('completed');

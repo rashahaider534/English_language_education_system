@@ -3,14 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Rate extends Model
 {
-    public function user()
+    protected $fillable =
+        ['stars_count'];
+    public function user():BelongsTo
     {
         return $this->belongsTo(User::class);
     }
-    public function course()
+    public function course():BelongsTo
     {
         return $this->belongsTo(Course::class);
     }
