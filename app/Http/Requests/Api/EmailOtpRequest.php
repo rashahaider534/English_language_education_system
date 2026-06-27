@@ -5,7 +5,7 @@ namespace App\Http\Requests\Api;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ResendOtpRequest extends FormRequest
+class EmailOtpRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
