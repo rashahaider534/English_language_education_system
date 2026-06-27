@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\OtpType;
 use App\Http\Requests\Api\LoginRequest;
 use App\Http\Requests\Api\RegisterRequest;
-use App\Http\Requests\Api\ResendOtpRequest;
+use App\Http\Requests\Api\EmailOtpRequest;
+use App\Http\Requests\Api\resetPasswordRequest;
 use App\Http\Requests\Api\VerifyOtpRequest;
 
 use App\Models\User;
@@ -30,19 +32,19 @@ class AuthController extends Controller
 
     }
 
-    public function verifyOTP(VerifyOtpRequest $request):  JsonResponse
+    public function verifyOTP(VerifyOtpRequest $request , OtpType $type):  JsonResponse
     {
         $data = $request->validated();
         return response()->json(
-            $this->authService->verifyOtp($data)
+            $this->authService->verifyOtp($data , $type)
         );
     }
 
-    public function resendOtp(ResendOtpRequest $request):  JsonResponse
+    public function resendOtp(EmailOtpRequest $request , OtpType $type):  JsonResponse
     {
         $data = $request->validated();
         return response()->json(
-            $this->authService->resendOtp($data['email'])
+            $this->authService->resendOtp($data['email'] , $type)
         );
     }
 
@@ -59,5 +61,21 @@ class AuthController extends Controller
         return response()->json(
             $this->authService->logout($request->user())
         );
+    }
+
+    public function forgotPassword(EmailOtpRequest $request ): JsonResponse
+    {
+        $data = $request->validated();
+        return response()->json([
+            $this->authService->forgotPassword($data['email'])
+        ]);
+    }
+
+    public function resetPassword(resetPasswordRequest $request)
+    {
+        $data = $request->validated();
+        return response()->json([
+            $this->authService->resetPassword($data)
+        ]);
     }
 }

@@ -2,7 +2,10 @@
 
 namespace App\Services;
 
+use App\Enums\OtpType;
+use App\Http\Requests\Api\EmailOtpRequest;
 use App\Http\Requests\Api\RegisterRequest;
+use App\Http\Resources\UserResource;
 use App\Jobs\SendOtpEmailJob;
 use App\Mail\otpMail;
 use App\Models\User;
@@ -33,31 +36,31 @@ class authService
 
 
 
-        $this->sendOtp($user);
+        $this->sendOtp($user , OtpType::REGISTER);
 
         return [
             'message' => 'OTP sent successfully'
         ];
     }
 
-    public function sendOtp(User $user)
+    public function sendOtp(User $user , OtpType $type)
     {
         $otp = (string)random_int(100000, 999999);
         Cache::put(
-            "otp:{$user->email}",
+            "otp:{$type->value}:{$user->email}",
             $otp,
             now()->addMinutes(5)
         );
-        Cache::put("otp_attempts:{$user->email}", 0, now()->addMinutes(5));
+        Cache::put("otp_attempts:{$type->value}:{$user->email}", 0, now()->addMinutes(5));
         SendOtpEmailJob::dispatch($user->email, $otp);
     }
 
-    public function verifyOtp(array $data)
+    public function verifyOtp(array $data , OtpType $type)
     {
 
         $email = $data['email'];
 
-        $cachedOtp = Cache::get("otp:{$email}");
+        $cachedOtp = Cache::get("otp:{$type->value}:{$email}");
 
         if (!$cachedOtp) {
             throw ValidationException::withMessages([
@@ -65,29 +68,10 @@ class authService
             ]);
         }
 
-//        if ((string)$cachedOtp !== (string)$data['otp']) {
-//
-//            $attempts = Cache::increment("otp_attempts:{$email}");
-//
-//            if ($attempts >= 5) {
-//
-//                Cache::forget("otp:{$email}");
-//                Cache::forget("otp_attempts:{$email}");
-//
-//                throw ValidationException::withMessages([
-//                    'otp' => ['Too many attempts']
-//                ]);
-//            }
-//
-//            throw ValidationException::withMessages([
-//                'otp' => ['Invalid OTP']
-//            ]);
-//        }
-
-        $attempts = Cache::increment("otp_attempts:{$email}");
+        $attempts = Cache::increment("otp_attempts:{$type->value}:{$email}");
         if ($attempts > 5) {
-            Cache::forget("otp:{$email}");
-            Cache::forget("otp_attempts:{$email}");
+            Cache::forget("otp:{$type->value}:{$email}");
+            Cache::forget("otp_attempts:{$type->value}:{$email}");
             throw ValidationException::withMessages(['otp' => ['Too many attempts. Request a new OTP.']]);
         }
 
@@ -103,6 +87,17 @@ class authService
             ]);
         }
 
+        Cache::forget("otp:{$type->value}:{$user->email}");
+        Cache::forget("otp_attempts:{$type->value}:{$user->email}");
+
+        return match ($type) {
+            OtpType::REGISTER => $this->handleRegisterVerification($user),
+            OtpType::FORGOT_PASSWORD => $this->handleForgotPasswordVerification($user),
+        };
+    }
+
+    private function handleRegisterVerification(User $user):array
+    {
         if ($user->email_verified_at) {
             throw ValidationException::withMessages([
                 'email' => ['Already verified']
@@ -113,20 +108,29 @@ class authService
             'email_verified_at' => now()
         ]);
 
-
-        Cache::forget("otp:{$user->email}");
-        Cache::forget("otp_attempts:{$user->email}");
-
         $token = $user->createToken('auth-token')->plainTextToken;
         $user->assignRole('student');
         return [
             'message' => 'Account verified successfully',
             'token' => $token,
-            'user' => $user
+            'user' => new UserResource($user)
         ];
     }
 
-    public function resendOtp(string $email)
+    private function handleForgotPasswordVerification(User $user):array
+    {
+        if (!$user->email_verified_at) {
+            throw ValidationException::withMessages([
+                'email' => ['Your email address is not verified yet.']
+            ]);
+        }
+
+        Cache::put("password_reset_verified:{$user->email}", true, now()->addMinutes(10));
+        return [
+            'message' => 'Otp Verified successfully',
+        ];
+    }
+    public function resendOtp(string $email,OtpType $type)
     {
         $user = User::where('email', $email)->first();
 
@@ -136,22 +140,22 @@ class authService
             ]);
         }
 
-        if ($user->email_verified_at) {
+        if ($type === OtpType::REGISTER && $user->email_verified_at) {
             throw ValidationException::withMessages([
                 'email' => ['Email already verified']
             ]);
         }
-        if (Cache::has("resend_lock:$email")) {
+        if (Cache::has("resend_lock:{$type->value}:$email")) {
             throw ValidationException::withMessages([
                 'email' => ['Please wait before requesting another OTP']
             ]);
         }
 
-        Cache::put("resend_lock:$email", true, 60);
-        Cache::forget("otp:$email");
-        Cache::forget("otp_attempts:$email");
+        Cache::put("resend_lock:{$type->value}:$email", true, 60);
+        Cache::forget("otp:{$type->value}:$email");
+        Cache::forget("otp_attempts:{$type->value}:$email");
 
-        $this->sendOtp($user);
+        $this->sendOtp($user , $type);
 
         return [
             'message' => 'OTP resent successfully'
@@ -183,7 +187,7 @@ class authService
         return [
             'message' => 'Login successfully',
             'token' => $token,
-            'role' => $user->roles,
+            'role' => $user->roles->pluck('name'),
         ];
     }
 
@@ -193,6 +197,61 @@ class authService
 
         return [
             'message' => 'Logged out successfully'
+        ];
+    }
+
+    public function forgotPassword(string $email)
+    {
+        $type = OtpType::FORGOT_PASSWORD;
+        $user = User::where('email', $email)->first();
+        if (!$user) {
+            throw ValidationException::withMessages(['email' => ['Email not found.']]);
+        }
+
+        if (Cache::has("resend_lock:{$type->value}:{$email}")) {
+            throw ValidationException::withMessages([
+                'email' => ['Please wait before requesting another OTP']
+            ]);
+        }
+
+        Cache::put("resend_lock:{$type->value}:{$email}", true, 60);
+        Cache::forget("otp:{$type->value}:{$email}");
+        Cache::forget("otp_attempts:{$type->value}:{$email}");
+
+        $this->sendOtp($user, $type);
+
+        return [
+            'message' => 'OTP sent successfully to your email.'
+        ];
+    }
+
+    public function resetPassword(array $data): array
+    {
+        $email = $data['email'];
+        $cacheKey = "password_reset_verified:{$email}";
+
+        if (!Cache::has($cacheKey)) {
+            throw ValidationException::withMessages([
+                'email' => ['unauthorized. Please verify OTP again.']
+            ]);
+        }
+
+        $user = User::where('email', $email)->first();
+
+        if (!$user) {
+            throw ValidationException::withMessages([
+                'email' => ['User not found.']
+            ]);
+        }
+
+        $user->update([
+            'password' => Hash::make($data['password']),
+        ]);
+
+        Cache::forget($cacheKey);
+
+        return [
+            'message' => 'Password reset successfully. You can now login with your new password.'
         ];
     }
 }
