@@ -22,7 +22,7 @@ class UserSeeder extends Seeder
             'is_active' => true,
         ]);
          $superadmin->assignRole(Role::findByName('super-admin', 'web'));
-         
+
         $admins = [
             [
                 'first_name' => 'Admin1',
@@ -52,6 +52,36 @@ class UserSeeder extends Seeder
             $admin->assignRole(Role::findByName('admin', 'web'));
         }
 
+        $teachers = [
+            [
+                'first_name' => 'Teacher1',
+                'last_name' => 'AA',
+                'email' => 'teacher1@gmail.com',
+                'password' => bcrypt('12345678'),
+                'is_active' => true,
+                'email_verified_at' => now(),
+            ],
+            [
+                'first_name' => 'Teacher2',
+                'last_name' => 'BB',
+                'email' => 'teacher2@gmail.com',
+                'password' => bcrypt('87654321'),
+                'is_active' => true,
+                'email_verified_at' => now(),
+            ],
+            [
+                'first_name' => 'Teacher3',
+                'last_name' => 'CC',
+                'email' => 'teacher3@gmail.com',
+                'password' => bcrypt('87654321'),
+                'is_active' => true,
+                'email_verified_at' => now(),
 
+            ]
+        ];
+        foreach ($teachers as $teacherData) {
+           $user =  User::create($teacherData);
+           $user->assignRole('teacher');
+        }
     }
 }

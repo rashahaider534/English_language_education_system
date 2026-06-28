@@ -18,7 +18,7 @@ use Illuminate\Validation\ValidationException;
 class authService
 {
 
-    public function register(array $data)
+    public function register(array $data):array
     {
         if (User::where('email', $data['email'])->exists()) {
             throw ValidationException::withMessages([
@@ -43,7 +43,7 @@ class authService
         ];
     }
 
-    public function sendOtp(User $user , OtpType $type)
+    private function sendOtp(User $user , OtpType $type):void
     {
         $otp = (string)random_int(100000, 999999);
         Cache::put(
@@ -55,7 +55,7 @@ class authService
         SendOtpEmailJob::dispatch($user->email, $otp);
     }
 
-    public function verifyOtp(array $data , OtpType $type)
+    public function verifyOtp(array $data , OtpType $type):array
     {
 
         $email = $data['email'];
@@ -130,7 +130,7 @@ class authService
             'message' => 'Otp Verified successfully',
         ];
     }
-    public function resendOtp(string $email,OtpType $type)
+    public function resendOtp(string $email,OtpType $type):array
     {
         $user = User::where('email', $email)->first();
 
@@ -162,7 +162,7 @@ class authService
         ];
 
     }
-    public function login(array $data)
+    public function login(array $data):array
     {
         $user = User::where('email', $data['email'])->first();
         if(!$user)
@@ -200,7 +200,7 @@ class authService
         ];
     }
 
-    public function forgotPassword(string $email)
+    public function forgotPassword(string $email):array
     {
         $type = OtpType::FORGOT_PASSWORD;
         $user = User::where('email', $email)->first();
