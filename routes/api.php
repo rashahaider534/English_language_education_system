@@ -19,8 +19,8 @@ Route::post('/forgotPassword' , [AuthController::class, 'forgotPassword'])
 Route::post('/resetPassword' , [AuthController::class, 'resetPassword'])
     ->middleware('throttle:3,1');
 Route::post('/login' , [AuthController::class, 'login']);
-Route::get('/google/redirect' , [SocialAuthController::class, 'redirect']);
-Route::get('/google/callback' , [SocialAuthController::class, 'callback']);
+//Route::get('/google/redirect' , [SocialAuthController::class, 'redirect']);
+Route::post('/google/login' , [SocialAuthController::class, 'login']);
 Route::middleware(['auth:sanctum','role:student|teacher'])->group(function () {
     Route::post('/logout' , [AuthController::class, 'logout']);
 });
