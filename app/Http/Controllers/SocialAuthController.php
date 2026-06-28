@@ -18,18 +18,18 @@ class SocialAuthController extends Controller
     }
 
 
-    public function redirect()
+//    public function redirect()
+//    {
+//        return response()->json([
+//            $this->socialAuthService->redirect()
+//        ]);
+//
+//    }
+
+    public function login(Request $request)
     {
         return response()->json([
-            $this->socialAuthService->redirect()
-        ]);
-
-    }
-
-    public function callback(Request $request)
-    {
-        return response()->json([
-            $this->socialAuthService->callback($request)
+            $this->socialAuthService->login($request)
         ]);
     }
 }
