@@ -19,7 +19,13 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             LevelSeeder::class,
             CourseSeeder::class,
-            LessonSeeder::class
+            LessonSeeder::class,
+            QuestionSeeder::class,
+            McqAnswerSeeder::class,
+            ArrangeAnswerSeeder::class,
+            FillAnswerSeeder::class,
+            PairAnswerSeeder::class,
+            TestSeeder::class,
 
         ]);
     }

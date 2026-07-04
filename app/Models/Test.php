@@ -16,6 +16,7 @@ class Test extends Model
         'title_en',
         'title_ar',
         'is_active',
+        'status',
     ];
      public function testable():MorphTo
     {
