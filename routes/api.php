@@ -5,6 +5,10 @@ use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SocialAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Models\Level;
+use Illuminate\Support\Facades\App;
+use App\Http\Controllers\Admin\LevelController;
+
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -24,6 +28,7 @@ Route::post('/login' , [AuthController::class, 'login']);
 Route::post('/google/login' , [SocialAuthController::class, 'login']);
 Route::middleware(['auth:sanctum','role:student|teacher'])->group(function () {
     Route::post('/logout' , [AuthController::class, 'logout']);
+    Route::post('/createlevel',[LevelController::class,'store']);
 });
 
 //teacher routes
@@ -35,3 +40,4 @@ Route::middleware(['auth:sanctum','role:teacher'])->group(function () {
     Route::get('/questions/{question}/checkStatus' , [QuestionController::class, 'checkStatus']);
     Route::get('/questions/{question}/delete' , [QuestionController::class, 'deleteQuestion']);
 });
+

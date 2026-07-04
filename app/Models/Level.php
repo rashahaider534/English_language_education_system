@@ -6,9 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-
+use App\Traits\HasTranslations;
 class Level extends Model
 {
+    use HasTranslations;
     protected $fillable = [
         'name_en',
         'name_ar',
