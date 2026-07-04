@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SocialAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -23,4 +24,14 @@ Route::post('/login' , [AuthController::class, 'login']);
 Route::post('/google/login' , [SocialAuthController::class, 'login']);
 Route::middleware(['auth:sanctum','role:student|teacher'])->group(function () {
     Route::post('/logout' , [AuthController::class, 'logout']);
+});
+
+//teacher routes
+Route::middleware(['auth:sanctum','role:teacher'])->group(function () {
+    Route::get('/questions' , [QuestionController::class, 'index']);
+    Route::get('/questions/{question}' , [QuestionController::class, 'show']);
+    Route::post('/questions' , [QuestionController::class, 'store']);
+    Route::post('/questions/{question}' , [QuestionController::class, 'updateQuestion']);
+    Route::get('/questions/{question}/checkStatus' , [QuestionController::class, 'checkStatus']);
+    Route::get('/questions/{question}/delete' , [QuestionController::class, 'deleteQuestion']);
 });

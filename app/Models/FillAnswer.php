@@ -10,6 +10,7 @@ class FillAnswer extends Model
     protected $fillable = [
         'question_id',
         'text_answer',
+        'blank_order'
     ];
    public function question():BelongsTo
     {

@@ -11,6 +11,10 @@ class ArrangeAnswer extends Model
         'question_id',
         'text_answer',
         'order',
+        'is_correct'
+    ];
+    protected $casts = [
+        'is_correct' => 'boolean',
     ];
     public function question():BelongsTo
     {
