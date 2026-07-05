@@ -10,22 +10,26 @@ use Laravel\Socialite\Facades\Socialite;
 
 class SocialAuthService
 {
-    public function redirect()
-    {
-        $url = Socialite::driver('google')
-            ->stateless()
-            ->redirect()
-            ->getTargetUrl();
+//    public function redirect()
+//    {
+//        $url = Socialite::driver('google')
+//            ->stateless()
+//            ->redirect()
+//            ->getTargetUrl();
+//
+//        return[
+//            'url' => $url
+//        ];
+//    }
 
-        return[
-            'url' => $url
-        ];
-    }
+    public function login(Request $request){
 
-    public function callback(Request $request){
+//        $googleUser = Socialite::driver('google')
+//            ->stateless()
+//            ->user();
         $googleUser = Socialite::driver('google')
             ->stateless()
-            ->user();
+            ->userFromToken($request->access_token);
 
         $user = User::where('google_id', $googleUser->getId())->first();
         if (!$user) {

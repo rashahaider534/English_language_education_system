@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ContentStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,7 +17,7 @@ return new class extends Migration
             $table->string('title_en');
             $table->string('title_ar');
             $table->foreignId('course_id')->constrained('courses')->onDelete('cascade');
-            $table->enum('status', ['pending', 'in_review', 'request_changes', 'published', 'rejected'])->default('pending');
+            $table->enum('status', array_column(ContentStatus::cases(), 'value'))->default(ContentStatus::PENDING->value);
             $table->integer('order');
             $table->integer('xp_points')->default(0);
             $table->timestamps();

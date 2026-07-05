@@ -71,7 +71,7 @@ class AuthController extends Controller
         ]);
     }
 
-    public function resetPassword(resetPasswordRequest $request)
+    public function resetPassword(resetPasswordRequest $request): JsonResponse
     {
         $data = $request->validated();
         return response()->json([
