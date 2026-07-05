@@ -13,7 +13,7 @@ class StoreLevelRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -28,6 +28,7 @@ class StoreLevelRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
+                 'regex:/^[a-zA-Z0-9\s\-_]+$/',
                 Rule::unique('levels', 'name_en'),
             ],
 
@@ -35,6 +36,7 @@ class StoreLevelRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
+                'regex:/^[\x{0600}-\x{06FF}\s0-9\-_]+$/u',
                 Rule::unique('levels', 'name_ar'),
             ],
 

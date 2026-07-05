@@ -18,8 +18,9 @@ return new class extends Migration
             $table->integer('order');
             $table->integer('minimum_score');
             $table->integer('maximum_score');
-            $table->boolean('is_active')->default(true);
             $table->decimal('price', 10, 2);
+            $table->enum('status', ['pending', 'published','closed','archived'])->default('pending');
+            $table->timestamp('published_at')->nullable();
             $table->integer('estimated_duration');
             $table->foreignId('created_by')
                 ->constrained('users');

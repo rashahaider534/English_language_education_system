@@ -12,10 +12,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable,HasRoles, HasApiTokens;
+    use HasFactory, Notifiable, HasRoles, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -36,12 +37,15 @@ class User extends Authenticatable
         'email_verified_at'
     ];
 
-    public function studentProfile():HasOne
+    public function studentProfile(): HasOne
     {
         return $this->hasOne(StudentProfile::class);
     }
-
-    public function teacherProfile():HasOne
+    public function createdLevels(): HasMany
+    {
+        return $this->hasMany(Level::class, 'created_by');
+    }
+    public function teacherProfile(): HasOne
     {
         return $this->hasOne(TeacherProfile::class);
     }
@@ -56,71 +60,71 @@ class User extends Authenticatable
             );
     }
 
-    public function userLevels():HasMany
+    public function userLevels(): HasMany
     {
         return $this->hasMany(UserLevel::class);
     }
-     public function StudentCourses():BelongsToMany
+    public function StudentCourses(): BelongsToMany
     {
         return $this->belongsToMany(Course::class, 'user_courses')
-            ->withPivot('status','started_at', 'completed_at');
+            ->withPivot('status', 'started_at', 'completed_at');
     }
 
-    public function TeacherCourses():HasMany
+    public function TeacherCourses(): HasMany
     {
         return $this->hasMany(Course::class);
     }
-     public function lessons():BelongsToMany
+    public function lessons(): BelongsToMany
     {
         return $this->belongsToMany(Lesson::class, 'user_lessons')
             ->withPivot('status', 'started_at', 'completed_at');
     }
-     public function words():BelongsToMany
+    public function words(): BelongsToMany
     {
         return $this->belongsToMany(Word::class, 'user_words')
             ->withPivot('status', 'added_at');
     }
-     public function DailyChallenge():BelongsToMany
+    public function DailyChallenge(): BelongsToMany
     {
-        return $this->belongsToMany(DailyChallenge::class, 'users_challenges' , 'user_id' , 'daily_challenge_id')
-            ->withPivot('progress', 'is_completed', 'completed_at', 'reward_claimed','reward_claimed_at');
+        return $this->belongsToMany(DailyChallenge::class, 'users_challenges', 'user_id', 'daily_challenge_id')
+            ->withPivot('progress', 'is_completed', 'completed_at', 'reward_claimed', 'reward_claimed_at');
     }
 
-    public function payments():HasMany
+    public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
     }
-    public function levelExceptions():HasMany
+    public function levelExceptions(): HasMany
     {
         return $this->hasMany(LevelException::class, 'user_id');
     }
-    public function ratings():HasMany
+    public function ratings(): HasMany
     {
         return $this->hasMany(Rate::class);
     }
 
-    public function comments():HasMany
+    public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
     }
 
-    public function testAttempts():HasMany
+    public function testAttempts(): HasMany
     {
         return $this->hasMany(UserAttempt::class);
     }
 
-    public function contactUsMessages():HasMany
+    public function contactUsMessages(): HasMany
     {
         return $this->hasMany(ContactUs::class);
     }
-    public function placementTestsCreate():HasMany
+    public function placementTestsCreate(): HasMany
     {
         return $this->hasMany(PlacementTest::class, 'created_by');
     }
 
-    public function lessonReviews():HasMany
+    public function lessonReviews(): HasMany
     {
-        return $this->hasMany(LessonReview::class , 'assigned_to');
+        return $this->hasMany(LessonReview::class, 'assigned_to');
     }
 
 

@@ -19,7 +19,6 @@ return new class extends Migration
             $table->foreignId('teacher_id')->constrained('users');
             $table->integer('order');
             $table->integer('estimated_duration');
-            $table->timestamp('published_at')->nullable();
             $table->boolean('is_active')->default(false);
             $table->foreignId('created_by')->constrained('users');
             $table->timestamps();

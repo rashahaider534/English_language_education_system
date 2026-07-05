@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\Level;
 use Illuminate\Support\Facades\App;
-use App\Http\Controllers\Admin\LevelController;
+use App\Http\Controllers\Student\LevelController;
 
 
 Route::get('/user', function (Request $request) {
@@ -16,12 +16,8 @@ Route::get('/user', function (Request $request) {
 
 
 Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:2,1');
-Route::post('/verifyOtp/{type}' , [AuthController::class, 'verifyOtp']);
-Route::post('/resendOtp/{type}' , [AuthController::class, 'resendOtp'])
-           ->middleware('throttle:3,1');
-Route::post('/forgotPassword' , [AuthController::class, 'forgotPassword'])
-           ->middleware('throttle:3,1');
-Route::post('/resetPassword' , [AuthController::class, 'resetPassword'])
+Route::post('/verifyOtp/{type}', [AuthController::class, 'verifyOtp']);
+Route::post('/resendOtp/{type}', [AuthController::class, 'resendOtp'])
     ->middleware('throttle:3,1');
 Route::post('/login' , [AuthController::class, 'login']);
 //Route::get('/google/redirect' , [SocialAuthController::class, 'redirect']);
