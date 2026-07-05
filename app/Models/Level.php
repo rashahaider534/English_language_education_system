@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use App\Traits\HasTranslations;
+
 class Level extends Model
 {
     use HasTranslations;
@@ -16,7 +17,7 @@ class Level extends Model
         'order',
         'minimum_score',
         'maximum_score',
-        'is_active',
+        'status',
         'price',
         'estimated_duration',
         'created_by'
@@ -32,26 +33,29 @@ class Level extends Model
             );
     }
 
-    public function userLevels():HasMany
+    public function userLevels(): HasMany
     {
         return $this->hasMany(UserLevel::class);
     }
-    public function courses():HasMany
+    public function courses(): HasMany
     {
         return $this->hasMany(Course::class);
     }
-     public function tests()
+    public function tests()
     {
         return $this->morphMany(Test::class, 'testable');
     }
     public function LevelException()
     {
-        return $this->hasMany(LevelException::class,'requested_level_id');
+        return $this->hasMany(LevelException::class, 'requested_level_id');
     }
 
-    public function podcasts():HasMany
+    public function podcasts(): HasMany
     {
         return $this->hasMany(Podcast::class);
     }
-
+       public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 }
