@@ -108,8 +108,10 @@ class authService
             'email_verified_at' => now()
         ]);
 
+        $user->assignRole('teacher');
         $token = $user->createToken('auth-token')->plainTextToken;
-        $user->assignRole('student');
+
+        $user->load('roles');
         return [
             'message' => 'Account verified successfully',
             'token' => $token,

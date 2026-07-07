@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ContentStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,7 +18,11 @@ return new class extends Migration
             $table->integer('passing_score');
             $table->string('title_en');
             $table->string('title_ar');
-            $table->boolean('is_active')->default(true);
+            $table->enum('status', array_column(ContentStatus::cases(), 'value'))->default(ContentStatus::PENDING->value);
+            $table->foreignId('previous_test_id')
+                ->nullable()
+                ->constrained('tests')
+                ->nullOnDelete();
             $table->timestamps();
         });
     }
