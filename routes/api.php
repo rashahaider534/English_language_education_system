@@ -36,4 +36,6 @@ Route::middleware(['auth:sanctum','role:teacher'])->group(function () {
     Route::get('/questions/{question}/checkStatus' , [QuestionController::class, 'checkStatus']);
     Route::get('/questions/{question}/delete' , [QuestionController::class, 'deleteQuestion']);
 });
-
+Route::middleware(['auth:sanctum','role:student'])->group(function () {
+Route::get('/getLevels',[LevelController::class,'getStudentLevels']);
+});

@@ -12,21 +12,48 @@ use Illuminate\Validation\ValidationException;
 
 class AdminLevelService
 {
-
-
-    public function getAllLevels()
+    public function getLevels(?string $status = null)
     {
         $page = request('page', 1);
-        return Cache::tags(['levels'])->remember("levels.page.$page", 3600, function () {
-            return Level::with('creator')
-                ->orderBy('order', 'asc')
-                ->paginate(10);
-        });
+        return Cache::tags(['levels'])
+            ->remember(
+                "levels.$status.page.$page",
+                3600,
+                function () use ($status) {
+
+                    $query = Level::with('creator')
+                        ->orderBy('order', 'asc');
+
+                    if ($status) {
+                        $query->where('status', $status);
+                    }
+
+                    return $query->paginate(10);
+                }
+            );
     }
+
+    public function getStatisticsLevel()
+    {
+        return Cache::tags(['levels'])
+            ->remember(
+                "levels.statistics",
+                3600,
+                function () {
+                    return Level::selectRaw("
+                    COUNT(*) as all_count,
+                    SUM(status = 'pending') as pending,
+                    SUM(status = 'closed') as closed,
+                    SUM(status = 'published') as published,
+                    SUM(status = 'archived') as archived")->first();
+                }
+            );
+    }
+
     public function create(array $data): Level
     {
         return DB::transaction(function () use ($data) {
-            return Level::create([
+            $level = Level::create([
                 'name_en' => $data['name_en'],
                 'name_ar' => $data['name_ar'],
                 'order' => $data['order'],
@@ -37,46 +64,58 @@ class AdminLevelService
                 'estimated_duration' => $data['estimated_duration'],
                 'created_by' => $data['created_by'],
             ]);
+            Cache::tags(['levels'])->flush();
+            return $level;
         });
     }
     public function update(Level $level, array $data)
     {
-        if ($level->created_by !== auth()->id()) {
+         $user = auth()->user();
+        if (
+            !$user->hasRole('super-admin')
+            && $level->created_by !== $user->id
+        ){
             throw ValidationException::withMessages([
                 'level' => 'You are not allowed to edit this level.',
             ]);
         }
-        if ($level->status == 'published') {
+        if (in_array($level->status, ['closed', 'archived'])) {
             throw ValidationException::withMessages([
-                'level' => 'Published levels cannot be modified.',
+                'level' => 'inactive levels cannot be modified.',
             ]);
         }
         $level->update($data);
+        Cache::tags(['levels'])->flush();
         return $level;
     }
     public function archive(Level $level)
     {
-        if ($level->created_by !== auth()->id()) {
+        $user = auth()->user();
+        if (
+            !$user->hasRole('super-admin')
+            && $level->created_by !== $user->id
+        ) {
             throw ValidationException::withMessages([
                 'level' => 'You are not allowed to archive this level.',
             ]);
         }
+
         if (in_array($level->status, ['closed', 'archived'])) {
             throw ValidationException::withMessages([
-                'level' => 'Level is already inactive.',
+                'level' => 'Archived or closed levels cannot be archived again',
             ]);
         }
 
+        $hasInProgressStudents = $level->userLevels()
+            ->where('status', 'in_progress')
+            ->exists();
+
         $level->update([
-            'status' => $level->userLevels()->exists()
+            'status' => $hasInProgressStudents
                 ? 'closed'
                 : 'archived',
         ]);
-
-        return $level;
-    }
-    public function clearCache()
-    {
         Cache::tags(['levels'])->flush();
+        return $level;
     }
 }

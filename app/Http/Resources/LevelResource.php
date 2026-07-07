@@ -23,7 +23,6 @@ class LevelResource extends JsonResource
             'price' => $this->price,
             'estimated_duration' => $this->estimated_duration,
             'status' => $this->status,
-            'state' => $this->state,
             'creator' => $this->whenLoaded('creator')
                 ? new UserResource($this->creator)
                 : null,
