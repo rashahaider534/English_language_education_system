@@ -13,9 +13,9 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        Permission::create(['name' => 'create level']);
-        Permission::create(['name' => 'update level']);
-        Permission::create(['name' => 'archive level']);
-        Permission::create(['name' => 'view levels']);
+        Permission::create(['name' => 'create level', 'guard_name' => 'web']);
+        Permission::create(['name' => 'update level', 'guard_name' => 'web']);
+        Permission::create(['name' => 'archive level', 'guard_name' => 'web']);
+        Permission::create(['name' => 'view levels', 'guard_name' => 'web']);
     }
 }

@@ -13,8 +13,8 @@ class RolePermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        $admin = Role::findByName('admin');
-        $superAdmin = Role::findByName('super-admin');
+        $admin = Role::findByName('admin', 'web');
+        $superAdmin = Role::findByName('super-admin', 'web');
 
         $admin->givePermissionTo([
             'create level',
