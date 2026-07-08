@@ -26,6 +26,8 @@ class DatabaseSeeder extends Seeder
             FillAnswerSeeder::class,
             PairAnswerSeeder::class,
             TestSeeder::class,
+            PermissionSeeder::class,
+            RolePermissionSeeder::class,
 
         ]);
     }
