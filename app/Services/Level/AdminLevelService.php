@@ -70,11 +70,11 @@ class AdminLevelService
     }
     public function update(Level $level, array $data)
     {
-         $user = auth()->user();
+        $user = auth()->user();
         if (
             !$user->hasRole('super-admin')
             && $level->created_by !== $user->id
-        ){
+        ) {
             throw ValidationException::withMessages([
                 'level' => 'You are not allowed to edit this level.',
             ]);
@@ -83,6 +83,17 @@ class AdminLevelService
             throw ValidationException::withMessages([
                 'level' => 'inactive levels cannot be modified.',
             ]);
+        }
+        if ($level->status === 'published') {
+            $allowedFields = [
+                'name_ar',
+                'name_en',
+                'estimated_duration',
+            ];
+            $data = array_intersect_key(
+                $data,
+                array_flip($allowedFields)
+            );
         }
         $level->update($data);
         Cache::tags(['levels'])->flush();

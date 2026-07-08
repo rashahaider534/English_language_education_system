@@ -19,10 +19,8 @@ class LevelController extends Controller
 
     public function index(Request $request)
     {
-        $levels = $this->service
-            ->getLevels($request->status);
-        $statistics = $this->service
-            ->getStatisticsLevel();
+        $levels = $this->service ->getLevels($request->status);
+        $statistics = $this->service->getStatisticsLevel();
         return view('levels.index', compact(
             'levels',
             'statistics'
