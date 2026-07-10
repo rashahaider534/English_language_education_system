@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Level;
 use Illuminate\Support\Facades\App;
 use App\Http\Controllers\Student\LevelController;
-
+use App\Http\Controllers\Admin\CourseController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -33,6 +33,9 @@ Route::middleware(['auth:sanctum','role:student|teacher'])->group(function () {
 
 //teacher routes
 Route::middleware(['auth:sanctum','role:teacher'])->group(function () {
+
+    Route::post('createcourse/{level}',[CourseController::class,'store']);
+     Route::get('course/{level}/{status?}',[CourseController::class,'index']);
     Route::get('/questions' , [QuestionController::class, 'index']);
     Route::get('/questions/{question}' , [QuestionController::class, 'show']);
     Route::post('/questions' , [QuestionController::class, 'store']);

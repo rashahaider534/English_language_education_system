@@ -9,7 +9,7 @@ use App\Models\Level;
 use App\Models\User;
 use App\Models\UserLevel;
 use Illuminate\Validation\ValidationException;
-
+use Illuminate\Support\Facades\Log;
 class AdminLevelService
 {
     public function getLevels(?string $status = null)
@@ -20,13 +20,11 @@ class AdminLevelService
                 "levels.$status.page.$page",
                 3600,
                 function () use ($status) {
-
                     $query = Level::with('creator')
+                        ->when($status, function ($query) use ($status) {
+                            $query->where('status', $status);
+                        })
                         ->orderBy('order', 'asc');
-
-                    if ($status) {
-                        $query->where('status', $status);
-                    }
 
                     return $query->paginate(10);
                 }

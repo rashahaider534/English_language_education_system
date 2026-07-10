@@ -23,23 +23,24 @@ class UpdateLevelRequest extends FormRequest
      */
     public function rules(): array
     {
+        $level = $this->route('level');
         return [
             'name_en' => [
                 'sometimes',
                 'string',
                 'max:255',
                 'regex:/^[a-zA-Z0-9\s\-_]+$/',
-                Rule::unique('levels', 'name_en'),
+                Rule::unique('levels', 'name_en')->ignore($level->id),
             ],
             'name_ar' => [
                 'sometimes',
                 'string',
                 'max:255',
                 'regex:/^[\x{0600}-\x{06FF}\s0-9\-_]+$/u',
-                Rule::unique('levels', 'name_ar'),
+                Rule::unique('levels', 'name_ar')->ignore($level->id),
             ],
 
-            'order' => ['sometimes', 'integer', 'min:0', Rule::unique('levels', 'order'),],
+            'order' => ['sometimes', 'integer', 'min:0', Rule::unique('levels', 'order')->ignore($level->id),],
 
             'minimum_score' => [
                 'sometimes',
@@ -72,5 +73,5 @@ class UpdateLevelRequest extends FormRequest
             'estimated_duration' => ['sometimes', 'integer', 'min:1'],
         ];
     }
- 
+
 }

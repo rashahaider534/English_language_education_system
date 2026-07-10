@@ -45,6 +45,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Level::class, 'created_by');
     }
+       public function createdCourses(): HasMany
+    {
+        return $this->hasMany(Course::class, 'created_by');
+    }
     public function teacherProfile(): HasOne
     {
         return $this->hasOne(TeacherProfile::class);
