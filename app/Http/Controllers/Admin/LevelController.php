@@ -34,7 +34,6 @@ class LevelController extends Controller
     public function store(StoreLevelRequest $request)
     {
         $data = $request->validated();
-        $data['created_by'] = auth()->id();
         $level = $this->service->create($data);
         return redirect()
             ->route('levels.index')

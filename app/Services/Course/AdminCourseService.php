@@ -9,8 +9,9 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use App\Models\Course;
 use App\Models\Level;
-
+use App\Models\User;
 use Illuminate\Support\Facades\Log;
+
 class AdminCourseService
 {
     public function getCourses(Level $level, ?string $status = null)
@@ -21,7 +22,7 @@ class AdminCourseService
                 "courses.level.{$level->id}.status.{$status}.page.{$page}",
                 3600,
                 function () use ($status, $level) {
-                      Log::info('QUERY EXECUTED');
+                    Log::info('QUERY EXECUTED');
                     $query = Course::query()
                         ->with(['teacher'])
                         ->where('level_id', $level->id)
@@ -29,8 +30,6 @@ class AdminCourseService
                             $query->where('status', $status);
                         })
                         ->orderBy('order');
-
-
                     return $query->paginate(10);
                 }
             );
@@ -42,7 +41,7 @@ class AdminCourseService
                 "courses.level.{$level->id}.statistics",
                 3600,
                 function () use ($level) {
-                    return Course::where('level_id',$level->id)->selectRaw("
+                    return Course::where('level_id', $level->id)->selectRaw("
                     COUNT(*) as all_count,
                     SUM(status = 'pending') as pending,
                     SUM(status = 'closed') as closed,
@@ -55,7 +54,7 @@ class AdminCourseService
     public  function create(array $data, Level $level)
     {
         return DB::transaction(function () use ($data, $level) {
-            if ($data['created_by'] !== $level->created_by) {
+            if ($level->created_by !== auth()->id()) {
                 throw ValidationException::withMessages([
                     'course' => 'is not your permission .',
                 ]);
@@ -68,7 +67,7 @@ class AdminCourseService
                 'level_id' => $level->id,
                 'status' => $data['status'] ?? 'pending',
                 'teacher_id' => $data['teacher_id'],
-                'created_by' => $data['created_by'],
+                'created_by' => auth()->id(),
             ]);
             if (isset($data['image'])) {
                 $course
@@ -78,5 +77,51 @@ class AdminCourseService
             Cache::tags(['courses'])->flush();
             return $course;
         });
+    }
+
+    public function update(Course $course, array $data)
+    {
+        return DB::transaction(function () use ($course, $data) {
+            $user = auth()->user();
+            if (
+                !$user->hasRole('super-admin')
+                && $course->created_by !== $user->id
+            ) {
+                throw ValidationException::withMessages([
+                    'course' => 'You are not allowed to edit this course.',
+                ]);
+            }
+            if (in_array($course->status, ['closed', 'archived'])) {
+                throw ValidationException::withMessages([
+                    'course' => 'inactive courses cannot be modified.',
+                ]);
+            }
+            if ($course->status === 'published') {
+                $allowedFields = [
+                    'name_ar',
+                    'name_en',
+                    'estimated_duration',
+                    'image',
+                ];
+                $data = array_intersect_key(
+                    $data,
+                    array_flip($allowedFields)
+                );
+            }
+                if (isset($data['image'])) {
+                $course
+                    ->addMedia($data['image'])
+                    ->toMediaCollection('course_image');
+            }
+            $course->update($data);
+            Cache::tags(['courses'])->flush();
+            return $course->fresh();
+        });
+    }
+    public function getTeachers()
+    {
+        return User::whereHas('roles', function ($query) {
+            $query->where('name', 'teacher');
+        })->select('id', 'email')->get();
     }
 }
