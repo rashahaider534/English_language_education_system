@@ -33,7 +33,7 @@ class Course extends Model implements HasMedia
     {
         return $this->belongsTo(User::class, 'teacher_id');
     }
-    public function users(): BelongsToMany
+    public function usercourses(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'user_courses')
             ->withPivot('status', 'started_at', 'completed_at');

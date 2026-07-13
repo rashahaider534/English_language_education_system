@@ -108,7 +108,7 @@ class AdminCourseService
                     array_flip($allowedFields)
                 );
             }
-                if (isset($data['image'])) {
+            if (isset($data['image'])) {
                 $course
                     ->addMedia($data['image'])
                     ->toMediaCollection('course_image');
@@ -118,6 +118,45 @@ class AdminCourseService
             return $course->fresh();
         });
     }
+    public function archive(Course $course)
+    {
+        $user = auth()->user();
+        if (
+            !$user->hasRole('super-admin')
+            && $course->created_by !== $user->id
+        ) {
+            throw ValidationException::withMessages([
+                'course' => 'You are not allowed to archive this course.',
+            ]);
+        }
+
+        if (in_array($course->status, ['closed', 'archived'])) {
+            throw ValidationException::withMessages([
+                'course' => 'Archived or closed courses cannot be archived again',
+            ]);
+        }
+
+        $hasInProgressStudents = $course->usercourses()
+            ->where('status', 'in_progress')
+            ->exists();
+
+        if ($course->status === 'pending' && !$course->lessons()->exists()) {
+
+            $course->delete();
+
+            Cache::tags(['courses'])->flush();
+
+            return null;
+        }
+        $course->update([
+            'status' => $hasInProgressStudents
+                ? 'closed'
+                : 'archived',
+        ]);
+        Cache::tags(['courses'])->flush();
+        return $course;
+    }
+    
     public function getTeachers()
     {
         return User::whereHas('roles', function ($query) {

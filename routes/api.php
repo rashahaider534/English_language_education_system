@@ -33,10 +33,6 @@ Route::middleware(['auth:sanctum','role:student|teacher'])->group(function () {
 
 //teacher routes
 Route::middleware(['auth:sanctum','role:teacher'])->group(function () {
-
-    Route::post('createcourse/{level}',[CourseController::class,'store']);
-    Route::put('/course/{course}',[CourseController::class,'update']);
-     Route::get('course/{level}/{status?}',[CourseController::class,'index']);
     Route::get('/questions' , [QuestionController::class, 'index']);
     Route::get('/questions/{question}' , [QuestionController::class, 'show']);
     Route::post('/questions' , [QuestionController::class, 'store']);
