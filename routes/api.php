@@ -53,4 +53,3 @@ Route::middleware(['auth:sanctum','role:teacher'])->group(function () {
 
 });
 
-
