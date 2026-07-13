@@ -3,17 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Enums\OtpType;
-use App\Http\Requests\Api\LoginRequest;
-use App\Http\Requests\Api\RegisterRequest;
-use App\Http\Requests\Api\EmailOtpRequest;
-use App\Http\Requests\Api\resetPasswordRequest;
-use App\Http\Requests\Api\VerifyOtpRequest;
-
-use App\Models\User;
+use App\Http\Requests\Api\Auth\EmailOtpRequest;
+use App\Http\Requests\Api\Auth\LoginRequest;
+use App\Http\Requests\Api\Auth\RegisterRequest;
+use App\Http\Requests\Api\Auth\resetPasswordRequest;
+use App\Http\Requests\Api\Auth\VerifyOtpRequest;
 use App\Services\authService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+
 class AuthController extends Controller
 {
 

@@ -18,14 +18,24 @@ class QuestionService
         $user = auth()->user();
         $activeQuestions = Question::where('user_id', $user->id)
             ->whereDoesntHave('nextVersion')
-            ->paginate(10);
-
-        $archivedVersions = Question::where('user_id', $user->id)
-            ->hasChildren()
+            ->latest()
             ->paginate(10);
 
         return response()->json([
             'active_questions' => TeacherQuestionResource::collection($activeQuestions)->response()->getData(true),
+              ]);
+
+    }
+
+    public function ArchivedQuestions()
+    {
+        $user = auth()->user();
+        $archivedVersions = Question::where('user_id', $user->id)
+            ->hasChildren()
+            ->latest()
+            ->paginate(10);
+
+        return response()->json([
             'deprecated_questions' => TeacherQuestionResource::collection($archivedVersions)->response()->getData(true),
         ]);
 
@@ -185,12 +195,14 @@ class QuestionService
             if (isset($data['image'])) {
                 $newQuestion->addMedia($data['image'])->toMediaCollection('image');
             } else {
-                $oldQuestion->getFirstMedia('image')?->copy($newQuestion, 'image');
-            }
+                if(!$isUpdate)
+                {$oldQuestion->getFirstMedia('image')?->copy($newQuestion, 'image');}
+                }
 
             if (isset($data['audio'])) {
                 $newQuestion->addMedia($data['audio'])->toMediaCollection('audio');
             } else {
+                if(!$isUpdate)
                 $oldQuestion->getFirstMedia('audio')?->copy($newQuestion, 'audio');
             }
         }
@@ -238,5 +250,14 @@ class QuestionService
                     ->update(['status' => ContentStatus::DRAFT]);
             }
         }
+
+    public function blockingTests(Question $question)
+    {
+        $tests = $question->tests()
+            ->where('status', ContentStatus::PUBLISHED)
+            ->get(['tests.id', 'tests.title_en', 'tests.title_ar', 'tests.testable_type', 'tests.testable_id']);
+
+        return response()->json(['blocking_tests' => $tests]);
+    }
 
 }
