@@ -23,26 +23,30 @@ class UpdateLevelRequest extends FormRequest
      */
     public function rules(): array
     {
+        $level = $this->route('level');
         return [
             'name_en' => [
                 'sometimes',
+                'filled',
                 'string',
                 'max:255',
                 'regex:/^[a-zA-Z0-9\s\-_]+$/',
-                Rule::unique('levels', 'name_en'),
+                Rule::unique('levels', 'name_en')->ignore($level->id),
             ],
             'name_ar' => [
                 'sometimes',
+                'filled',
                 'string',
                 'max:255',
                 'regex:/^[\x{0600}-\x{06FF}\s0-9\-_]+$/u',
-                Rule::unique('levels', 'name_ar'),
+                Rule::unique('levels', 'name_ar')->ignore($level->id),
             ],
 
-            'order' => ['sometimes', 'integer', 'min:0', Rule::unique('levels', 'order'),],
+            'order' => ['sometimes','filled', 'integer', 'min:0', Rule::unique('levels', 'order')->ignore($level->id),],
 
             'minimum_score' => [
                 'sometimes',
+                'filled',
                 'numeric',
                 'min:0',
                 function ($attribute, $value, $fail) {
@@ -56,6 +60,7 @@ class UpdateLevelRequest extends FormRequest
 
             'maximum_score' => [
                 'sometimes',
+                'filled',
                 'numeric',
                 'min:0',
                 function ($attribute, $value, $fail) {
@@ -67,10 +72,10 @@ class UpdateLevelRequest extends FormRequest
                 }
             ],
 
-            'price' => ['sometimes', 'numeric', 'min:0'],
+            'price' => ['sometimes', 'filled','numeric', 'min:0'],
 
-            'estimated_duration' => ['sometimes', 'integer', 'min:1'],
+            'estimated_duration' => ['sometimes','filled', 'integer', 'min:1'],
         ];
     }
- 
+
 }

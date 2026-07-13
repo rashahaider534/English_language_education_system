@@ -17,9 +17,9 @@ class LevelController extends Controller
         private AdminLevelService $service
     ) {}
 
-    public function index(Request $request)
+    public function index(?string $status = null)
     {
-        $levels = $this->service ->getLevels($request->status);
+        $levels = $this->service ->getLevels($status);
         $statistics = $this->service->getStatisticsLevel();
         return view('levels.index', compact(
             'levels',
@@ -34,7 +34,6 @@ class LevelController extends Controller
     public function store(StoreLevelRequest $request)
     {
         $data = $request->validated();
-        $data['created_by'] = auth()->id();
         $level = $this->service->create($data);
         return redirect()
             ->route('levels.index')

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Level;
 use Illuminate\Support\Facades\App;
 use App\Http\Controllers\Student\LevelController;
-
+use App\Http\Controllers\Admin\CourseController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();

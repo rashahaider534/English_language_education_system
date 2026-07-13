@@ -9,6 +9,7 @@ use App\Models\Level;
 use App\Models\User;
 use App\Models\UserLevel;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
 
 class AdminLevelService
 {
@@ -20,13 +21,11 @@ class AdminLevelService
                 "levels.$status.page.$page",
                 3600,
                 function () use ($status) {
-
                     $query = Level::with('creator')
+                        ->when($status, function ($query) use ($status) {
+                            $query->where('status', $status);
+                        })
                         ->orderBy('order', 'asc');
-
-                    if ($status) {
-                        $query->where('status', $status);
-                    }
 
                     return $query->paginate(10);
                 }
@@ -62,7 +61,7 @@ class AdminLevelService
                 'status' => $data['status'] ?? 'pending',
                 'price' => $data['price'],
                 'estimated_duration' => $data['estimated_duration'],
-                'created_by' => $data['created_by'],
+                'created_by' => auth()->id(),
             ]);
             Cache::tags(['levels'])->flush();
             return $level;
@@ -70,34 +69,37 @@ class AdminLevelService
     }
     public function update(Level $level, array $data)
     {
-        $user = auth()->user();
-        if (
-            !$user->hasRole('super-admin')
-            && $level->created_by !== $user->id
-        ) {
-            throw ValidationException::withMessages([
-                'level' => 'You are not allowed to edit this level.',
-            ]);
-        }
-        if (in_array($level->status, ['closed', 'archived'])) {
-            throw ValidationException::withMessages([
-                'level' => 'inactive levels cannot be modified.',
-            ]);
-        }
-        if ($level->status === 'published') {
-            $allowedFields = [
-                'name_ar',
-                'name_en',
-                'estimated_duration',
-            ];
-            $data = array_intersect_key(
-                $data,
-                array_flip($allowedFields)
-            );
-        }
-        $level->update($data);
-        Cache::tags(['levels'])->flush();
-        return $level;
+        return DB::transaction(function () use ($level, $data) {
+            $user = auth()->user();
+            if (
+                !$user->hasRole('super-admin')
+                && $level->created_by !== $user->id
+            ) {
+                throw ValidationException::withMessages([
+                    'level' => 'You are not allowed to edit this level.',
+                ]);
+            }
+            if (in_array($level->status, ['closed', 'archived'])) {
+                throw ValidationException::withMessages([
+                    'level' => 'inactive levels cannot be modified.',
+                ]);
+            }
+            if ($level->status === 'published') {
+                $allowedFields = [
+                    'name_ar',
+                    'name_en',
+                    'estimated_duration',
+                    'price',
+                ];
+                $data = array_intersect_key(
+                    $data,
+                    array_flip($allowedFields)
+                );
+            }
+            $level->update($data);
+            Cache::tags(['levels'])->flush();
+            return $level;
+        });
     }
     public function archive(Level $level)
     {

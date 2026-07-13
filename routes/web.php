@@ -4,7 +4,7 @@ use App\Http\Controllers\DashboardTemplateController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\LevelController;
-
+use App\Http\Controllers\Admin\CourseController;
 Route::get('/', function () {
     return redirect()->route('login');
 });
@@ -46,6 +46,13 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
     Route::get('/levels/{level}/edit', [LevelController::class, 'edit'])->name('levels.edit');
     Route::put('/levels/{level}', [LevelController::class, 'update'])->name('levels.update');
     Route::patch('/levels/{level}/archive', [LevelController::class, 'archive'])->name('levels.archive');
+
+    Route::get('/courses/{level}',[CourseController::class,'index'])->name('courses.index');
+    Route::get('/courses/{level}/create', [CourseController::class, 'create'])->name('courses.create');
+    Route::post('/courses/{level}',[CourseController::class,'store'])->name('courses.store');
+    Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])->name('courses.edit');
+    Route::put('/courses/{course}',[CourseController::class,'update'])->name('courses.update');
+    Route::patch('/courses/{course}/archive', [CourseController::class, 'archive'])->name('courses.archive');
 });
 
 
