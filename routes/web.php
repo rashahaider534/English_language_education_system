@@ -1,15 +1,37 @@
 <?php
 
+use App\Http\Controllers\DashboardTemplateController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Admin\LevelController;
+use App\Http\Controllers\Admin\CourseController;
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', [DashboardTemplateController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/users', [DashboardTemplateController::class, 'users'])->name('dashboard.users');
+    Route::get('/dashboard/roles', [DashboardTemplateController::class, 'roles'])->name('dashboard.roles');
+    Route::get('/dashboard/reports', [DashboardTemplateController::class, 'reports'])->name('dashboard.reports');
+    Route::get('/dashboard/tables', [DashboardTemplateController::class, 'tables'])->name('dashboard.tables');
+    Route::get('/dashboard/forms', [DashboardTemplateController::class, 'forms'])->name('dashboard.forms');
+    Route::get('/dashboard/cards', [DashboardTemplateController::class, 'cards'])->name('dashboard.cards');
+    Route::get('/dashboard/charts', [DashboardTemplateController::class, 'charts'])->name('dashboard.charts');
+    Route::get('/dashboard/notifications', [DashboardTemplateController::class, 'notifications'])->name('dashboard.notifications');
+    Route::get('/dashboard/profile', [DashboardTemplateController::class, 'profile'])->name('dashboard.profile');
+    Route::get('/dashboard/settings', [DashboardTemplateController::class, 'settings'])->name('dashboard.settings');
+    Route::get('/dashboard/blank', [DashboardTemplateController::class, 'blank'])->name('dashboard.blank');
+});
+
+Route::get('/language/{locale}', function ($locale) {
+    if (! in_array($locale, ['ar', 'en'])) {
+        abort(404);
+    }
+    session()->put('locale', $locale);
+    return back();
+});
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -17,4 +39,21 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
+    Route::get('/levels', [LevelController::class, 'index'])->name('levels.index');
+    Route::get('/levels/create', [LevelController::class, 'create'])->name('levels.create');
+    Route::post('/levels', [LevelController::class, 'store'])->name('levels.store');
+    Route::get('/levels/{level}/edit', [LevelController::class, 'edit'])->name('levels.edit');
+    Route::put('/levels/{level}', [LevelController::class, 'update'])->name('levels.update');
+    Route::patch('/levels/{level}/archive', [LevelController::class, 'archive'])->name('levels.archive');
+
+    Route::get('/courses/{level}',[CourseController::class,'index'])->name('courses.index');
+    Route::get('/courses/{level}/create', [CourseController::class, 'create'])->name('courses.create');
+    Route::post('/courses/{level}',[CourseController::class,'store'])->name('courses.store');
+    Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])->name('courses.edit');
+    Route::put('/courses/{course}',[CourseController::class,'update'])->name('courses.update');
+    Route::patch('/courses/{course}/archive', [CourseController::class, 'archive'])->name('courses.archive');
+});
+
+
+require __DIR__ . '/auth.php';
