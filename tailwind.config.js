@@ -13,6 +13,18 @@ export default {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                tajawal: ['Tajawal', ...defaultTheme.fontFamily.sans],
+                poppins: ['Poppins', ...defaultTheme.fontFamily.sans],
+            },
+            colors: {
+                fluent: {
+                    sky: '#A8E8F9',
+                    primary: '#00537A',
+                    dark: '#013C58',
+                    orange: '#F5A201',
+                    lightOrange: '#FFBA42',
+                    yellow: '#FFD35B',
+                },
             },
         },
     },

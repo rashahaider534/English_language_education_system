@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -29,5 +30,16 @@ class AppServiceProvider extends ServiceProvider
             'role'       => 'Spatie\Permission\Models\Role',
             'permission' => 'Spatie\Permission\Models\Permission',
         ]);
+        View::composer('dashboard.layouts.app', function ($view) {
+            if (array_key_exists('dashboardUser', $view->getData())) {
+                return;
+            }
+
+            $view->with('dashboardUser', [
+                'name' => optional(auth()->user())->name ?: 'Admin User',
+                'email' => optional(auth()->user())->email ?: 'admin@example.com',
+                'role' => optional(auth()->user())->getRoleNames()->first() ?: 'Platform Administrator',
+            ]);
+        });
     }
 }

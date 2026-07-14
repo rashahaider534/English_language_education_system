@@ -16,14 +16,16 @@ class LevelResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name_en' => $this->name_en,
-            'name_ar' => $this->name_ar,
+            'name' => $this->translate('name'),
             'order' => $this->order,
             'minimum_score' => $this->minimum_score,
             'maximum_score' => $this->maximum_score,
             'price' => $this->price,
             'estimated_duration' => $this->estimated_duration,
-            'is_active' => $this->is_active,
+            'status' => $this->status,
+            'creator' => $this->whenLoaded('creator')
+                ? new UserResource($this->creator)
+                : null,
         ];
     }
 }
