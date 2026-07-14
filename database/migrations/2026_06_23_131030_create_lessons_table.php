@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('title_en');
             $table->string('title_ar');
             $table->foreignId('course_id')->constrained('courses')->onDelete('cascade');
-            $table->enum('status', array_column(ContentStatus::cases(), 'value'))->default(ContentStatus::PENDING->value);
+            $table->enum('status', array_column(ContentStatus::cases(), 'value'))->default(ContentStatus::DRAFT->value);
             $table->integer('order');
             $table->integer('xp_points')->default(0);
             $table->timestamps();

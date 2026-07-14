@@ -117,8 +117,14 @@ class CreateQuestionRequest extends FormRequest
                 'integer',
                 'distinct',
                 'min:1',
-                'required_if:answers.*.is_correct,true',
-                'prohibited_if:answers.*.is_correct,false',
+                Rule::when(
+                    $this->input('type') === QuestionType::ARRANGE->value,
+                    ['required_if:answers.*.is_correct,true', 'prohibited_if:answers.*.is_correct,false']
+                ),
+                Rule::when(
+                    $this->input('type') !== QuestionType::ARRANGE->value,
+                    ['prohibited']
+                ),
             ],
 
             'answers.*.blank_order' => 'required_if:type,FILL|integer|distinct|min:1',
