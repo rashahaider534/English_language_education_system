@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('passing_score');
             $table->string('title_en');
             $table->string('title_ar');
-            $table->enum('status', array_column(ContentStatus::cases(), 'value'))->default(ContentStatus::PENDING->value);
+            $table->enum('status', array_column(ContentStatus::cases(), 'value'))->default(ContentStatus::DRAFT->value);
             $table->foreignId('previous_test_id')
                 ->nullable()
                 ->constrained('tests')
