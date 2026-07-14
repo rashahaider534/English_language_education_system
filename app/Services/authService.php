@@ -3,16 +3,11 @@
 namespace App\Services;
 
 use App\Enums\OtpType;
-use App\Http\Requests\Api\EmailOtpRequest;
-use App\Http\Requests\Api\RegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Jobs\SendOtpEmailJob;
-use App\Mail\otpMail;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 class authService

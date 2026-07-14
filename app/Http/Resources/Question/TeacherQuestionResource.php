@@ -30,9 +30,9 @@ class TeacherQuestionResource extends JsonResource
           'text_question' => $this->text_question,
           'difficulty' => $this->difficulty,
           'previous_question_id' => $this->previous_question_id,
-          'created_at' => $this->created_at,
-          'updated_at' => $this->updated_at,
-          'deleted_at' => $this->deleted_at,
+          'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
+          'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),
+          'deleted_at' => $this->deleted_at?->format('Y-m-d H:i:s'),
           'audio_url' => $this->getFirstMediaUrl('audio'),
           'image_url' => $this->getFirstMediaUrl('image'),
           'answers' => $resource::collection(

@@ -12,9 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tests', function (Blueprint $table) {
+        Schema::create('tests', function (Blueprint $table)
+        {
             $table->id();
-            $table->morphs('testable'); // ينشئ تلقائياً testable_id و testable_type للإسناد المتعدد (course, level, lesson...)
+            $table->morphs('testable');
             $table->integer('passing_score');
             $table->string('title_en');
             $table->string('title_ar');

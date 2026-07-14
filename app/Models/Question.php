@@ -7,6 +7,7 @@ use App\Http\Resources\Answer\ArrangeAnswerResource;
 use App\Http\Resources\Answer\FillAnswerResource;
 use App\Http\Resources\Answer\McqAnswerResource;
 use App\Http\Resources\Answer\PairAnswerResource;
+use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -19,7 +20,7 @@ use Spatie\MediaLibrary\HasMedia;
 
 class Question extends Model implements HasMedia
 {
-    use InteractsWithMedia,SoftDeletes;
+    use InteractsWithMedia,SoftDeletes,HasTranslations;
     protected $fillable = ['type', 'score', 'title_question_en' , 'title_question_ar', 'text_question' , 'difficulty','user_id','previous_question_id'];
     public function mcqAnswers():HasMany
     {

@@ -52,7 +52,25 @@ class CreateQuestionRequest extends FormRequest
             'difficulty'=> ['required', 'string' ,Rule::in(['EASY','MEDIUM','HARD'])],
             'audio' => 'nullable|file|mimes:mp3,wav,ogg|max:5120|prohibits:image',
             'image' => 'nullable|file|mimes:jpeg,jpg,png|max:5120|prohibits:audio',
-            'score' => 'required|integer|min:1',
+            'score' => [
+                'required',
+                'integer',
+                function ($attribute, $value, $fail) {
+                    $difficulty = $this->input('difficulty');
+
+                    if ($difficulty === 'easy' && ($value < 1 || $value > 2)) {
+                        $fail('An easy question should have only 1 or 2 points.');
+                    }
+
+                    if ($difficulty === 'medium' && ($value < 3 || $value > 5)) {
+                        $fail('A medium question should have only between 3 and 5 points.');
+                    }
+
+                    if ($difficulty === 'hard' && ($value < 6 || $value > 10)) {
+                        $fail('A hard question should have between 6 and 10 points.');
+                    }
+                },
+            ],
             'answers' => [
                 'required',
                 'array',

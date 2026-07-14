@@ -21,6 +21,11 @@ class QuestionController extends Controller
         return $this->questionService->index();
     }
 
+    public function ArchiveQuestions()
+    {
+        return $this->questionService->ArchivedQuestions();
+    }
+
     public function show(Request $request,Question $question)
     {
         $this->authorize('view', $question);
@@ -57,5 +62,10 @@ class QuestionController extends Controller
         return response()->json(
             $this->questionService->deleteQuestion($question)
         );
+    }
+
+    public function blockingTests(Question $question)
+    {
+        return $this->questionService->blockingTests($question);
     }
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SocialAuthController;
+use App\Http\Controllers\TestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\Level;
@@ -28,17 +29,28 @@ Route::post('/login' , [AuthController::class, 'login']);
 Route::post('/google/login' , [SocialAuthController::class, 'login']);
 Route::middleware(['auth:sanctum','role:student|teacher'])->group(function () {
     Route::post('/logout' , [AuthController::class, 'logout']);
-    Route::post('/createlevel',[LevelController::class,'store']);
+    //Test api
+    Route::get('/tests/{test}',[TestController::class,'show']);
+
+
 });
 
 //teacher routes
 Route::middleware(['auth:sanctum','role:teacher'])->group(function () {
+    //question api
     Route::get('/questions' , [QuestionController::class, 'index']);
+    Route::get('questions/deprecated', [QuestionController::class, 'ArchiveQuestions']);
     Route::get('/questions/{question}' , [QuestionController::class, 'show']);
     Route::post('/questions' , [QuestionController::class, 'store']);
     Route::post('/questions/{question}' , [QuestionController::class, 'updateQuestion']);
     Route::get('/questions/{question}/checkStatus' , [QuestionController::class, 'checkStatus']);
     Route::get('/questions/{question}/delete' , [QuestionController::class, 'deleteQuestion']);
+    Route::get('/questions/{question}/blocking-tests',[QuestionController::class, 'blockingTests']);
+
+    //level api
+    Route::post('/createlevel',[LevelController::class,'store']);
+
+
 });
 Route::middleware(['auth:sanctum','role:student'])->group(function () {
 Route::get('/getStudentLevels',[LevelController::class,'getStudentLevels']);
