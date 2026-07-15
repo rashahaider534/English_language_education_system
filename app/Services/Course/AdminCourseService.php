@@ -54,9 +54,15 @@ class AdminCourseService
     public  function create(array $data, Level $level)
     {
         return DB::transaction(function () use ($data, $level) {
-            if ($level->created_by !== auth()->id()) {
+            $user = auth()->user();
+            if (!$user->hasRole('super-admin') && $level->created_by !== $user->id) {
                 throw ValidationException::withMessages([
                     'course' => 'is not your permission .',
+                ]);
+            }
+            if (in_array($level->status, ['published'])) {
+                throw ValidationException::withMessages([
+                    'course' => 'you cannot add a course',
                 ]);
             }
             $course = Course::create([
@@ -67,7 +73,7 @@ class AdminCourseService
                 'level_id' => $level->id,
                 'status' => $data['status'] ?? 'pending',
                 'teacher_id' => $data['teacher_id'],
-                'created_by' => auth()->id(),
+                'created_by' => $user->id,
             ]);
             if (isset($data['image'])) {
                 $course
@@ -156,7 +162,7 @@ class AdminCourseService
         Cache::tags(['courses'])->flush();
         return $course;
     }
-    
+
     public function getTeachers()
     {
         return User::whereHas('roles', function ($query) {
