@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use App\Models\Level;
 use App\Models\User;
+use App\Models\Lesson;
 use App\Models\UserLevel;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Log;
@@ -118,16 +119,30 @@ class AdminLevelService
                 'level' => 'Archived or closed levels cannot be archived again',
             ]);
         }
+        DB::transaction(function () use ($level) {
 
-        $hasInProgressStudents = $level->userLevels()
-            ->where('status', 'in_progress')
-            ->exists();
+            $hasInProgressStudents = $level->userLevels()
+                ->where('status', 'in_progress')
+                ->exists();
 
-        $level->update([
-            'status' => $hasInProgressStudents
+            $status = $hasInProgressStudents
                 ? 'closed'
-                : 'archived',
-        ]);
+                : 'archived';
+
+            $level->update([
+                'status' => $status,
+            ]);
+
+            $level->courses()->update([
+                'status' => $status,
+            ]);
+
+            Lesson::whereHas('course', function ($query) use ($level) {
+                $query->where('level_id', $level->id);
+            })->update([
+                'status' => $status,
+            ]);
+        });
         Cache::tags(['levels'])->flush();
         return $level;
     }

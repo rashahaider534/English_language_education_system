@@ -21,8 +21,16 @@ class UserSeeder extends Seeder
             'password' => bcrypt('12345678'),
             'is_active' => true,
         ]);
-         $superadmin->assignRole(Role::findByName('super-admin', 'web'));
-
+        $superadmin->assignRole(Role::findByName('super-admin', 'web'));
+        $student = User::create([
+            'first_name' => 'rasha',
+            'last_name' => 'haider',
+            'email' => 'rsh74877@gmail.com',
+            'password' => bcrypt('87654321'),
+            'is_active' => true,
+            'email_verified_at' => now(),
+        ]);
+         $student->assignRole('student');
         $admins = [
             [
                 'first_name' => 'Admin1',
@@ -80,8 +88,8 @@ class UserSeeder extends Seeder
             ]
         ];
         foreach ($teachers as $teacherData) {
-           $user =  User::create($teacherData);
-           $user->assignRole('teacher');
+            $user =  User::create($teacherData);
+            $user->assignRole('teacher');
         }
     }
 }
