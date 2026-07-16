@@ -86,20 +86,20 @@ class Question extends Model implements HasMedia
 
     public function getPublishedTestsAttribute()
     {
-        return $this->tests()->where('status', ContentStatus::PUBLISHED->value)->get(['tests.id', 'tests.title_en']);
+        return $this->tests()->where('status', ContentStatus::PUBLISHED)->get(['tests.id', 'tests.title_en']);
     }
 
     public function getArchivedTestsAttribute()
     {
-        return $this->tests()->where('status', ContentStatus::ARCHIVED->value)->get(['tests.id', 'tests.title_en']);
+        return $this->tests()->where('status', ContentStatus::ARCHIVED)->get(['tests.id', 'tests.title_en']);
     }
     public function getInReviewTestsAttribute()
     {
-        return $this->tests()->where('status', ContentStatus::IN_REVIEW->value)->get(['tests.id', 'tests.title_en']);
+        return $this->tests()->where('status', ContentStatus::IN_REVIEW)->get(['tests.id', 'tests.title_en']);
     }
     public function getApprovedTestsAttribute()
     {
-        return $this->tests()->where('status', ContentStatus::APPROVED->value)->get(['tests.id', 'tests.title_en']);
+        return $this->tests()->where('status', ContentStatus::APPROVED)->get(['tests.id', 'tests.title_en']);
     }
 
 

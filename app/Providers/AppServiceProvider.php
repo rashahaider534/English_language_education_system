@@ -36,6 +36,7 @@ class AppServiceProvider extends ServiceProvider
             'course' => 'App\Models\Course',
             'lesson' => 'App\Models\Lesson',
             'level'  => 'App\Models\Level',
+            'placement_test' => 'App\Models\PlacementTest',
             'user'   => 'App\Models\User','question' => 'App\Models\Question',
             'test'     => 'App\Models\Test',
             'role'       => 'Spatie\Permission\Models\Role',

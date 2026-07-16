@@ -103,7 +103,7 @@ class authService
             'email_verified_at' => now()
         ]);
 
-        $user->assignRole('teacher');
+        $user->assignRole('student');
         $token = $user->createToken('auth-token')->plainTextToken;
 
         $user->load('roles');

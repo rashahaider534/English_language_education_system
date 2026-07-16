@@ -16,9 +16,9 @@ class TestSeeder extends Seeder
     {
         // 1. تعريف مصفوفة الاختبارات
         $tests = [
-            ['title_ar' => 'اختبار الكورس الأول', 'title_en' => 'Course 1 Final', 'type' => 'App\Models\Course', 'id' => 1, 'status' => ContentStatus::PUBLISHED->value],
-            ['title_ar' => 'اختبار الدرس الثاني', 'title_en' => 'Lesson 2 Quiz', 'type' => 'App\Models\Lesson', 'id' => 2, 'status' => ContentStatus::PENDING->value],
-            ['title_ar' => 'اختبار المستوى المتقدم', 'title_en' => 'Advanced Level Test', 'type' => 'App\Models\Level', 'id' => 3, 'status' => ContentStatus::ARCHIVED->value],
+            ['title_ar' => 'اختبار الكورس الأول', 'title_en' => 'Course 1 Final', 'type' => 'course', 'id' => 1, 'status' => ContentStatus::PUBLISHED->value],
+            ['title_ar' => 'اختبار الدرس الثاني', 'title_en' => 'Lesson 2 Quiz', 'type' => 'lesson', 'id' => 2, 'status' => ContentStatus::PENDING->value],
+            ['title_ar' => 'اختبار المستوى المتقدم', 'title_en' => 'Advanced Level Test', 'type' => 'level', 'id' => 3, 'status' => ContentStatus::ARCHIVED->value],
         ];
 
         foreach ($tests as $test) {
