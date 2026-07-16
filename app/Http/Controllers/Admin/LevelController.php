@@ -17,8 +17,9 @@ class LevelController extends Controller
         private AdminLevelService $service
     ) {}
 
-    public function index(?string $status = null)
+    public function index(Request $request)
     {
+        $status = $request->query('status');
         $levels = $this->service ->getLevels($status);
         $statistics = $this->service->getStatisticsLevel();
         return view('levels.index', compact(
