@@ -125,21 +125,35 @@
                 <a href="{{ route('levels.index', ['status' => 'closed']) }}" style="{{ $tabBase }} {{ $activeStatus === 'closed' ? 'background:#013C58; color:#fff;' : 'color:rgba(1,60,88,0.55);' }}">مغلقة ({{ $statistics->closed ?? 0 }})</a>
                 <a href="{{ route('levels.index', ['status' => 'archived']) }}" style="{{ $tabBase }} {{ $activeStatus === 'archived' ? 'background:#013C58; color:#fff;' : 'color:rgba(1,60,88,0.55);' }}">مؤرشفة ({{ $statistics->archived ?? 0 }})</a>
             </div>
-            <div style="display:flex; align-items:center; gap:9px; background:rgba(0,83,122,0.05); border:1.5px solid transparent; border-radius:11px; padding:0 14px; min-width:220px;">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:rgba(1,60,88,0.4); flex-shrink:0;"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
-                <input x-model="search" placeholder="ابحثي باسم المستوى..." style="flex:1; background:transparent; border:none; outline:none; padding:10px 4px; font-size:13.5px; color:#013C58; font-family:'Tajawal',sans-serif;">
+            <div style="display:flex; align-items:center; gap:9px; background:rgba(255,211,91,0.12); border:1.5px solid #FFBA42; border-radius:11px; padding:0 14px; min-width:220px; box-shadow:0 0 0 4px rgba(255,186,66,0.16);">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     style="color:#F5A201; flex-shrink:0;"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                <input x-model="search" placeholder="ابحثي باسم المستوى..." style="flex:1; background:transparent; border:none; outline:none; box-shadow:none; padding:10px 4px; font-size:13.5px; color:#013C58; font-family:'Tajawal',sans-serif;">
             </div>
         </div>
 
         <table style="width:100%; border-collapse:collapse; table-layout:fixed;">
             <thead>
                 <tr>
-                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 16px; background:rgba(168,232,249,0.10); width:6%;">#</th>
-                    <th style="text-align:right; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 16px; background:rgba(168,232,249,0.10); width:25%;">المستوى</th>
-                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 16px; background:rgba(168,232,249,0.10); width:16%;">السعر</th>
-                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 16px; background:rgba(168,232,249,0.10); width:18%;">المدة</th>
-                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 16px; background:rgba(168,232,249,0.10); width:17%;">الحالة</th>
-                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 16px; background:rgba(168,232,249,0.10); width:18%;">الإجراءات</th>
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.10); width:4%;">#</th>
+                    <th style="text-align:right; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.10); width:17%;">المستوى</th>
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.10); width:9%;">
+                        <span style="display:inline-flex; align-items:center; gap:4px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F5A201" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"></path><path d="m6 13 6 6 6-6"></path></svg>
+                            أدنى علامة
+                        </span>
+                    </th>
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.10); width:9%;">
+                        <span style="display:inline-flex; align-items:center; gap:4px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"></path><path d="m6 11 6-6 6 6"></path></svg>
+                            أعلى علامة
+                        </span>
+                    </th>
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.10); width:10%;">السعر</th>
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.10); width:11%;">المدة</th>
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.10); width:11%;">الحالة</th>
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.10); width:15%;">أُنشئ بواسطة</th>
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.10); width:14%;">الإجراءات</th>
                 </tr>
             </thead>
             <tbody>
@@ -179,7 +193,19 @@
                                 </div>
                             </div>
                         </td>
-                        <td style="padding:14px 16px; border-bottom:1px solid rgba(0,83,122,0.05); vertical-align:middle; text-align:center;">
+                        <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); vertical-align:middle; text-align:center;">
+                            <span style="display:inline-flex; align-items:center; gap:4px; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; color:rgba(1,60,88,0.7);" dir="ltr">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F5A201" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"></path><path d="m6 13 6 6 6-6"></path></svg>
+                                {{ $level->minimum_score }}
+                            </span>
+                        </td>
+                        <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); vertical-align:middle; text-align:center;">
+                            <span style="display:inline-flex; align-items:center; gap:4px; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; color:rgba(1,60,88,0.7);" dir="ltr">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"></path><path d="m6 11 6-6 6 6"></path></svg>
+                                {{ $level->maximum_score }}
+                            </span>
+                        </td>
+                        <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); vertical-align:middle; text-align:center;">
                             <span style="font-family:'Poppins',sans-serif; font-weight:700; font-size:13.5px; color:#013C58;" dir="ltr">${{ $level->price }}</span>
                         </td>
                         <td style="padding:14px 16px; border-bottom:1px solid rgba(0,83,122,0.05); vertical-align:middle; text-align:center;">
@@ -193,6 +219,13 @@
                                 <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:{{ $sc['dot'] }};"></span>
                                 {{ $statusLabels[$level->status] ?? $level->status }}
                             </span>
+                        </td>
+                        <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); vertical-align:middle; text-align:center;">
+                            @if ($level->creator)
+                                <span style="font-size:12.5px; color:rgba(1,60,88,0.65); font-weight:600;">{{ trim($level->creator->first_name.' '.$level->creator->last_name) }}</span>
+                            @else
+                                <span style="font-size:12.5px; color:rgba(1,60,88,0.35);">—</span>
+                            @endif
                         </td>
                         <td style="padding:14px 16px; border-bottom:1px solid rgba(0,83,122,0.05); vertical-align:middle; text-align:center;">
                             <div style="display:flex; gap:8px; justify-content:center;">
@@ -225,7 +258,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" style="padding:60px 20px; text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:14px;">ما في مستويات بعد</td>
+                        <td colspan="9" style="padding:60px 20px; text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:14px;">ما في مستويات بعد</td>
                     </tr>
                 @endforelse
             </tbody>

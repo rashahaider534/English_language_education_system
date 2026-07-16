@@ -101,6 +101,7 @@ class StudentLevelService
             ->whereNotIn('id', $approvedExceptionLevelIds)
             ->orderBy('order')
             ->get();
+            
 
         return [
             'current_level' => $currentLevel,

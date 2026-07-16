@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Level;
 use Illuminate\Support\Facades\App;
 use App\Http\Controllers\Student\LevelController;
-use App\Http\Controllers\Admin\CourseController;
+use App\Http\Controllers\Student\CourseController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -55,4 +55,5 @@ Route::middleware(['auth:sanctum','role:teacher'])->group(function () {
 Route::middleware(['auth:sanctum','role:student'])->group(function () {
 Route::get('/getStudentLevels',[LevelController::class,'getStudentLevels']);
 Route::get('/getPurchasableLevels',[LevelController::class,'getPurchasableLevels']);
+Route::get('/getStudentcourses/{level}',[CourseController::class,'index']);
 });
