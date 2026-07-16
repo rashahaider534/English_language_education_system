@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Api\Question;
 
 use App\Enums\QuestionType;
-use App\Rules\ValidArrangeOrder;
+use App\Rules\SequentialOrder;
 use App\Rules\ValidCorrectAnswers;
 use App\Rules\ValidFillQuestion;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -84,7 +84,7 @@ class CreateQuestionRequest extends FormRequest
                 ),
                 Rule::when(
                     $this->input('type') === QuestionType::ARRANGE->value,
-                    [new ValidArrangeOrder($this->input('answers', []))]
+                    [new SequentialOrder($this->input('answers', []))]
                 ),
                 Rule::when(
                     in_array($this->input('type'), [

@@ -124,7 +124,7 @@ class QuestionService
 
             $relatedTests = $question->tests()->orderBy('id')->lockForUpdate()->get();
 
-            if ($relatedTests->contains(fn($t) => $t->status === ContentStatus::IN_REVIEW->value)) {
+            if ($relatedTests->contains(fn($t) => $t->status === ContentStatus::IN_REVIEW)) {
                 throw ValidationException::withMessages([
                     'error' => 'This question belongs to a test currently under review and cannot be edited.'
                 ]);
@@ -215,7 +215,7 @@ class QuestionService
 
                 $relatedTests = $question->tests()->orderBy('id')->lockForUpdate()->get();
 
-                if ($relatedTests->contains(fn($t) => $t->status === ContentStatus::IN_REVIEW->value)) {
+                if ($relatedTests->contains(fn($t) => $t->status === ContentStatus::IN_REVIEW)) {
                     throw ValidationException::withMessages([
                         'error' => 'This question belongs to a test currently under review and cannot be deleted.',
                     ]);

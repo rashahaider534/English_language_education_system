@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Translation\PotentiallyTranslatedString;
 
-class ValidArrangeOrder implements ValidationRule
+class SequentialOrder implements ValidationRule
 {
     /**
      * Run the validation rule.
