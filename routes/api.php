@@ -10,6 +10,7 @@ use App\Models\Level;
 use Illuminate\Support\Facades\App;
 use App\Http\Controllers\Student\LevelController;
 use App\Http\Controllers\Student\CourseController;
+use App\Http\Controllers\Teacher\LessonController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -50,9 +51,16 @@ Route::middleware(['auth:sanctum','role:teacher'])->group(function () {
     //level api
     Route::post('/createlevel',[LevelController::class,'store']);
 
+    //lesson api
+    Route::get('/getTeacherCourses',[LessonController::class,'getTeacherCourses']);
+    Route::post('/lessons/{course}',[LessonController::class,'store']);
+
+
+
 
 });
 Route::middleware(['auth:sanctum','role:student'])->group(function () {
+    //level api
 Route::get('/getStudentLevels',[LevelController::class,'getStudentLevels']);
 Route::get('/getPurchasableLevels',[LevelController::class,'getPurchasableLevels']);
 Route::get('/getStudentcourses/{level}',[CourseController::class,'index']);
