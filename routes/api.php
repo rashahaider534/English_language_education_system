@@ -25,43 +25,35 @@ Route::post('/forgotPassword', [AuthController::class, 'forgotPassword'])
     ->middleware('throttle:3,1');
 Route::post('/resetPassword', [AuthController::class, 'resetPassword'])
     ->middleware('throttle:3,1');
-Route::post('/login' , [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login']);
 //Route::get('/google/redirect' , [SocialAuthController::class, 'redirect']);
-Route::post('/google/login' , [SocialAuthController::class, 'login']);
-Route::middleware(['auth:sanctum','role:student|teacher'])->group(function () {
-    Route::post('/logout' , [AuthController::class, 'logout']);
+Route::post('/google/login', [SocialAuthController::class, 'login']);
+Route::middleware(['auth:sanctum', 'role:student|teacher'])->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
     //Test api
-    Route::get('/tests/{test}',[TestController::class,'show']);
-
-
+    Route::get('/tests/{test}', [TestController::class, 'show']);
 });
 
 //teacher routes
-Route::middleware(['auth:sanctum','role:teacher'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:teacher'])->group(function () {
     //question api
-    Route::get('/questions' , [QuestionController::class, 'index']);
+    Route::get('/questions', [QuestionController::class, 'index']);
     Route::get('questions/deprecated', [QuestionController::class, 'ArchiveQuestions']);
-    Route::get('/questions/{question}' , [QuestionController::class, 'show']);
-    Route::post('/questions' , [QuestionController::class, 'store']);
-    Route::post('/questions/{question}' , [QuestionController::class, 'updateQuestion']);
-    Route::get('/questions/{question}/checkStatus' , [QuestionController::class, 'checkStatus']);
-    Route::get('/questions/{question}/delete' , [QuestionController::class, 'deleteQuestion']);
-    Route::get('/questions/{question}/blocking-tests',[QuestionController::class, 'blockingTests']);
-
-    //level api
-    Route::post('/createlevel',[LevelController::class,'store']);
+    Route::get('/questions/{question}', [QuestionController::class, 'show']);
+    Route::post('/questions', [QuestionController::class, 'store']);
+    Route::post('/questions/{question}', [QuestionController::class, 'updateQuestion']);
+    Route::get('/questions/{question}/checkStatus', [QuestionController::class, 'checkStatus']);
+    Route::get('/questions/{question}/delete', [QuestionController::class, 'deleteQuestion']);
+    Route::get('/questions/{question}/blocking-tests', [QuestionController::class, 'blockingTests']);
 
     //lesson api
-    Route::get('/getTeacherCourses',[LessonController::class,'getTeacherCourses']);
-    Route::post('/lessons/{course}',[LessonController::class,'store']);
-
-
-
-
+    Route::get('/getTeacherCourses', [LessonController::class, 'getTeacherCourses']);
+    Route::post('/lessons/{course}', [LessonController::class, 'store']);
+    Route::post('/lessons/{lesson}', [LessonController::class, 'update']);
 });
-Route::middleware(['auth:sanctum','role:student'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
     //level api
-Route::get('/getStudentLevels',[LevelController::class,'getStudentLevels']);
-Route::get('/getPurchasableLevels',[LevelController::class,'getPurchasableLevels']);
-Route::get('/getStudentcourses/{level}',[CourseController::class,'index']);
+    Route::get('/getStudentLevels', [LevelController::class, 'getStudentLevels']);
+    Route::get('/getPurchasableLevels', [LevelController::class, 'getPurchasableLevels']);
+    Route::get('/getStudentcourses/{level}', [CourseController::class, 'index']);
 });

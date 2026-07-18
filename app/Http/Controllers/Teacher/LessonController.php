@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Course\UpdateCourseRequest;
 use App\Services\Lesson\TeacherLessonService;
 use App\Http\Requests\Lesson\StoreLessonRequest;
+use App\Http\Requests\Lesson\UpdateLessonRequest;
 use App\Http\Resources\LessonResource;
 use App\Models\Course;
+use App\Models\Lesson;
 use Illuminate\Http\Request;
 
 use App\Http\Resources\CourseResource;
@@ -26,6 +29,10 @@ class LessonController extends Controller
         $lesson = $this->service->store($request->validated(), $course);
         return new LessonResource($lesson);
     }
-
+    public function update(UpdateLessonRequest $request, Lesson $lesson)
+    {
+        $lesson = $this->service->update($lesson, $request->validated());
+        return new LessonResource($lesson);
+    }
 
 }
