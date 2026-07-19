@@ -26,7 +26,7 @@ class LevelSeeder extends Seeder
                 'price' => 50,
                 'estimated_duration' => 30,
                 'created_by' => 1,
-                'status' => 'published',
+                'status' => 'pending',
                 'published_at' => now(),
                 'created_at' => now(),
                 'updated_at' => now(),

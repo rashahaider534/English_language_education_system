@@ -11,4 +11,5 @@ enum ContentStatus: string
     case APPROVED = 'approved';
     case PUBLISHED = 'published';
     case ARCHIVED = 'archived';
+    case CLOSED = 'closed';
 }
