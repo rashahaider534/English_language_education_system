@@ -6,21 +6,37 @@ use App\Models\Course;
 use App\Models\User;
 
 use Illuminate\Support\Facades\Cache;
- use App\Enums\ContentStatus;
+use App\Enums\ContentStatus;
 use Illuminate\Support\Facades\DB;
 use App\Models\Lesson;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
 
 class TeacherLessonService
 {
-
-    public function getTeacherCourses(User $teacher)
+    public function index(Course $course)
     {
-        return Course::query()
-            ->where('teacher_id', $teacher->id)
-            ->orderBy('order')
-            ->get();
+        if ($course->teacher_id !== auth()->id()) {
+            throw ValidationException::withMessages([
+                'course' => 'You are not allowed to view lessons in this course.',
+            ]);
+        }
+        $page = request('page', 1);
+        return Cache::tags(['lessons'])
+            ->remember(
+                "teacher_lessons_{$course->id}.page.{$page}",
+                3600,
+                function () use ($course) {
+                    Log::info('QUERY EXECUTED');
+                    return $course->lessons()
+                        ->with('media')
+                        ->orderBy('order')
+                        ->paginate(10);
+                }
+            );
     }
+
+
     public function store(array $data, Course $course)
     {
         if ($course->teacher_id !== auth()->id()) {
@@ -50,7 +66,7 @@ class TeacherLessonService
                     ->addMedia($data['video'])
                     ->toMediaCollection('videos');
             }
-
+            Cache::tags(['lessons'])->flush();
             return $lesson->load('media');
         });
     }
@@ -64,17 +80,21 @@ class TeacherLessonService
                     'lesson' => 'You are not allowed to update this lesson.',
                 ]);
             }
-            if (in_array($lesson->status, [ContentStatus::CLOSED, ContentStatus::ARCHIVED, ContentStatus::PENDING, ContentStatus::IN_REVIEW])) {
+            if (in_array($lesson->status, [
+                ContentStatus::CLOSED->value,
+                ContentStatus::ARCHIVED->value,
+                ContentStatus::PENDING->value,
+                ContentStatus::IN_REVIEW->value,
+            ])) {
                 throw ValidationException::withMessages([
-                    'lesson' => 'You can not to update lessons in this course now.',
+                    'lesson' => 'You cannot update lessons in this status.',
                 ]);
             }
-            if ($lesson->status === ContentStatus::PUBLISHED) {
+            if ($lesson->status === ContentStatus::PUBLISHED->value) {
                 $allowedFields = [
                     'title_en',
                     'title_ar',
                     'xp_points',
-
                 ];
                 $data = array_intersect_key(
                     $data,
@@ -87,7 +107,15 @@ class TeacherLessonService
                     ->toMediaCollection('videos');
             }
             $lesson->update($data);
-            return $lesson->load('media');
+            Cache::tags(['lessons'])->flush();
+            return $lesson->fresh();
         });
+    }
+    public function getTeacherCourses(User $teacher)
+    {
+        return Course::query()
+            ->where('teacher_id', $teacher->id)
+            ->orderBy('order')
+            ->get();
     }
 }

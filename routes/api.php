@@ -48,8 +48,9 @@ Route::middleware(['auth:sanctum', 'role:teacher'])->group(function () {
 
     //lesson api
     Route::get('/getTeacherCourses', [LessonController::class, 'getTeacherCourses']);
+    Route::get('/lessons/{course}', [LessonController::class, 'index']);
     Route::post('/lessons/{course}', [LessonController::class, 'store']);
-    Route::post('/lessons/{lesson}', [LessonController::class, 'update']);
+    Route::post('/lessons/{lesson}/update', [LessonController::class, 'update']);
 });
 Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
     //level api

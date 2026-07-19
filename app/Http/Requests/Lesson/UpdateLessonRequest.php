@@ -23,6 +23,7 @@ class UpdateLessonRequest extends FormRequest
      */
     public function rules(): array
     {
+        $lesson = $this->route('lesson');
         return [
             'title_en' => [
                 'sometimes',
@@ -30,7 +31,7 @@ class UpdateLessonRequest extends FormRequest
                 'max:255',
                 'filled',
                 'regex:/^[a-zA-Z0-9\s\-_]+$/',
-                Rule::unique('lessons', 'title_en'),
+                Rule::unique('lessons', 'title_en')->ignore($lesson->id),
             ],
 
             'title_ar' => [
@@ -39,7 +40,7 @@ class UpdateLessonRequest extends FormRequest
                 'filled',
                 'max:255',
                 'regex:/^[\x{0600}-\x{06FF}\s0-9\-_]+$/u',
-                Rule::unique('lessons', 'title_ar'),
+                Rule::unique('lessons', 'title_ar')->ignore($lesson->id),
             ],
 
 
@@ -48,7 +49,9 @@ class UpdateLessonRequest extends FormRequest
                 'filled',
                 'integer',
                 'min:1',
-                Rule::unique('lessons', 'order')->where('course_id', $this->course_id),
+                Rule::unique('lessons', 'order')
+                    ->ignore($lesson->id)
+                    ->where('course_id', $this->course_id),
             ],
 
             'xp_points' => [

@@ -19,20 +19,28 @@ class LessonController extends Controller
     public function __construct(
         private TeacherLessonService $service
     ) {}
+
+      public function index(Course $course)
+    {
+        $lessons = $this->service->index($course);
+        return LessonResource::collection($lessons);
+    }
+
     public function getTeacherCourses()
     {
         $courses = $this->service->getTeacherCourses(auth()->user());
         return CourseResource::collection($courses);
     }
-      public function store(StoreLessonRequest $request,Course $course)
+
+    public function store(StoreLessonRequest $request, Course $course)
     {
         $lesson = $this->service->store($request->validated(), $course);
         return new LessonResource($lesson);
     }
-    public function update(UpdateLessonRequest $request, Lesson $lesson)
+    
+    public function update(Lesson $lesson, UpdateLessonRequest $request)
     {
         $lesson = $this->service->update($lesson, $request->validated());
         return new LessonResource($lesson);
     }
-
 }
