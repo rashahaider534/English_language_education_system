@@ -37,10 +37,14 @@ class LessonController extends Controller
         $lesson = $this->service->store($request->validated(), $course);
         return new LessonResource($lesson);
     }
-    
+
     public function update(Lesson $lesson, UpdateLessonRequest $request)
     {
         $lesson = $this->service->update($lesson, $request->validated());
         return new LessonResource($lesson);
+    }
+    public function delete(Lesson $lesson)
+    {
+       return $this->service->delete($lesson);
     }
 }
