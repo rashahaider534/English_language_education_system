@@ -51,6 +51,7 @@ Route::middleware(['auth:sanctum', 'role:teacher'])->group(function () {
     Route::get('/lessons/{course}', [LessonController::class, 'index']);
     Route::post('/lessons/{course}', [LessonController::class, 'store']);
     Route::post('/lessons/{lesson}/update', [LessonController::class, 'update']);
+    Route::delete('/lessons/{lesson}/delete', [LessonController::class, 'delete']);
 });
 Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
     //level api
