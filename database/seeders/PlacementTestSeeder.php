@@ -22,7 +22,6 @@ class PlacementTestSeeder extends Seeder
                 creator: $creator,
                 titleEn: 'General English Placement Test',
                 titleAr: 'اختبار تحديد المستوى العام',
-                isActive: true,
                 status: ContentStatus::PUBLISHED,
                 questionIds: range(1, 9),
             );
@@ -32,7 +31,6 @@ class PlacementTestSeeder extends Seeder
                 creator: $creator,
                 titleEn: 'General English Placement Test (Old)',
                 titleAr: 'اختبار تحديد المستوى العام (قديم)',
-                isActive: false,
                 status: ContentStatus::ARCHIVED,
                 questionIds: range(10, 18),
             );
@@ -43,14 +41,10 @@ class PlacementTestSeeder extends Seeder
         User $creator,
         string $titleEn,
         string $titleAr,
-        bool $isActive,
         ContentStatus $status,
         array $questionIds,
     ): void {
         $placementTest = PlacementTest::create([
-            'title_en' => $titleEn,
-            'title_ar' => $titleAr,
-            'is_active' => $isActive,
             'created_by' => $creator->id,
         ]);
 

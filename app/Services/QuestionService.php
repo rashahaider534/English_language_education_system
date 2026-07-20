@@ -72,7 +72,7 @@ class QuestionService
             $question->{$relation}()->createMany($data['answers']);
 
             $question->load($relation);
-            return new teacherQuestionResource($question);
+            return $question;
 
         });
     }
@@ -104,7 +104,7 @@ class QuestionService
         }
 
         if ($isApproved) {
-            $message .= ' Note: this question is also used in approved test(s) that will be reverted to pending and require re-review after this edit.';
+            $message .= ' Note: this question is also used in approved test(s) that will be reverted to changes requested and require re-review after this edit.';
         }
 
         return [
@@ -141,7 +141,7 @@ class QuestionService
                 if (!$question->isUsedInPublishedTests()) {
                     $question->delete();
                 }
-                $this->cascadeApprovedTestsToDraft($relatedTests);
+                $this->cascadeApprovedTestsToChangesRequested($relatedTests);
 
                 $relinkableTests = Test::whereIn('id', $relatedTests->pluck('id'))
                     ->whereIn('status', [
@@ -170,11 +170,11 @@ class QuestionService
             $question->update($data);
             //  dd($data['answers']);
             $this->syncAnswersAndMedia($question, $question, $data, $isUpdate = true);
-            $this->cascadeApprovedTestsToDraft($relatedTests);
+            $this->cascadeApprovedTestsToChangesRequested($relatedTests);
             return [
                 'status' => 'updated',
                 'message' => 'question updated successfully.',
-                'question' => new TeacherQuestionResource($question)
+                'question' => $question
             ];
         });
 
@@ -226,7 +226,7 @@ class QuestionService
                         'error' => 'You cannot delete this question because it is used in published tests.',
                     ]);
                 }
-                $this->cascadeApprovedTestsToDraft($relatedTests);
+                $this->cascadeApprovedTestsToChangesRequested($relatedTests);
 
                 if ($question->isUsedInArchivedTests()) {
                     return $question->delete();
@@ -239,7 +239,7 @@ class QuestionService
 
 
         private
-        function cascadeApprovedTestsToDraft($tests): void
+        function cascadeApprovedTestsToChangesRequested($tests): void
         {
             $approvedTestIds = $tests
                 ->where('status', ContentStatus::APPROVED)
@@ -247,7 +247,7 @@ class QuestionService
 
             if ($approvedTestIds->isNotEmpty()) {
                 Test::whereIn('id', $approvedTestIds)
-                    ->update(['status' => ContentStatus::DRAFT]);
+                    ->update(['status' => ContentStatus::CHANGES_REQUESTED]);
             }
         }
 

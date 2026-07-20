@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Api\Question\CreateQuestionRequest;
 use App\Http\Requests\Api\Question\UpdateQuestionRequest;
+use App\Http\Resources\Question\TeacherQuestionResource;
 use App\Models\Question;
 use App\Services\QuestionService;
 use Illuminate\Http\Request;
@@ -36,8 +37,9 @@ class QuestionController extends Controller
     {
 
         $data = $request->validated();
-       // dd($request->validated());
-        return $this->questionService->store($data);
+        return response()->json(
+            new TeacherQuestionResource($this->questionService->store($data))
+        );
     }
 
     public function checkStatus(Question $question)
@@ -51,9 +53,10 @@ class QuestionController extends Controller
     {
         $this->authorize('update', $question);
         $data = $request->validated();
-        return  response()->json(
-            $this->questionService->updateQuestion($question,$data)
-        );
+        $result = $this->questionService->updateQuestion($question, $data);
+        $result['question'] = new TeacherQuestionResource($result['question']);
+
+        return response()->json($result);
     }
 
     public function deleteQuestion(Question $question)

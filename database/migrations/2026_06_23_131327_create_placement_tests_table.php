@@ -13,9 +13,6 @@ return new class extends Migration
     {
         Schema::create('placement_tests', function (Blueprint $table) {
             $table->id();
-            $table->string('title_en');
-            $table->string('title_ar');
-            $table->boolean('is_active')->default(true);
             $table->foreignId('created_by')->constrained('users');
             $table->timestamps();
         });

@@ -47,8 +47,15 @@ Route::middleware(['auth:sanctum','role:teacher'])->group(function () {
     Route::get('/questions/{question}/delete' , [QuestionController::class, 'deleteQuestion']);
     Route::get('/questions/{question}/blocking-tests',[QuestionController::class, 'blockingTests']);
 
+    //Test api
+    Route::post('/tests' , [TestController::class, 'store']);
+    Route::post('/tests/{test}' , [TestController::class, 'update']);
+    Route::delete('/tests/{test}' , [TestController::class, 'delete']);
+
     //level api
     Route::post('/createlevel',[LevelController::class,'store']);
+//بس للتجريب
+   Route::get('/publishTest/{test}', [TestController::class, 'publishTest']);
 
 
 });
