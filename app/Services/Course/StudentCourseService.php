@@ -49,14 +49,17 @@ class StudentCourseService
     {
         $allowedOrder = $this->getAllowedOrder($level, $user);
         $currentCourse = $user->StudentCourses()
+            ->with('teacher')
             ->where('level_id', $level->id)
             ->where('user_courses.status',  'in_progress')
             ->first();
         $completedCourses = $user->StudentCourses()
+            ->with('teacher')
             ->where('level_id', $level->id)
             ->where('user_courses.status',  'completed')
             ->get();
         $lockedCourses = Course::query()
+            ->with('teacher')
             ->where('level_id', $level->id)
             ->where('courses.status', 'published')
             ->where('order', '>', $allowedOrder)

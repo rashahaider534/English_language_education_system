@@ -7,10 +7,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
-class Lesson extends Model
+class Lesson extends Model implements HasMedia
 {
+    use InteractsWithMedia, HasTranslations;
     protected $fillable =
         ['title_en','title_ar','course_id','status','order','xp_points'];
 

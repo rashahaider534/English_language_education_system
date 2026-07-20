@@ -101,12 +101,14 @@ class LessonSeeder extends Seeder
                     'title_en' => $lesson['en'],
                     'title_ar' => $lesson['ar'],
                     'course_id' => $courseId,
-                    'status' => 'published',
+                    'status' => 'draft',
                     'order' => $order++,
                     'xp_points' => 20,
                     'created_at' => now(),
                     'updated_at' => now(),
+
                 ];
+
             }
         }
 
