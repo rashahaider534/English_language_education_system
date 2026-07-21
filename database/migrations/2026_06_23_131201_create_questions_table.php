@@ -25,6 +25,7 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('questions')
                 ->nullOnDelete();
+            $table->boolean('is_placement_question')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

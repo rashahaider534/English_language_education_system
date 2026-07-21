@@ -4,15 +4,25 @@ namespace App\Services;
 
 use App\Enums\ContentStatus;
 use App\Http\Resources\Question\TeacherQuestionResource;
+use App\Models\Course;
+use App\Models\Lesson;
 use App\Models\Question;
 use App\Models\Test;
+use App\Services\Test\TestService;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Validation\ValidationException;
 
 class QuestionService
 {
 
+    protected TestService $testService;
+
+    public function __construct(TestService $testService)
+    {
+        $this->testService = $testService;
+    }
     public function index()
     {
         $user = auth()->user();
@@ -72,7 +82,7 @@ class QuestionService
             $question->{$relation}()->createMany($data['answers']);
 
             $question->load($relation);
-            return new teacherQuestionResource($question);
+            return $question;
 
         });
     }
@@ -83,11 +93,13 @@ class QuestionService
         $archivedTests = $question->archived_tests;
         $inReviewTests = $question->in_review_tests;
         $approvedTests = $question->approved_tests;
+        $closedTests = $question->closed_tests;
 
         $isPublished = $publishedTests->isNotEmpty();
         $isArchived = $archivedTests->isNotEmpty();
         $isInReview = $inReviewTests->isNotEmpty();
         $isApproved = $approvedTests->isNotEmpty();
+        $isClosed = $closedTests->isNotEmpty();
 
         $status = 'Editable.';
         $message = 'You can edit this question directly.';
@@ -98,19 +110,20 @@ class QuestionService
         } elseif ($isPublished) {
             $status = 'locked';
             $message = 'This question is related to published tests. A new version will be created and you will need to update the related tests.';
-        } elseif ($isArchived) {
+        } elseif ($isArchived || $isClosed) {
             $status = 'versioned';
-            $message = 'This question is related to archived tests. A new version will be created.';
+            $message = 'This question is related to archived or closed tests. A new version will be created.';
         }
 
         if ($isApproved) {
-            $message .= ' Note: this question is also used in approved test(s) that will be reverted to pending and require re-review after this edit.';
+            $message .= ' Note: this question is also used in approved test(s) that will be reverted to changes requested and require re-review after this edit.';
         }
 
         return [
             'status' => $status,
             'affected_published_tests' => $publishedTests,
             'affected_archived_tests' => $archivedTests,
+            'affected_closed_tests' => $closedTests,
             'affected_in_review_tests' => $inReviewTests,
             'affected_approved_tests' => $approvedTests,
             'will_revert_to_pending' => $isApproved,
@@ -130,7 +143,7 @@ class QuestionService
                 ]);
             }
 
-            if ($question->isUsedInPublishedTests() || $question->isUsedInArchivedTests()) {
+            if ($question->isUsedInPublishedTests() || $question->isUsedInArchivedTests() || $question->isUsedInClosedTests()) {
 
                 $data['type'] = $question->type;
                 $data['previous_question_id'] = $question->id;
@@ -138,10 +151,10 @@ class QuestionService
                 $newQuestion = Question::create($data);
                 $this->syncAnswersAndMedia($question, $newQuestion, $data);
 
-                if (!$question->isUsedInPublishedTests()) {
+                if (!$question->isUsedInPublishedTests() && !$question->isUsedInClosedTests()) {
                     $question->delete();
                 }
-                $this->cascadeApprovedTestsToDraft($relatedTests);
+                $this->cascadeApprovedTestsToChangesRequested($relatedTests);
 
                 $relinkableTests = Test::whereIn('id', $relatedTests->pluck('id'))
                     ->whereIn('status', [
@@ -170,11 +183,11 @@ class QuestionService
             $question->update($data);
             //  dd($data['answers']);
             $this->syncAnswersAndMedia($question, $question, $data, $isUpdate = true);
-            $this->cascadeApprovedTestsToDraft($relatedTests);
+            $this->cascadeApprovedTestsToChangesRequested($relatedTests);
             return [
                 'status' => 'updated',
                 'message' => 'question updated successfully.',
-                'question' => new TeacherQuestionResource($question)
+                'question' => $question
             ];
         });
 
@@ -208,8 +221,7 @@ class QuestionService
         }
     }
 
-        public
-        function deleteQuestion(Question $question)
+    public function deleteQuestion(Question $question)
         {
             return DB::transaction(function () use ($question) {
 
@@ -221,12 +233,12 @@ class QuestionService
                     ]);
                 }
 
-                if ($question->isUsedInPublishedTests()) {
+                if ($question->isUsedInPublishedTests() || $question->isUsedInClosedTests()) {
                     throw ValidationException::withMessages([
                         'error' => 'You cannot delete this question because it is used in published tests.',
                     ]);
                 }
-                $this->cascadeApprovedTestsToDraft($relatedTests);
+                $this->cascadeApprovedTestsToChangesRequested($relatedTests);
 
                 if ($question->isUsedInArchivedTests()) {
                     return $question->delete();
@@ -234,12 +246,7 @@ class QuestionService
 
                 return $question->forceDelete();
             });
-        }
-
-
-
-        private
-        function cascadeApprovedTestsToDraft($tests): void
+        }private function cascadeApprovedTestsToChangesRequested($tests): void
         {
             $approvedTestIds = $tests
                 ->where('status', ContentStatus::APPROVED)
@@ -247,17 +254,99 @@ class QuestionService
 
             if ($approvedTestIds->isNotEmpty()) {
                 Test::whereIn('id', $approvedTestIds)
-                    ->update(['status' => ContentStatus::DRAFT]);
+                    ->update(['status' => ContentStatus::CHANGES_REQUESTED]);
             }
         }
-
     public function blockingTests(Question $question)
     {
         $tests = $question->tests()
-            ->where('status', ContentStatus::PUBLISHED)
+            ->whereIn('status',[ContentStatus::PUBLISHED,ContentStatus::CLOSED] )
             ->get(['tests.id', 'tests.title_en', 'tests.title_ar', 'tests.testable_type', 'tests.testable_id']);
 
         return response()->json(['blocking_tests' => $tests]);
     }
 
+    public function filter(array $data)
+    {
+        $query = Question::where('user_id', auth()->id());
+
+        if (!empty($data['type'])) {
+            $query->where('type', $data['type']);
+        }
+
+        if (!empty($data['difficulty'])) {
+            $query->where('difficulty', $data['difficulty']);
+        }
+
+        if (isset($data['min_score'])) {
+            $query->where('score', '>=', $data['min_score']);
+        }
+
+        if (isset($data['max_score'])) {
+            $query->where('score', '<=', $data['max_score']);
+        }
+
+        if (!empty($data['search'])) {
+            $search = $data['search'];
+
+            $query->where(function ($q) use ($search) {
+                $q->where('title_question_en', 'like', "%{$search}%")
+                    ->orWhere('title_question_ar', 'like', "%{$search}%");
+            });
+        }
+
+        $courseId = $data['course_id'] ?? null;
+        $onlyEligibleProvided = array_key_exists('only_eligible', $data);
+        $onlyEligible = filter_var($data['only_eligible'] ?? false, FILTER_VALIDATE_BOOLEAN);
+        $eligibleIds = null;
+
+        if ($onlyEligibleProvided) {
+            $course = Course::findOrFail($courseId);
+
+            if ($course->teacher_id !== auth()->id()) {
+                abort(403);
+            }
+
+            $lessonsIds = Lesson::where('course_id', $courseId)->pluck('id');
+
+            $questionIdsOwnedByTeacher = Question::where('user_id', auth()->id())
+                ->pluck('id');
+
+            $eligibleIds = $this->testService
+                ->eligibleQuestionIdsFromLessonTests($questionIdsOwnedByTeacher, $lessonsIds);
+
+            if ($onlyEligible) {
+                $query->whereIn('id', $eligibleIds);
+            }
+        } elseif ($courseId) {
+            $course = Course::findOrFail($courseId);
+
+            if ($course->teacher_id !== auth()->id()) {
+                abort(403);
+            }
+
+            $lessonsIds = Lesson::where('course_id', $courseId)->pluck('id');
+
+            $query->whereHas('tests', function ($q) use ($lessonsIds) {
+                $q->where('testable_type', 'lesson')
+                    ->whereIn('testable_id', $lessonsIds);
+            });
+        }
+
+        $sortDirection = $data['sort'] ?? 'desc';
+
+        $query->orderBy('created_at', $sortDirection);
+
+        $paginated = $query->paginate(10);
+
+        if ($onlyEligibleProvided && !$onlyEligible) {
+            $paginated->getCollection()->transform(function ($q) use ($eligibleIds) {
+                $q->is_eligible = in_array($q->id, $eligibleIds);
+
+                return $q;
+            });
+        }
+
+        return $paginated;
+    }
 }
