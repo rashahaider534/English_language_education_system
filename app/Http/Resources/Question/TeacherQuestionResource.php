@@ -36,8 +36,11 @@ class TeacherQuestionResource extends JsonResource
           'audio_url' => $this->getFirstMediaUrl('audio'),
           'image_url' => $this->getFirstMediaUrl('image'),
           'answers' => $resource::collection(
-                       $this->whenLoaded($this->getAnswersRelationName())
-    ),
+                       $this->whenLoaded($this->getAnswersRelationName())),
+          'is_eligible' => $this->when(
+                isset($this->is_eligible),
+                $this->is_eligible
+            ),
 
 
 

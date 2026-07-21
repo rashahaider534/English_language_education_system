@@ -111,7 +111,7 @@ namespace App\Services\Test;
                      'error' => 'This test currently under review and cannot be edited.'
                  ]);
              }
-             if($test->status === ContentStatus::ARCHIVED)
+             if($test->status === ContentStatus::ARCHIVED || $test->status === ContentStatus::CLOSED)
              {
                  throw ValidationException::withMessages([
                      'error' => 'This test is archived and cannot be edited.'
@@ -264,7 +264,7 @@ namespace App\Services\Test;
      {
          return DB::transaction(function () use ($test) {
              $test = Test::where('id', $test->id)->lockForUpdate()->first();
-             if ($test->status === ContentStatus::PUBLISHED || $test->status === ContentStatus::ARCHIVED)
+             if ($test->status === ContentStatus::PUBLISHED || $test->status === ContentStatus::ARCHIVED || $test->status === ContentStatus::CLOSED)
              {
                  throw ValidationException::withMessages([
                      'error' => 'This test cannot be deleted.'
@@ -328,7 +328,7 @@ namespace App\Services\Test;
          $oldQuestion = Question::find($questionId);
 
          $isStillInPublishedTest = $oldQuestion->tests()
-             ->where('status', ContentStatus::PUBLISHED)
+             ->whereIn('status', [ContentStatus::PUBLISHED , ContentStatus::CLOSED])
              ->exists();
 
          if (!$isStillInPublishedTest) {

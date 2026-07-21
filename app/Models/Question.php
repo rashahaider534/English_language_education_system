@@ -84,6 +84,11 @@ class Question extends Model implements HasMedia
         return $this->tests()->where('status', 'archived')->exists();
     }
 
+    public function isUsedInClosedTests(): bool
+    {
+        return $this->tests()->where('status', 'closed')->exists();
+    }
+
     public function getPublishedTestsAttribute()
     {
         return $this->tests()->where('status', ContentStatus::PUBLISHED)->get(['tests.id', 'tests.title_en']);
@@ -102,8 +107,13 @@ class Question extends Model implements HasMedia
         return $this->tests()->where('status', ContentStatus::APPROVED)->get(['tests.id', 'tests.title_en']);
     }
 
+    public function getClosedTestsAttribute()
+    {
+        return $this->tests()->where('status', ContentStatus::CLOSED)->get(['tests.id', 'tests.title_en']);
+    }
 
-    protected $appends = ['published_tests','archived_tests','in_review_tests','approved_tests'];
+
+    protected $appends = ['published_tests','archived_tests','in_review_tests','approved_tests','closed_tests'];
 
     public function scopeHasChildren($query)
     {

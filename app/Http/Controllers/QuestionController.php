@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Api\Question\CreateQuestionRequest;
+use App\Http\Requests\Api\Question\FilterQuestionRequest;
 use App\Http\Requests\Api\Question\UpdateQuestionRequest;
 use App\Http\Resources\Question\TeacherQuestionResource;
 use App\Models\Question;
@@ -70,5 +71,11 @@ class QuestionController extends Controller
     public function blockingTests(Question $question)
     {
         return $this->questionService->blockingTests($question);
+    }
+
+    public function filter(FilterQuestionRequest $request)
+    {
+        $data = $request->validated();
+        return response()->json(TeacherQuestionResource::collection($this->questionService->filter($data)), 200);
     }
 }

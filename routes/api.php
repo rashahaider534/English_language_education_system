@@ -39,6 +39,7 @@ Route::middleware(['auth:sanctum', 'role:teacher'])->group(function () {
     //question api
     Route::get('/questions', [QuestionController::class, 'index']);
     Route::get('questions/deprecated', [QuestionController::class, 'ArchiveQuestions']);
+    Route::post('questions/filter', [QuestionController::class, 'filter']);
     Route::get('/questions/{question}', [QuestionController::class, 'show']);
     Route::post('/questions', [QuestionController::class, 'store']);
     Route::post('/questions/{question}', [QuestionController::class, 'updateQuestion']);
