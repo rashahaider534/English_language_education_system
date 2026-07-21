@@ -63,6 +63,7 @@ Route::middleware(['auth:sanctum', 'role:teacher'])->group(function () {
    Route::get('/publishTest/{test}', [TestController::class, 'publishTest']);
 
 
+    Route::delete('/lessons/{lesson}/delete', [LessonController::class, 'delete']);
 });
 Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
     //level api
