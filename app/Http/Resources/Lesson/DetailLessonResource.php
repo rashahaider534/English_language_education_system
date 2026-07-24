@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Lesson;
 
+use App\Http\Resources\CommentResource;
+use App\Http\Resources\CourseResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class LessonResource extends JsonResource
+class DetailLessonResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,12 +20,13 @@ class LessonResource extends JsonResource
             'id' => $this->id,
             'title_en' => $this->title_en,
             'title_ar' => $this->title_ar,
-            'course_id' => $this->course_id,
+            'course' => CourseResource::make($this->whenLoaded('course')),
             'status' => $this->status,
             'order' => $this->order,
             'xp_points' => $this->xp_points,
             'video' => $this->getFirstMediaUrl('videos'),
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,];
+            'updated_at' => $this->updated_at,
+        ];
     }
 }

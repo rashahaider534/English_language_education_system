@@ -11,9 +11,14 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Lesson;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Log;
+use App\Services\CommentService;
 
 class TeacherLessonService
 {
+    public function __construct(
+        private CommentService $commentService
+    ) {}
+
     public function index(Course $course)
     {
         if ($course->teacher_id !== auth()->id()) {
@@ -133,8 +138,25 @@ class TeacherLessonService
         $lesson->delete();
         Cache::tags(['lessons'])->flush();
         return response()->json(['message' => 'Lesson deleted successfully.']);
-
     }
+    public function show(Lesson $lesson)
+    {
+        $user = auth()->user();
+
+        if (
+            $lesson->course->teacher_id !== $user->id
+        ) {
+            throw ValidationException::withMessages([
+                'lesson' => 'You are not allowed to view this lesson.',
+            ]);
+        }
+
+        return [
+            'lesson' => $lesson->load('media'),
+            'comments' => $this->commentService->getComments($lesson),
+        ];
+    }
+
     public function getTeacherCourses(User $teacher)
     {
         return Course::query()

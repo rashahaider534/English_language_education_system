@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Lesson;
+
 class LessonSeeder extends Seeder
 {
     /**
@@ -101,17 +102,30 @@ class LessonSeeder extends Seeder
                     'title_en' => $lesson['en'],
                     'title_ar' => $lesson['ar'],
                     'course_id' => $courseId,
-                    'status' => 'draft',
+                    'status' => 'published',
                     'order' => $order++,
                     'xp_points' => 20,
                     'created_at' => now(),
                     'updated_at' => now(),
 
                 ];
-
             }
         }
 
         Lesson::insert($lessons);
+
+        // إضافة فيديو للدرس رقم 4
+        $lesson4 = Lesson::find(4);
+        $lesson4
+            ->addMedia(database_path('seeders/vedios/lesson.mp4'))
+            ->preservingOriginal()
+            ->toMediaCollection('videos');
+
+        // إضافة فيديو للدرس رقم 5
+        $lesson5 = Lesson::find(5);
+        $lesson5
+            ->addMedia(database_path('seeders/vedios/lesson.mp4'))
+            ->preservingOriginal()
+            ->toMediaCollection('videos');
     }
 }
