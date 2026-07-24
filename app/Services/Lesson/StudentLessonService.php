@@ -55,7 +55,6 @@ class StudentLessonService
         if (
             !$user->studentCourses()
                 ->where('course_id', $course->id)
-                ->wherePivot('status', 'in_progress')
                 ->exists()
         ) {
             throw ValidationException::withMessages([
