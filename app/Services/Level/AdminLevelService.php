@@ -122,7 +122,6 @@ class AdminLevelService
         DB::transaction(function () use ($level) {
 
             $hasInProgressStudents = $level->userLevels()
-                ->where('status', 'in_progress')
                 ->exists();
 
             $status = $hasInProgressStudents
