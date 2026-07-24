@@ -10,7 +10,8 @@ use App\Models\Level;
 use Illuminate\Support\Facades\App;
 use App\Http\Controllers\Student\LevelController;
 use App\Http\Controllers\Student\CourseController;
-use App\Http\Controllers\Teacher\LessonController;
+use App\Http\Controllers\Teacher\LessonController as TeacherLessonController;
+use App\Http\Controllers\Student\LessonController  as StudentLessonController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -47,15 +48,20 @@ Route::middleware(['auth:sanctum', 'role:teacher'])->group(function () {
     Route::get('/questions/{question}/blocking-tests', [QuestionController::class, 'blockingTests']);
 
     //lesson api
-    Route::get('/getTeacherCourses', [LessonController::class, 'getTeacherCourses']);
-    Route::get('/lessons/{course}', [LessonController::class, 'index']);
-    Route::post('/lessons/{course}', [LessonController::class, 'store']);
-    Route::post('/lessons/{lesson}/update', [LessonController::class, 'update']);
-    Route::delete('/lessons/{lesson}/delete', [LessonController::class, 'delete']);
+    Route::get('/getTeacherCourses', [TeacherLessonController::class, 'getTeacherCourses']);
+    Route::get('/lessons/{course}', [TeacherLessonController::class, 'index']);
+    Route::get('/lessons/{lesson}/details', [TeacherLessonController::class, 'show']);
+    Route::post('/lessons/{course}', [TeacherLessonController::class, 'store']);
+    Route::post('/lessons/{lesson}/update', [TeacherLessonController::class, 'update']);
+    Route::delete('/lessons/{lesson}/delete', [TeacherLessonController::class, 'delete']);
 });
 Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
     //level api
     Route::get('/getStudentLevels', [LevelController::class, 'getStudentLevels']);
     Route::get('/getPurchasableLevels', [LevelController::class, 'getPurchasableLevels']);
     Route::get('/getStudentcourses/{level}', [CourseController::class, 'index']);
+
+    //lesson api
+    Route::get('/lessons/{course}',[StudentLessonController::class,'index']);
+    Route::get('/lessons/{lesson}/detail',[StudentLessonController::class,'show']);
 });

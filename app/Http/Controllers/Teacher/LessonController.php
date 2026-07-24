@@ -7,7 +7,9 @@ use App\Http\Requests\Course\UpdateCourseRequest;
 use App\Services\Lesson\TeacherLessonService;
 use App\Http\Requests\Lesson\StoreLessonRequest;
 use App\Http\Requests\Lesson\UpdateLessonRequest;
-use App\Http\Resources\LessonResource;
+use App\Http\Resources\Lesson\LessonResource;
+use App\Http\Resources\CommentResource;
+use App\Http\Resources\Lesson\DetailLessonResource;
 use App\Models\Course;
 use App\Models\Lesson;
 use Illuminate\Http\Request;
@@ -20,10 +22,18 @@ class LessonController extends Controller
         private TeacherLessonService $service
     ) {}
 
-      public function index(Course $course)
+    public function index(Course $course)
     {
         $lessons = $this->service->index($course);
         return LessonResource::collection($lessons);
+    }
+    public function show(Lesson $lesson)
+    {
+        $data = $this->service->show($lesson);
+        return response()->json([
+            'lesson' => new DetailLessonResource($data['lesson']),
+            'comments' => CommentResource::collection($data['comments']),
+        ]);
     }
 
     public function getTeacherCourses()
@@ -45,6 +55,6 @@ class LessonController extends Controller
     }
     public function delete(Lesson $lesson)
     {
-       return $this->service->delete($lesson);
+        return $this->service->delete($lesson);
     }
 }
