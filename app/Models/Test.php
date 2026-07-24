@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ContentStatus;
 use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -19,7 +20,9 @@ class Test extends Model
         'title_ar',
         'is_active',
         'status',
+        'previous_test_id'
     ];
+    protected $casts = ['status' => ContentStatus::class];
      public function testable():MorphTo
     {
         return $this->morphTo();
@@ -28,7 +31,9 @@ class Test extends Model
     public function questions():BelongsToMany
     {
         return $this->belongsToMany(Question::class, 'test_questions')
-                    ->withPivot('order');
+                    ->withPivot('order')
+                    ->withTimestamps() ;
+
     }
 
     public function attempts():HasMany

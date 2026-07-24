@@ -40,6 +40,7 @@ Route::middleware(['auth:sanctum', 'role:teacher'])->group(function () {
     //question api
     Route::get('/questions', [QuestionController::class, 'index']);
     Route::get('questions/deprecated', [QuestionController::class, 'ArchiveQuestions']);
+    Route::post('questions/filter', [QuestionController::class, 'filter']);
     Route::get('/questions/{question}', [QuestionController::class, 'show']);
     Route::post('/questions', [QuestionController::class, 'store']);
     Route::post('/questions/{question}', [QuestionController::class, 'updateQuestion']);
@@ -54,6 +55,22 @@ Route::middleware(['auth:sanctum', 'role:teacher'])->group(function () {
     Route::post('/lessons/{course}', [TeacherLessonController::class, 'store']);
     Route::post('/lessons/{lesson}/update', [TeacherLessonController::class, 'update']);
     Route::delete('/lessons/{lesson}/delete', [TeacherLessonController::class, 'delete']);
+    Route::get('/getTeacherCourses', [LessonController::class, 'getTeacherCourses']);
+    Route::get('/lessons/{course}', [LessonController::class, 'index']);
+    Route::post('/lessons/{course}', [LessonController::class, 'store']);
+    Route::post('/lessons/{lesson}/update', [LessonController::class, 'update']);
+    //Test api
+    Route::post('/tests' , [TestController::class, 'store']);
+    Route::post('/tests/{test}' , [TestController::class, 'update']);
+    Route::delete('/tests/{test}' , [TestController::class, 'delete']);
+
+    //level api
+    Route::post('/createlevel',[LevelController::class,'store']);
+//بس للتجريب
+   Route::get('/publishTest/{test}', [TestController::class, 'publishTest']);
+
+
+    Route::delete('/lessons/{lesson}/delete', [LessonController::class, 'delete']);
 });
 Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
     //level api

@@ -9,9 +9,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 class PlacementTest extends Model
 {
     protected $fillable = [
-        'title_en',
-        'title_ar',
-        'is_active',
         'created_by',
     ];
    public function admin():BelongsTo
