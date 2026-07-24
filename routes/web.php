@@ -5,6 +5,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\LevelController;
 use App\Http\Controllers\Admin\CourseController;
+use App\Http\Controllers\Admin\LessonController;
+
 Route::get('/', function () {
     return redirect()->route('login');
 });
@@ -49,12 +51,18 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
     Route::patch('/levels/{level}/archive', [LevelController::class, 'archive'])->name('levels.archive');
 
     //course route
-    Route::get('/courses/{level}',[CourseController::class,'index'])->name('courses.index');
+    Route::get('/courses/{level}', [CourseController::class, 'index'])->name('courses.index');
     Route::get('/courses/{level}/create', [CourseController::class, 'create'])->name('courses.create');
-    Route::post('/courses/{level}',[CourseController::class,'store'])->name('courses.store');
+    Route::post('/courses/{level}', [CourseController::class, 'store'])->name('courses.store');
     Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])->name('courses.edit');
-    Route::put('/courses/{course}',[CourseController::class,'update'])->name('courses.update');
+    Route::put('/courses/{course}', [CourseController::class, 'update'])->name('courses.update');
     Route::patch('/courses/{course}/archive', [CourseController::class, 'archive'])->name('courses.archive');
+    
+    //lesson route
+    Route::get('/courses/{course}/lessons/{status?}', [LessonController::class, 'index'])->name('lessons.index');
+    Route::get('/lessons/pending', [LessonController::class, 'pending'])->name('lessons.pending');
+    Route::get('/lessons/{lesson}', [LessonController::class, 'show'])->name('lessons.show');
+    Route::patch('/lessons/{lesson}/archive', [LessonController::class, 'archive'])->name('lessons.archive');
 });
 
 

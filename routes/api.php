@@ -12,6 +12,7 @@ use App\Http\Controllers\Student\LevelController;
 use App\Http\Controllers\Student\CourseController;
 use App\Http\Controllers\Teacher\LessonController as TeacherLessonController;
 use App\Http\Controllers\Student\LessonController  as StudentLessonController;
+use App\Http\Controllers\Admin\LessonController  as AdminLessonController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -50,7 +51,7 @@ Route::middleware(['auth:sanctum', 'role:teacher'])->group(function () {
 
     //lesson api
     Route::get('/getTeacherCourses', [TeacherLessonController::class, 'getTeacherCourses']);
-    Route::get('/lessons/{course}', [TeacherLessonController::class, 'index']);
+    Route::get('/lessons/{course}/teacher', [TeacherLessonController::class, 'index']);
     Route::get('/lessons/{lesson}/details', [TeacherLessonController::class, 'show']);
     Route::post('/lessons/{course}', [TeacherLessonController::class, 'store']);
     Route::post('/lessons/{lesson}/update', [TeacherLessonController::class, 'update']);
