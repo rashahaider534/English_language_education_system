@@ -66,7 +66,7 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
     Route::patch('/lessons/{lesson}/archive', [LessonController::class, 'archive'])->name('lessons.archive');
 
     //comment route
-    Route::delete('/comments/{comment}/destroy',[CommentController::class,'admindelete'])
+    Route::delete('/comments/{comment}/destroy',[CommentController::class,'admindelete']);
 });
 
 
