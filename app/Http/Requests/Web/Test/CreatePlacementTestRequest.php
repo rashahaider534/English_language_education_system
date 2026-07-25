@@ -32,7 +32,7 @@ class CreatePlacementTestRequest extends FormRequest
                 'required', 'integer', 'distinct',
                 Rule::exists('questions', 'id')->where('is_placement_question', true),
             ],
-
+            'questions.*.order' => ['required','integer','min:1',]
 
              ];
     }
