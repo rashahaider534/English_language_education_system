@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\ContentStatus;
 use App\Models\Lesson;
 use App\Models\Comment;
 use App\Models\User;
@@ -20,14 +21,18 @@ class CommentService
 
     public function create(Lesson $lesson, User $user, array $data)
     {
-        return DB::transaction(function () use ($lesson, $user, $data) {
+            if ($lesson->status !== ContentStatus::PUBLISHED->value) {
+                throw ValidationException::withMessages([
+                    'comment' => 'You cannot be create comment for this lesson.',
+                ]);
+            }
             return Comment::create([
                 'user_id' => $user->id,
                 'lesson_id' => $lesson->id,
                 'comment' => $data['comment'],
                 'created_at' => now(),
             ]);
-        });
+        
     }
     public function update(Comment $comment,  array $data)
     {
@@ -43,5 +48,4 @@ class CommentService
     {
         $comment->delete();
     }
-
 }
