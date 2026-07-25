@@ -13,6 +13,7 @@ use App\Http\Controllers\Student\CourseController;
 use App\Http\Controllers\Teacher\LessonController as TeacherLessonController;
 use App\Http\Controllers\Student\LessonController  as StudentLessonController;
 use App\Http\Controllers\Admin\LessonController  as AdminLessonController;
+use App\Http\Controllers\CommentController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -74,4 +75,10 @@ Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
     //lesson api
     Route::get('/lessons/{course}',[StudentLessonController::class,'index']);
     Route::get('/lessons/{lesson}/detail',[StudentLessonController::class,'show']);
+});
+Route::middleware(['auth:sanctum', 'role:student|teacher' ])->group(function () {
+    //comment api
+    Route::post('/comments/{lesson}',[CommentController::class,'create']);
+    Route::post('/comments/{comment}/update',[CommentController::class,'update']);
+    Route::delete('/comments/{comment}/delete',[CommentController::class,'delete']);
 });
