@@ -36,7 +36,7 @@ class UserSeeder extends Seeder
                 'first_name' => 'Admin1',
                 'last_name' => 'AA',
                 'email' => 'admin1@gmail.com',
-                'password' => bcrypt('1327765'),
+                'password' => bcrypt('132776555'),
                 'is_active' => true,
             ],
             [

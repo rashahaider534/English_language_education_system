@@ -261,7 +261,7 @@ class QuestionService
     {
         $tests = $question->tests()
             ->whereIn('status',[ContentStatus::PUBLISHED,ContentStatus::CLOSED] )
-            ->get(['tests.id', 'tests.title_en', 'tests.title_ar', 'tests.testable_type', 'tests.testable_id']);
+            ->get(['tests.id', 'tests.title_en', 'tests.title_ar', 'tests.testable_type', 'tests.testable_id', 'tests.status']);
 
         return response()->json(['blocking_tests' => $tests]);
     }

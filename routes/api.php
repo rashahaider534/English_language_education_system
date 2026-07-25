@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\Admin\TestController as AdminTestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\Level;
@@ -53,6 +54,7 @@ Route::middleware(['auth:sanctum', 'role:teacher'])->group(function () {
     Route::post('/lessons/{course}', [LessonController::class, 'store']);
     Route::post('/lessons/{lesson}/update', [LessonController::class, 'update']);
     //Test api
+    Route::get('/tests' , [TestController::class, 'index']);
     Route::post('/tests' , [TestController::class, 'store']);
     Route::post('/tests/{test}' , [TestController::class, 'update']);
     Route::delete('/tests/{test}' , [TestController::class, 'delete']);
@@ -70,3 +72,4 @@ Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
     Route::get('/getPurchasableLevels', [LevelController::class, 'getPurchasableLevels']);
     Route::get('/getStudentcourses/{level}', [CourseController::class, 'index']);
 });
+
