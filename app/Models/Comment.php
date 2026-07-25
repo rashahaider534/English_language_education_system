@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Comment extends Model
 {
     protected $fillable = [
-        'comment '
+        'lesson_id',
+        'user_id',
+        'comment'
     ];
     public function user():BelongsTo
     {
