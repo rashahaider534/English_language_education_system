@@ -17,6 +17,11 @@ class TestController extends Controller
     {
         $this->testService = $testService;
     }
+
+    public function index()
+    {
+        return response()->json( TeacherTestResource::collection($this->testService->index()));
+    }
     public function show(Test $test)
     {
         $user = auth()->user();
@@ -55,6 +60,8 @@ class TestController extends Controller
         $this->authorize('delete', $test);
         return response()->json($this->testService->delete($test));
     }
+
+
 
 //بس للتجريب
     public function publishTest(Test $test)

@@ -3,6 +3,7 @@
 namespace App\Services\Test;
  use App\Enums\ContentStatus;
  use App\Http\Resources\Test\TeacherTestResource;
+ use App\Models\Course;
  use App\Models\Lesson;
  use App\Models\LessonReview;
  use App\Models\PlacementTest;
@@ -16,6 +17,23 @@ namespace App\Services\Test;
  class TestService
  {
      public AdminTestService $adminTestService;
+
+     public function index()
+     {
+         $teacherId = auth()->id();
+
+         $courseIds = Course::where('teacher_id', $teacherId)->pluck('id');
+         $lessonIds = Lesson::whereIn('course_id', $courseIds)->pluck('id');
+
+         $tests = Test::where(function ($query) use ($courseIds, $lessonIds) {
+             $query->where('testable_type', 'course')->whereIn('testable_id', $courseIds);
+         })->orWhere(function ($query) use ($lessonIds) {
+             $query->where('testable_type', 'lesson')->whereIn('testable_id', $lessonIds);
+         })->get();
+
+         return $tests;
+
+     }
 
      public function show(Test $test)
      {

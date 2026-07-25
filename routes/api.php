@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\Admin\TestController as AdminTestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\Level;
@@ -59,6 +60,7 @@ Route::middleware(['auth:sanctum', 'role:teacher'])->group(function () {
     Route::delete('/lessons/{lesson}/delete', [TeacherLessonController::class, 'delete']);
 
     //Test api
+    Route::get('/tests' , [TestController::class, 'index']);
     Route::post('/tests' , [TestController::class, 'store']);
     Route::post('/tests/{test}' , [TestController::class, 'update']);
     Route::delete('/tests/{test}' , [TestController::class, 'delete']);
@@ -82,3 +84,4 @@ Route::middleware(['auth:sanctum', 'role:student|teacher' ])->group(function () 
     Route::post('/comments/{comment}/update',[CommentController::class,'update']);
     Route::delete('/comments/{comment}/delete',[CommentController::class,'delete']);
 });
+
