@@ -27,6 +27,7 @@ class RolePermissionSeeder extends Seeder
             'update level',
             'archive level',
             'view levels',
+            'archive lesson'
         ]);
     }
 }

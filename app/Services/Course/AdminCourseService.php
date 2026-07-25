@@ -124,27 +124,29 @@ class AdminCourseService
             return $course->fresh();
         });
     }
-    public function archive(Course $course)
-    {
-        $user = auth()->user();
-        if (
-            !$user->hasRole('super-admin')
-            && $course->created_by !== $user->id
-        ) {
-            throw ValidationException::withMessages([
-                'course' => 'You are not allowed to archive this course.',
-            ]);
-        }
 
-        if (in_array($course->status, ['closed', 'archived'])) {
-            throw ValidationException::withMessages([
-                'course' => 'Archived or closed courses cannot be archived again',
-            ]);
-        }
+public function archive(Course $course)
+{
+    $user = auth()->user();
 
-        $hasInProgressStudents = $course->usercourses()
-            ->where('status', 'in_progress')
-            ->exists();
+    if (
+        !$user->hasRole('super-admin')
+        && $course->created_by !== $user->id
+    ) {
+        throw ValidationException::withMessages([
+            'course' => 'You are not allowed to archive this course.',
+        ]);
+    }
+
+    if (in_array($course->status, ['closed', 'archived'])) {
+        throw ValidationException::withMessages([
+            'course' => 'Archived or closed courses cannot be archived again',
+        ]);
+    }
+
+    return DB::transaction(function () use ($course) {
+
+        $hasInProgressStudents = $course->usercourses()->exists();
 
         if ($course->status === 'pending' && !$course->lessons()->exists()) {
 
@@ -154,14 +156,24 @@ class AdminCourseService
 
             return null;
         }
+
+        $newStatus = $hasInProgressStudents
+            ? 'closed'
+            : 'archived';
+
         $course->update([
-            'status' => $hasInProgressStudents
-                ? 'closed'
-                : 'archived',
+            'status' => $newStatus,
         ]);
+
+        $course->lessons()->update([
+            'status' => $newStatus,
+        ]);
+
         Cache::tags(['courses'])->flush();
+
         return $course;
-    }
+    });
+}
 
     public function getTeachers()
     {

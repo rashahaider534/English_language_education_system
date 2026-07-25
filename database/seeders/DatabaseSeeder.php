@@ -32,6 +32,8 @@ class DatabaseSeeder extends Seeder
             UserAttemptSeeder::class,
             UserLevelSeeder::class,
             UserCourseSeeder::class,
+            UserLessonSeeder::class,
+            CommentSeeder::class
         ]);
     }
 }
