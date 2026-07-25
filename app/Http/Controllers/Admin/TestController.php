@@ -24,8 +24,9 @@ class TestController extends Controller
     {
         $test = $this->testService->show($test);
         $isEligible = $this->testService->isTestStillEligible($test);
+        return response()->json(['test' => $test, 'isEligible' => $isEligible]);
         //تذكري تتأكدي من اسم الواجهة من دنيا
-        return view('tests.show-teacher', ['test' => $test, 'isEligible' => $isEligible]);
+      //  return view('tests.show-teacher', ['test' => $test, 'isEligible' => $isEligible]);
 
     }
 
@@ -33,6 +34,7 @@ class TestController extends Controller
     {
         $data = $request->validated();
         $test = $this->adminTestService->storePlacementTest($data);
+        return response()->json(['test' => $test]);
         //return view
 
     }
@@ -41,7 +43,15 @@ class TestController extends Controller
     {
         $data = $request->validated();
         $test = $this->adminTestService->generateLevelTest($data);
+        return response()->json(['test' => $test]);
         //return view
+    }
+
+    public function update(Test $test, CreatePlacementTestRequest $request)
+    {
+        $data = $request->validated();
+        $test = $this->adminTestService->update($test, $data);
+        return response()->json(['test' => $test]);
     }
 
 }

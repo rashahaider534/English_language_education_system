@@ -23,6 +23,15 @@ class TestPolicy
      */
     public function view(User $user, Test $test): bool
     {
+        if ($test->testable_type === 'course')
+        {
+            return $user->id === $test->testable->teacher_id;
+
+        } elseif ($test->testable_type === 'lesson')
+        {
+            return $user->id === $test->testable->course->teacher_id;
+        }
+
         return false;
     }
 
@@ -48,7 +57,7 @@ class TestPolicy
      */
     public function update(User $user, Test $test): bool
     {
-        $testable = $test->testable; // resolves Lesson or Course via the morph relation
+        $testable = $test->testable;
 
         if ($testable instanceof Lesson) {
             return $user->id === $testable->course->teacher_id;
