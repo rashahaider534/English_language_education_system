@@ -83,7 +83,7 @@ class TeacherLessonService
             if (in_array($lesson->status, [
                 ContentStatus::CLOSED->value,
                 ContentStatus::ARCHIVED->value,
-                ContentStatus::PENDING->value,
+                ContentStatus::APPROVED->value,
                 ContentStatus::IN_REVIEW->value,
             ])) {
                 throw ValidationException::withMessages([
@@ -110,6 +110,30 @@ class TeacherLessonService
             Cache::tags(['lessons'])->flush();
             return $lesson->fresh();
         });
+    }
+    public function delete(Lesson $lesson)
+    {
+        if ($lesson->course->teacher_id !== auth()->id()) {
+            throw ValidationException::withMessages([
+                'lesson' => 'You are not allowed to delete this lesson.',
+            ]);
+        }
+        if (in_array($lesson->status, [
+            ContentStatus::CLOSED->value,
+            ContentStatus::ARCHIVED->value,
+            ContentStatus::APPROVED->value,
+            ContentStatus::PUBLISHED->value,
+            ContentStatus::IN_REVIEW->value,
+        ])) {
+            throw ValidationException::withMessages([
+                'lesson' => 'You cannot delete lessons in this status.',
+            ]);
+        }
+        //اشعار اذا كانت حالته changes_requested
+        $lesson->delete();
+        Cache::tags(['lessons'])->flush();
+        return response()->json(['message' => 'Lesson deleted successfully.']);
+
     }
     public function getTeacherCourses(User $teacher)
     {
