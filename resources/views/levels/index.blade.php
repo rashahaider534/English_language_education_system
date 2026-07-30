@@ -1,5 +1,31 @@
 @extends('dashboard.layouts.app')
 
+@push('styles')
+<style>
+    .course-field-wrap {
+        border: 1.5px solid rgba(0,83,122,0.12);
+        border-radius: 11px;
+        padding: 0 4px;
+        background: #F7FBFD;
+        transition: border-color .15s, box-shadow .15s, background .15s;
+    }
+    .course-field-wrap:focus-within {
+        border-color: #F5A201;
+        box-shadow: 0 0 0 4px rgba(245,162,1,0.12);
+        background: #fff;
+    }
+    .course-field-wrap.is-locked {
+        border-color: rgba(0,83,122,0.06);
+        background: rgba(0,83,122,0.04);
+    }
+    .modal-scroll::-webkit-scrollbar { width: 8px; }
+    .modal-scroll::-webkit-scrollbar-track { background: transparent; }
+    .modal-scroll::-webkit-scrollbar-thumb { background: rgba(1,60,88,0.14); border-radius: 999px; }
+    .modal-scroll::-webkit-scrollbar-thumb:hover { background: rgba(1,60,88,0.24); }
+    .modal-scroll { scrollbar-width: thin; scrollbar-color: rgba(1,60,88,0.18) transparent; }
+</style>
+@endpush
+
 @section('content')
 <div
     x-data="{
@@ -35,7 +61,8 @@
             this.editModalOpen = true;
         },
     }"
-    style="font-family:'Tajawal',sans-serif;"
+    class="-mx-4 -my-6 px-4 py-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
+    style="background:#DFF2F9; font-family:'Tajawal',sans-serif;"
     dir="rtl"
 >
     {{-- success flash --}}
@@ -185,13 +212,14 @@
                             <div style="display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:8px; background:rgba(0,83,122,0.06); color:rgba(1,60,88,0.6); font-family:'Poppins',sans-serif; font-weight:700; font-size:12px;">{{ $level->order }}</div>
                         </td>
                         <td style="padding:14px 16px; border-bottom:1px solid rgba(0,83,122,0.05); vertical-align:middle;">
-                            <div style="display:flex; align-items:center; gap:12px;">
+                            <a href="{{ route('courses.index', $level) }}" title="عرض كورسات هالمستوى"
+                               style="display:flex; align-items:center; gap:12px; text-decoration:none; cursor:pointer;">
                                 <div style="display:flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:11px; background:{{ $avatarColor }}; color:#fff; font-family:'Poppins',sans-serif; font-weight:700; font-size:12px; flex-shrink:0; opacity:{{ $dimmed ? 0.45 : 1 }};">{{ strtoupper(substr($level->name_en, 0, 2)) }}</div>
                                 <div>
                                     <div style="font-family:'Poppins',sans-serif; font-weight:700; font-size:14px; color:#013C58;">{{ $level->name_en }}</div>
                                     <div style="font-size:12px; color:rgba(1,60,88,0.5); margin-top:2px;">{{ $level->name_ar }}</div>
                                 </div>
-                            </div>
+                            </a>
                         </td>
                         <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); vertical-align:middle; text-align:center;">
                             <span style="display:inline-flex; align-items:center; gap:4px; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; color:rgba(1,60,88,0.7);" dir="ltr">
@@ -229,6 +257,10 @@
                         </td>
                         <td style="padding:14px 16px; border-bottom:1px solid rgba(0,83,122,0.05); vertical-align:middle; text-align:center;">
                             <div style="display:flex; gap:8px; justify-content:center;">
+                                <a href="{{ route('courses.index', $level) }}" title="عرض الكورسات"
+                                   style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; background:rgba(168,232,249,0.18); color:#00537A; text-decoration:none;">
+                                    <svg width="15.5" height="15.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5c-1.6-1.1-3.7-1.6-6-1.6v13c2.3 0 4.4.5 6 1.6 1.6-1.1 3.7-1.6 6-1.6v-13c-2.3 0-4.4.5-6 1.6Z"></path><path d="M12 6.5V19.5"></path></svg>
+                                </a>
                                 <button type="button" title="تعديل"
                                    @click="openEdit({{ Illuminate\Support\Js::from([
                                         'id' => $level->id,
@@ -275,7 +307,7 @@
     <div
         x-show="archiveModalOpen"
         x-cloak
-        style="position:fixed; inset:0; z-index:50; background:rgba(1,42,63,0.5); backdrop-filter:blur(4px); overflow-y:auto;"
+        class="modal-scroll" style="position:fixed; inset:0; z-index:50; background:rgba(1,42,63,0.5); backdrop-filter:blur(4px); overflow-y:auto;"
         @click="archiveModalOpen = false"
     >
       <div style="min-height:100%; display:flex; align-items:center; justify-content:center; padding:24px;">
@@ -304,19 +336,18 @@
     <div
         x-show="createModalOpen"
         x-cloak
-        style="position:fixed; inset:0; z-index:50; background:rgba(1,42,63,0.5); backdrop-filter:blur(4px); overflow-y:auto;"
+        class="modal-scroll" style="position:fixed; inset:0; z-index:50; background:rgba(1,42,63,0.5); backdrop-filter:blur(4px); overflow-y:auto;"
         @click="createModalOpen = false"
     >
       <div style="min-height:100%; display:flex; align-items:center; justify-content:center; padding:24px;">
-        <div @click.stop style="width:100%; max-width:640px; background:#fff; border-radius:22px; padding:28px 26px; box-shadow:0 44px 100px rgba(1,42,63,0.4); font-family:'Tajawal',sans-serif;" dir="rtl">
-            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;">
-                <div>
-                    <h3 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:19px; color:#013C58;">إضافة مستوى جديد</h3>
-                    <p style="margin:4px 0 0; font-size:13px; color:rgba(1,60,88,0.55);">عبّي التفاصيل لإنشاء مستوى تعلّم جديد</p>
-                </div>
-                <button type="button" @click="createModalOpen = false" style="width:32px; height:32px; border-radius:9px; border:none; background:rgba(0,83,122,0.07); color:#00537A; cursor:pointer; flex-shrink:0;">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin:auto;"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
-                </button>
+        <div @click.stop class="modal-scroll" style="position:relative; width:100%; max-width:640px; max-height:88vh; overflow-y:auto; background:#FBFEFF; border-radius:28px; padding:32px 28px 28px; box-shadow:0 50px 110px rgba(1,42,63,0.42); font-family:'Tajawal',sans-serif;" dir="rtl">
+            <button type="button" @click="createModalOpen = false" style="position:absolute; top:16px; left:16px; width:30px; height:30px; border-radius:50%; border:none; background:rgba(0,83,122,0.06); color:rgba(1,60,88,0.6); display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+            </button>
+
+            <div style="text-align:center; margin-bottom:22px;">
+                <h1 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:20px; color:#013C58;">إضافة مستوى جديد</h1>
+                <p style="margin:6px 0 0; font-size:13px; color:rgba(1,60,88,0.5);">عبّي التفاصيل لإنشاء مستوى تعلّم جديد</p>
             </div>
 
             @if ($errors->any() && old('form_type') === 'create')
@@ -336,22 +367,22 @@
 
                 @php
                     $label = 'display:block; font-size:12px; font-weight:600; color:rgba(1,60,88,0.6); margin-bottom:7px;';
-                    $wrap = 'border:1.5px solid rgba(0,83,122,0.1); border-radius:11px; padding:0 4px; background:#F7FBFD;';
+                    $wrap = 'course-field-wrap';
                     $input = "width:100%; background:transparent; border:none; outline:none; padding:11px 11px; font-size:13.5px; color:#013C58; font-family:'Tajawal',sans-serif;";
-                    $section = 'margin:0 0 12px; font-size:11.5px; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; color:rgba(1,60,88,0.4);';
+                    $section = 'display:inline-flex; margin:0 0 12px; font-size:10.5px; font-weight:800; letter-spacing:0.8px; text-transform:uppercase; color:#00537A; background:rgba(168,232,249,0.3); padding:5px 12px; border-radius:999px;';
                 @endphp
 
                 <p style="{{ $section }}">الاسم</p>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
                     <div>
                         <label style="{{ $label }}">بالإنكليزي</label>
-                        <div style="{{ $wrap }}">
+                        <div class="{{ $wrap }}">
                             <input name="name_en" value="{{ old('form_type') === 'create' ? old('name_en') : '' }}" placeholder="e.g. Beginner A1" style="{{ $input }}">
                         </div>
                     </div>
                     <div>
                         <label style="{{ $label }}">بالعربي</label>
-                        <div style="{{ $wrap }}">
+                        <div class="{{ $wrap }}">
                             <input name="name_ar" value="{{ old('form_type') === 'create' ? old('name_ar') : '' }}" placeholder="مثال: مبتدئ A1" style="{{ $input }}">
                         </div>
                     </div>
@@ -361,19 +392,19 @@
                 <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
                     <div>
                         <label style="{{ $label }}">الترتيب</label>
-                        <div style="{{ $wrap }}">
+                        <div class="{{ $wrap }}">
                             <input type="number" name="order" value="{{ old('form_type') === 'create' ? old('order') : '' }}" placeholder="1" style="{{ $input }}">
                         </div>
                     </div>
                     <div>
                         <label style="{{ $label }}">أدنى علامة</label>
-                        <div style="{{ $wrap }}">
+                        <div class="{{ $wrap }}">
                             <input type="number" name="minimum_score" value="{{ old('form_type') === 'create' ? old('minimum_score') : '' }}" placeholder="0" style="{{ $input }}">
                         </div>
                     </div>
                     <div>
                         <label style="{{ $label }}">أعلى علامة</label>
-                        <div style="{{ $wrap }}">
+                        <div class="{{ $wrap }}">
                             <input type="number" name="maximum_score" value="{{ old('form_type') === 'create' ? old('maximum_score') : '' }}" placeholder="100" style="{{ $input }}">
                         </div>
                     </div>
@@ -383,24 +414,24 @@
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
                     <div>
                         <label style="{{ $label }}">السعر (بالدولار)</label>
-                        <div style="{{ $wrap }}">
+                        <div class="{{ $wrap }}">
                             <input type="number" name="price" value="{{ old('form_type') === 'create' ? old('price') : '' }}" placeholder="49" style="{{ $input }}">
                         </div>
                     </div>
                     <div>
                         <label style="{{ $label }}">المدة المتوقعة (أسابيع)</label>
-                        <div style="{{ $wrap }}">
+                        <div class="{{ $wrap }}">
                             <input type="number" name="estimated_duration" value="{{ old('form_type') === 'create' ? old('estimated_duration') : '' }}" placeholder="8" style="{{ $input }}">
                         </div>
                     </div>
                 </div>
 
-                <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:26px; padding-top:20px; border-top:1px solid rgba(0,83,122,0.06);">
-                    <button type="button" @click="createModalOpen = false" style="padding:11px 20px; border-radius:11px; border:1.5px solid rgba(0,83,122,0.12); background:#fff; color:#013C58; font-family:'Poppins',sans-serif; font-weight:600; font-size:13px; cursor:pointer;">إلغاء</button>
-                    <button type="submit" style="display:flex; align-items:center; gap:7px; padding:11px 22px; border-radius:11px; border:none; background:#013C58; color:#fff; font-family:'Poppins',sans-serif; font-weight:600; font-size:13px; cursor:pointer; box-shadow:0 10px 22px rgba(1,60,88,0.2);">
+                <div style="display:flex; flex-direction:row-reverse; gap:10px; margin-top:26px; padding-top:20px; border-top:1px solid rgba(0,83,122,0.06);">
+                    <button type="submit" style="display:flex; align-items:center; gap:7px; padding:12px 24px; border-radius:999px; border:none; background:linear-gradient(90deg,#013C58,#00537A); color:#fff; font-family:'Poppins',sans-serif; font-weight:700; font-size:13.5px; cursor:pointer; box-shadow:0 14px 28px rgba(1,60,88,0.28);">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
                         إضافة المستوى
                     </button>
+                    <button type="button" @click="createModalOpen = false" style="padding:12px 20px; border:none; background:transparent; color:rgba(1,60,88,0.5); font-family:'Poppins',sans-serif; font-weight:600; font-size:13.5px; cursor:pointer;">إلغاء</button>
                 </div>
             </form>
         </div>
@@ -411,19 +442,18 @@
     <div
         x-show="editModalOpen"
         x-cloak
-        style="position:fixed; inset:0; z-index:50; background:rgba(1,42,63,0.5); backdrop-filter:blur(4px); overflow-y:auto;"
+        class="modal-scroll" style="position:fixed; inset:0; z-index:50; background:rgba(1,42,63,0.5); backdrop-filter:blur(4px); overflow-y:auto;"
         @click="editModalOpen = false"
     >
       <div style="min-height:100%; display:flex; align-items:center; justify-content:center; padding:24px;">
-        <div @click.stop style="width:100%; max-width:640px; background:#fff; border-radius:22px; padding:28px 26px; box-shadow:0 44px 100px rgba(1,42,63,0.4); font-family:'Tajawal',sans-serif;" dir="rtl">
-            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;">
-                <div>
-                    <h3 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:19px; color:#013C58;">تعديل المستوى</h3>
-                    <p style="margin:4px 0 0; font-size:13px; color:rgba(1,60,88,0.55);">حدّثي تفاصيل هالمستوى</p>
-                </div>
-                <button type="button" @click="editModalOpen = false" style="width:32px; height:32px; border-radius:9px; border:none; background:rgba(0,83,122,0.07); color:#00537A; cursor:pointer; flex-shrink:0;">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin:auto;"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
-                </button>
+        <div @click.stop class="modal-scroll" style="position:relative; width:100%; max-width:640px; max-height:88vh; overflow-y:auto; background:#FBFEFF; border-radius:28px; padding:32px 28px 28px; box-shadow:0 50px 110px rgba(1,42,63,0.42); font-family:'Tajawal',sans-serif;" dir="rtl">
+            <button type="button" @click="editModalOpen = false" style="position:absolute; top:16px; left:16px; width:30px; height:30px; border-radius:50%; border:none; background:rgba(0,83,122,0.06); color:rgba(1,60,88,0.6); display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+            </button>
+
+            <div style="text-align:center; margin-bottom:22px;">
+                <h1 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:20px; color:#013C58;">تعديل المستوى</h1>
+                <p style="margin:6px 0 0; font-size:13px; color:rgba(1,60,88,0.5);">حدّثي تفاصيل هالمستوى</p>
             </div>
 
             @if ($errors->any() && old('form_type') === 'edit')
@@ -462,23 +492,21 @@
 
                 @php
                     $label = 'display:block; font-size:12px; font-weight:600; color:rgba(1,60,88,0.6); margin-bottom:7px;';
-                    $wrapBase = 'border:1.5px solid rgba(0,83,122,0.1); border-radius:11px; padding:0 4px; background:#F7FBFD;';
-                    $wrapLocked = 'border:1.5px solid rgba(0,83,122,0.06); border-radius:11px; padding:0 4px; background:rgba(0,83,122,0.04);';
                     $input = "width:100%; background:transparent; border:none; outline:none; padding:11px 11px; font-size:13.5px; color:#013C58; font-family:'Tajawal',sans-serif;";
-                    $section = 'margin:0 0 12px; font-size:11.5px; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; color:rgba(1,60,88,0.4);';
+                    $section = 'display:inline-flex; margin:0 0 12px; font-size:10.5px; font-weight:800; letter-spacing:0.8px; text-transform:uppercase; color:#00537A; background:rgba(168,232,249,0.3); padding:5px 12px; border-radius:999px;';
                 @endphp
 
                 <p style="{{ $section }}">الاسم</p>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
                     <div>
                         <label style="{{ $label }}">بالإنكليزي</label>
-                        <div :style="editIsLocked ? '{{ $wrapLocked }}' : '{{ $wrapBase }}'">
+                        <div :class="editIsLocked ? 'course-field-wrap is-locked' : 'course-field-wrap'">
                             <input name="name_en" x-model="editTarget.name_en" :disabled="editIsLocked" style="{{ $input }}">
                         </div>
                     </div>
                     <div>
                         <label style="{{ $label }}">بالعربي</label>
-                        <div :style="editIsLocked ? '{{ $wrapLocked }}' : '{{ $wrapBase }}'">
+                        <div :class="editIsLocked ? 'course-field-wrap is-locked' : 'course-field-wrap'">
                             <input name="name_ar" x-model="editTarget.name_ar" :disabled="editIsLocked" style="{{ $input }}">
                         </div>
                     </div>
@@ -488,19 +516,19 @@
                 <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
                     <div>
                         <label style="{{ $label }}">الترتيب</label>
-                        <div :style="editIsCoreLocked ? '{{ $wrapLocked }}' : '{{ $wrapBase }}'">
+                        <div :class="editIsCoreLocked ? 'course-field-wrap is-locked' : 'course-field-wrap'">
                             <input type="number" name="order" x-model="editTarget.order" :disabled="editIsCoreLocked" style="{{ $input }}">
                         </div>
                     </div>
                     <div>
                         <label style="{{ $label }}">أدنى علامة</label>
-                        <div :style="editIsCoreLocked ? '{{ $wrapLocked }}' : '{{ $wrapBase }}'">
+                        <div :class="editIsCoreLocked ? 'course-field-wrap is-locked' : 'course-field-wrap'">
                             <input type="number" name="minimum_score" x-model="editTarget.minimum_score" :disabled="editIsCoreLocked" style="{{ $input }}">
                         </div>
                     </div>
                     <div>
                         <label style="{{ $label }}">أعلى علامة</label>
-                        <div :style="editIsCoreLocked ? '{{ $wrapLocked }}' : '{{ $wrapBase }}'">
+                        <div :class="editIsCoreLocked ? 'course-field-wrap is-locked' : 'course-field-wrap'">
                             <input type="number" name="maximum_score" x-model="editTarget.maximum_score" :disabled="editIsCoreLocked" style="{{ $input }}">
                         </div>
                     </div>
@@ -510,24 +538,24 @@
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
                     <div>
                         <label style="{{ $label }}">السعر (بالدولار)</label>
-                        <div :style="editIsCoreLocked ? '{{ $wrapLocked }}' : '{{ $wrapBase }}'">
+                        <div :class="editIsCoreLocked ? 'course-field-wrap is-locked' : 'course-field-wrap'">
                             <input type="number" name="price" x-model="editTarget.price" :disabled="editIsCoreLocked" style="{{ $input }}">
                         </div>
                     </div>
                     <div>
                         <label style="{{ $label }}">المدة المتوقعة (أسابيع)</label>
-                        <div :style="editIsLocked ? '{{ $wrapLocked }}' : '{{ $wrapBase }}'">
+                        <div :class="editIsLocked ? 'course-field-wrap is-locked' : 'course-field-wrap'">
                             <input type="number" name="estimated_duration" x-model="editTarget.estimated_duration" :disabled="editIsLocked" style="{{ $input }}">
                         </div>
                     </div>
                 </div>
 
-                <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:26px; padding-top:20px; border-top:1px solid rgba(0,83,122,0.06);">
-                    <button type="button" @click="editModalOpen = false" style="padding:11px 20px; border-radius:11px; border:1.5px solid rgba(0,83,122,0.12); background:#fff; color:#013C58; font-family:'Poppins',sans-serif; font-weight:600; font-size:13px; cursor:pointer;">إلغاء</button>
-                    <button type="submit" x-show="!editIsLocked" style="display:flex; align-items:center; gap:7px; padding:11px 22px; border-radius:11px; border:none; background:#013C58; color:#fff; font-family:'Poppins',sans-serif; font-weight:600; font-size:13px; cursor:pointer; box-shadow:0 10px 22px rgba(1,60,88,0.2);">
+                <div style="display:flex; flex-direction:row-reverse; gap:10px; margin-top:26px; padding-top:20px; border-top:1px solid rgba(0,83,122,0.06);">
+                    <button type="submit" x-show="!editIsLocked" style="display:flex; align-items:center; gap:7px; padding:12px 24px; border-radius:999px; border:none; background:linear-gradient(90deg,#013C58,#00537A); color:#fff; font-family:'Poppins',sans-serif; font-weight:700; font-size:13.5px; cursor:pointer; box-shadow:0 14px 28px rgba(1,60,88,0.28);">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
                         حفظ التعديلات
                     </button>
+                    <button type="button" @click="editModalOpen = false" style="padding:12px 20px; border:none; background:transparent; color:rgba(1,60,88,0.5); font-family:'Poppins',sans-serif; font-weight:600; font-size:13.5px; cursor:pointer;">إلغاء</button>
                 </div>
             </form>
         </div>

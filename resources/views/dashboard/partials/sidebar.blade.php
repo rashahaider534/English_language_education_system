@@ -1,7 +1,7 @@
 @php
     $dashboardNav = [
         ['label' => 'Dashboard', 'route' => 'dashboard', 'icon' => 'home'],
-        ['label' => 'مستويات', 'route' => 'levels.index', 'icon' => 'levels'],
+        ['label' => 'مستويات / كورسات', 'route' => 'levels.index', 'icon' => 'levels'],
         ['label' => 'Users', 'route' => 'dashboard.users', 'icon' => 'users'],
         ['label' => 'Roles & Permissions', 'route' => 'dashboard.roles', 'icon' => 'shield'],
         ['label' => 'Reports', 'route' => 'dashboard.reports', 'icon' => 'reports'],
@@ -31,7 +31,7 @@
         @foreach ($dashboardNav as $item)
             @php
                 $active = request()->routeIs($item['route'])
-                    || ($item['route'] === 'levels.index' && request()->routeIs('levels.*'));
+                    || ($item['route'] === 'levels.index' && (request()->routeIs('levels.*') || request()->routeIs('courses.*')));
             @endphp
             <a href="{{ route($item['route']) }}" class="dashboard-nav-link {{ $active ? 'is-active' : '' }}">
                 <span class="dashboard-nav-link__icon">

@@ -23,7 +23,7 @@ class StoreCourseRequest extends FormRequest
      */
     public function rules(): array
     {
-        $course = $this->route('course');
+        $level = $this->route('level');
         return [
             'name_en' => [
                 'required',
@@ -48,7 +48,7 @@ class StoreCourseRequest extends FormRequest
                 'integer',
                  'filled',
                 'min:1',
-                Rule::unique('courses', 'order')->where('level_id', $course->level_id),
+                Rule::unique('courses', 'order')->where('level_id', $level->id),
             ],
             'estimated_duration' => 'required|filled|integer|min:1',
             'image' => 'nullable|filled|image|mimes:jpg,jpeg,png,webp|max:2048',

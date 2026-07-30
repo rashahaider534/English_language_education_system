@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Student;
 
-use App\Http\Resources\LevelResource;
+use App\Http\Resources\Level\LevelResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\Level\StudentLevelService;
@@ -25,9 +25,9 @@ class LevelController extends Controller
             'locked_levels' => LevelResource::collection($data['locked_levels']),
         ]);
     }
-    public function getPurchasableLevels()
-    {
-        $levels = $this->service->getPurchasableLevels(auth()->user());
-        return LevelResource::collection($levels);
-    }
+    // public function getPurchasableLevels()
+    // {
+    //     $levels = $this->service->getPurchasableLevels(auth()->user());
+    //     return LevelResource::collection($levels);
+    // }
 }

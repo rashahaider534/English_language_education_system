@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\LevelController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\LessonController;
+use App\Http\Controllers\Admin\LevelExceptionController;
+use App\Http\Controllers\CommentController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -41,6 +43,15 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::middleware(['auth', 'role:super-admin'])->group(function () {
+    //Level Exception route
+    Route::get('/levelexceptions', [LevelExceptionController::class, 'index'])->name('levelException.index');
+    Route::get('/levelexceptions/{levelException}/details', [LevelExceptionController::class, 'show'])->name('levelException.show');
+    Route::patch('/levelexceptions/{levelException}/start', [LevelExceptionController::class, 'startReview'])->name('levelException.review');
+    Route::patch('/levelexceptions/{levelException}/approve', [LevelExceptionController::class, 'approve'])->name('levelException.approve');
+    Route::patch('/levelexceptions/{levelException}/reject', [LevelExceptionController::class, 'reject'])->name('levelException.reject');
+});
+
 Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
     //level route
     Route::get('/levels', [LevelController::class, 'index'])->name('levels.index');
@@ -57,12 +68,15 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
     Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])->name('courses.edit');
     Route::put('/courses/{course}', [CourseController::class, 'update'])->name('courses.update');
     Route::patch('/courses/{course}/archive', [CourseController::class, 'archive'])->name('courses.archive');
-    
+
     //lesson route
     Route::get('/courses/{course}/lessons/{status?}', [LessonController::class, 'index'])->name('lessons.index');
     Route::get('/lessons/pending', [LessonController::class, 'pending'])->name('lessons.pending');
     Route::get('/lessons/{lesson}', [LessonController::class, 'show'])->name('lessons.show');
     Route::patch('/lessons/{lesson}/archive', [LessonController::class, 'archive'])->name('lessons.archive');
+
+    //comment route
+    Route::delete('/comments/{comment}/destroy', [CommentController::class, 'admindelete']);
 });
 
 
