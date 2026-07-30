@@ -67,12 +67,7 @@ class AdminLevelExceptionService
             'executed_at' => now(),
             'review_note' => $data['review_note']
         ]);
-        return $levelException->load([
-            'media',
-            'requestedLevel:id,name_en,name_ar',
-            'user:id,first_name,last_name,email',
-            'recommendedLevel:id,name_en,name_ar'
-        ]);
+        return $levelException;
     }
 
     public function reject(User $user, LevelException $levelException, array $data)
@@ -88,11 +83,6 @@ class AdminLevelExceptionService
             'executed_at' => now(),
             'review_note' => $data['review_note']
         ]);
-        return $levelException->load([
-            'media',
-            'requestedLevel:id,name_en,name_ar',
-            'user:id,first_name,last_name,email',
-            'recommendedLevel:id,name_en,name_ar'
-        ]);
+        return $levelException;
     }
 }

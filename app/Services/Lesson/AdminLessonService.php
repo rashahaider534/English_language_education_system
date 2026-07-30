@@ -36,7 +36,6 @@ class AdminLessonService
                         'course.teacher:id,first_name,last_name,email',
                     ])
                     ->where('status', ContentStatus::PENDING->value)
-                    ->latest()
                     ->paginate(10);
             }
         );

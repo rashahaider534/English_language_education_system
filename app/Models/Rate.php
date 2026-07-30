@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Rate extends Model
 {
     protected $fillable =
-        ['stars_count'];
+        ['stars','user_id','course_id'];
     public function user():BelongsTo
     {
         return $this->belongsTo(User::class);
