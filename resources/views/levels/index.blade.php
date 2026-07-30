@@ -162,25 +162,25 @@
         <table style="width:100%; border-collapse:collapse; table-layout:fixed;">
             <thead>
                 <tr>
-                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.10); width:4%;">#</th>
-                    <th style="text-align:right; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.10); width:17%;">المستوى</th>
-                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.10); width:9%;">
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.22); width:4%;">#</th>
+                    <th style="text-align:right; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.22); width:17%;">المستوى</th>
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.22); width:9%;">
                         <span style="display:inline-flex; align-items:center; gap:4px;">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F5A201" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"></path><path d="m6 13 6 6 6-6"></path></svg>
                             أدنى علامة
                         </span>
                     </th>
-                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.10); width:9%;">
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.22); width:9%;">
                         <span style="display:inline-flex; align-items:center; gap:4px;">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"></path><path d="m6 11 6-6 6 6"></path></svg>
                             أعلى علامة
                         </span>
                     </th>
-                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.10); width:10%;">السعر</th>
-                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.10); width:11%;">المدة</th>
-                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.10); width:11%;">الحالة</th>
-                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.10); width:15%;">أُنشئ بواسطة</th>
-                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.10); width:14%;">الإجراءات</th>
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.22); width:10%;">السعر</th>
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.22); width:11%;">المدة</th>
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.22); width:11%;">الحالة</th>
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.22); width:15%;">أُنشئ بواسطة</th>
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.22); width:14%;">الإجراءات</th>
                 </tr>
             </thead>
             <tbody>

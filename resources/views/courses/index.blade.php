@@ -201,10 +201,20 @@
                         <span style="font-size:12.5px; font-weight:600; color:#013C58;">{{ $nameOf($course->teacher) }}</span>
                     </div>
 
+                    @php
+                        $avgStars = round($course->rates_avg_stars ?? 0);
+                    @endphp
                     <div style="display:flex; align-items:center; gap:2px; margin-top:8px;">
-                        @for ($i = 0; $i < 5; $i++)
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#F5A201" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.45;"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9L12 3Z"></path></svg>
+                        @for ($i = 1; $i <= 5; $i++)
+                            @if ($i <= $avgStars)
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="#F5A201" stroke="#F5A201" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9L12 3Z"></path></svg>
+                            @else
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#F5A201" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.4;"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9L12 3Z"></path></svg>
+                            @endif
                         @endfor
+                        @if ($course->rates_avg_stars)
+                            <span style="font-size:11px; color:rgba(1,60,88,0.5); margin-inline-start:4px;">({{ number_format($course->rates_avg_stars, 1) }})</span>
+                        @endif
                     </div>
 
                     <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:11px; flex-wrap:wrap;">
