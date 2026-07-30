@@ -48,4 +48,10 @@ class Lesson extends Model implements HasMedia
     {
         return $this->hasOne(LessonReview::class);
     }
+      public function registerMediaCollections(): void
+    {
+        $this
+            ->addMediaCollection('videos')
+            ->singleFile();
+    }
 }

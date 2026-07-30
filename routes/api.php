@@ -13,8 +13,8 @@ use App\Http\Controllers\Student\LevelController;
 use App\Http\Controllers\Student\CourseController;
 use App\Http\Controllers\Teacher\LessonController as TeacherLessonController;
 use App\Http\Controllers\Student\LessonController  as StudentLessonController;
-use App\Http\Controllers\Admin\LessonController  as AdminLessonController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\Student\LevelExceptionController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -77,6 +77,15 @@ Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
     //lesson api
     Route::get('/lessons/{course}',[StudentLessonController::class,'index']);
     Route::get('/lessons/{lesson}/detail',[StudentLessonController::class,'show']);
+
+    //level exception
+    Route::get('/levelexceptions/{status?}',[LevelExceptionController::class,'index']);
+    Route::get('/levelexceptions/{levelException}/details',[LevelExceptionController::class,'view']);
+    Route::post('/levelexceptions/{level}/create',[LevelExceptionController::class,'create']);
+    Route::post('/levelexceptions/{levelException}/update',[LevelExceptionController::class,'update']);
+    Route::delete('/levelexceptions/{levelException}/delete',[LevelExceptionController::class,'delete']);
+
+
 });
 Route::middleware(['auth:sanctum', 'role:student|teacher' ])->group(function () {
     //comment api

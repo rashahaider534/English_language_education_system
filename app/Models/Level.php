@@ -45,9 +45,13 @@ class Level extends Model
     {
         return $this->morphMany(Test::class, 'testable');
     }
-    public function LevelException()
+    public function requestedExceptions()
     {
         return $this->hasMany(LevelException::class, 'requested_level_id');
+    }
+    public function recommendedExceptions()
+    {
+        return $this->hasMany(LevelException::class, 'recommended_level_id');
     }
 
     public function podcasts(): HasMany

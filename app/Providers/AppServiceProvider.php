@@ -5,7 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\Facades\View;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
-
+use App\Models\LevelException;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -41,6 +41,7 @@ class AppServiceProvider extends ServiceProvider
             'test'     => 'App\Models\Test',
             'role'       => 'Spatie\Permission\Models\Role',
             'permission' => 'Spatie\Permission\Models\Permission',
+            'level_exception' => LevelException::class,
         ]);
     }
 }
