@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\LevelController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\LessonController;
+use App\Http\Controllers\Admin\LevelExceptionController;
 use App\Http\Controllers\CommentController;
 
 Route::get('/', function () {
@@ -42,6 +43,15 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::middleware(['auth', 'role:super-admin'])->group(function () {
+    //Level Exception route
+    Route::get('/levelexceptions', [LevelExceptionController::class, 'index'])->name('levelException.index');
+    Route::get('/levelexceptions/{levelException}/details', [LevelExceptionController::class, 'show'])->name('levelException.show');
+    Route::patch('/levelexceptions/{levelException}/start', [LevelExceptionController::class, 'startReview'])->name('levelException.review');
+    Route::patch('/levelexceptions/{levelException}/approve', [LevelExceptionController::class, 'approve'])->name('levelException.approve');
+    Route::patch('/levelexceptions/{levelException}/reject', [LevelExceptionController::class, 'reject'])->name('levelException.reject');
+});
+
 Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
     //level route
     Route::get('/levels', [LevelController::class, 'index'])->name('levels.index');
@@ -66,7 +76,7 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
     Route::patch('/lessons/{lesson}/archive', [LessonController::class, 'archive'])->name('lessons.archive');
 
     //comment route
-    Route::delete('/comments/{comment}/destroy',[CommentController::class,'admindelete']);
+    Route::delete('/comments/{comment}/destroy', [CommentController::class, 'admindelete']);
 });
 
 
