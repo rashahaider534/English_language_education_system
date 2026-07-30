@@ -24,7 +24,8 @@ class LessonController extends Controller
 
         return view('admin.lessons.index', compact(
             'statistics',
-            'lessons'
+            'lessons',
+            'course'
         ));
     }
     public function pending()

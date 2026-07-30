@@ -229,6 +229,10 @@
                     </div>
 
                     <div style="display:flex; gap:8px; margin-top:14px; padding-top:14px; border-top:1px solid rgba(0,83,122,0.06);">
+                        <a href="{{ route('lessons.index', $course) }}" title="عرض الدروس"
+                           style="display:flex; align-items:center; justify-content:center; width:37px; height:37px; border-radius:10px; background:rgba(168,232,249,0.18); color:#00537A; text-decoration:none; flex-shrink:0;">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h9"></path><path d="M4 12h9"></path><path d="M4 18h5"></path><path d="M15 15.5v-5l4.5 2.5-4.5 2.5Z" fill="currentColor" stroke="none"></path></svg>
+                        </a>
                         @if ($canEditCourse && !in_array($course->status, ['closed', 'archived']))
                             <button type="button"
                                @click="openEdit({{ Illuminate\Support\Js::from([

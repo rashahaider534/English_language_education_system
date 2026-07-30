@@ -1,7 +1,8 @@
 @php
     $dashboardNav = [
         ['label' => 'Dashboard', 'route' => 'dashboard', 'icon' => 'home'],
-        ['label' => 'مستويات / كورسات', 'route' => 'levels.index', 'icon' => 'levels'],
+        ['label' => 'مستويات / كورسات / دروس', 'route' => 'levels.index', 'icon' => 'levels'],
+        ['label' => 'الدروس قيد الانتظار', 'route' => 'lessons.pending', 'icon' => 'pending-lessons'],
         ['label' => 'Users', 'route' => 'dashboard.users', 'icon' => 'users'],
         ['label' => 'Roles & Permissions', 'route' => 'dashboard.roles', 'icon' => 'shield'],
         ['label' => 'Reports', 'route' => 'dashboard.reports', 'icon' => 'reports'],
