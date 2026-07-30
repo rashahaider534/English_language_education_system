@@ -32,7 +32,7 @@ class CommentService
                 'comment' => $data['comment'],
                 'created_at' => now(),
             ]);
-        
+
     }
     public function update(Comment $comment,  array $data)
     {
@@ -47,5 +47,6 @@ class CommentService
     public function delete(Comment $comment)
     {
         $comment->delete();
+        return ['comment deleted successfully'];
     }
 }

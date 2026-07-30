@@ -18,7 +18,7 @@ class CommentController extends Controller
 
     public function create(Lesson $lesson,StoreCommentRequest $request )
     {
-        
+
         $this->authorize('create',  [Comment::class, $lesson]);
         $comment = $this->service->create(
             $lesson,
@@ -50,9 +50,6 @@ class CommentController extends Controller
     public function admindelete(Comment $comment)
     {
         $this->authorize('delete', $comment);
-        $this->service->delete($comment);
-        return redirect()
-            ->back()
-            ->with('success', 'Comment deleted successfully.');
+        return response()->json( $this->service->delete($comment));
     }
 }
