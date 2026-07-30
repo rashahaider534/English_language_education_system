@@ -16,7 +16,6 @@ class RateServiece
         $canRate = $user->StudentCourses()
             ->where('course_id', $course->id)
             ->wherePivotIn('status', [
-                'in_progress',
                 'completed',
             ])
             ->exists();

@@ -33,7 +33,8 @@ class DatabaseSeeder extends Seeder
             UserLevelSeeder::class,
             UserCourseSeeder::class,
             UserLessonSeeder::class,
-            CommentSeeder::class
+            CommentSeeder::class,
+            WordSeeder::class,
         ]);
     }
 }
