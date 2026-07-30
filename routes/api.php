@@ -15,6 +15,7 @@ use App\Http\Controllers\Teacher\LessonController as TeacherLessonController;
 use App\Http\Controllers\Student\LessonController  as StudentLessonController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\Student\LevelExceptionController;
+use App\Http\Controllers\Student\RateController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -85,6 +86,9 @@ Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
     Route::post('/levelexceptions/{levelException}/update',[LevelExceptionController::class,'update']);
     Route::delete('/levelexceptions/{levelException}/delete',[LevelExceptionController::class,'delete']);
 
+    //rate api
+    Route::post('/rate/{course}',[RateController::class,'rate']);
+    Route::delete('/rate/{rate}/delete',[RateController::class,'delete']);
 
 });
 Route::middleware(['auth:sanctum', 'role:student|teacher' ])->group(function () {

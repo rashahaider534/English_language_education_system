@@ -25,6 +25,7 @@ class AdminCourseService
                     Log::info('QUERY EXECUTED');
                     $query = Course::query()
                         ->with(['teacher'])
+                        ->withAvg('rates', 'stars')
                         ->where('level_id', $level->id)
                         ->when($status, function ($query) use ($status) {
                             $query->where('status', $status);
