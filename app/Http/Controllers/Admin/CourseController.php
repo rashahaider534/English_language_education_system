@@ -18,11 +18,13 @@ class CourseController extends Controller
     public function __construct(
         private AdminCourseService $service
     ) {}
-    public  function index(Level $level, ?string $status = null)
+    public  function index(Request $request, Level $level)
     {
+        $status = $request->query('status');
         $courses = $this->service->getCourses($level, $status);
         $statistics = $this->service->getStatisticsCourses($level);
-        return view('courses.index', compact('courses', 'statistics'));
+        $teachers = $this->service->getTeachers();
+        return view('courses.index', compact('courses', 'statistics', 'level', 'teachers'));
     }
     public function create(Level $level)
     {
@@ -42,7 +44,8 @@ class CourseController extends Controller
      public function edit(Course $course)
     {
         $teachers = $this->service->getTeachers();
-        return view('courses.edit', compact('course', 'teachers'));
+        $level = $course->level;
+        return view('courses.edit', compact('course', 'teachers', 'level'));
     }
     public function update(Course $course, UpdateCourseRequest $request)
     {
