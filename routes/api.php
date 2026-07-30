@@ -13,6 +13,7 @@ use App\Http\Controllers\Student\LevelController;
 use App\Http\Controllers\Student\CourseController;
 use App\Http\Controllers\Teacher\LessonController as TeacherLessonController;
 use App\Http\Controllers\Student\LessonController  as StudentLessonController;
+use App\Http\Controllers\Teacher\WordController as TeacherWordController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\Student\LevelExceptionController;
 use App\Http\Controllers\Student\RateController;
@@ -65,6 +66,11 @@ Route::middleware(['auth:sanctum', 'role:teacher'])->group(function () {
     Route::post('/tests' , [TestController::class, 'store']);
     Route::post('/tests/{test}' , [TestController::class, 'update']);
     Route::delete('/tests/{test}' , [TestController::class, 'delete']);
+
+    //word api
+    Route::post('/words/{lesson}/create',[TeacherWordController::class,'create']);
+    Route::post('/words/{word}/update',[TeacherWordController::class,'update']);
+    Route::delete('/words/{word}/delete',[TeacherWordController::class,'delete']);
 
 //بس للتجريب
    Route::get('/publishTest/{test}', [TestController::class, 'publishTest']);

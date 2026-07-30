@@ -18,5 +18,6 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'archive level', 'guard_name' => 'web']);
         Permission::create(['name' => 'view levels', 'guard_name' => 'web']);
         Permission::create(['name' => 'archive lesson', 'guard_name' => 'web']);
+        Permission::create(['name' => 'create comments', 'guard_name' => 'api']);
     }
 }

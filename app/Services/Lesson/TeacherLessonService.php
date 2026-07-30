@@ -152,7 +152,7 @@ class TeacherLessonService
         }
 
         return [
-            'lesson' => $lesson->load('media'),
+            'lesson' => $lesson->load(['media','words']),
             'comments' => $this->commentService->getComments($lesson),
         ];
     }
