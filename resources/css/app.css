@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+[x-cloak] {
+    display: none !important;
+}
+
 @layer base {
     body.dashboard-body {
         @apply m-0 bg-slate-100 font-sans text-slate-900 antialiased;
