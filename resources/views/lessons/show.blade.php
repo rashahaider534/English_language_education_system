@@ -169,18 +169,30 @@
                     $authorName = $author ? (trim(($author->first_name ?? '').' '.($author->last_name ?? '')) ?: $author->email) : 'مستخدم محذوف';
                     $authorInitial = $author ? strtoupper(substr($author->first_name ?? $author->email, 0, 1)) : '?';
                 @endphp
-                <div class="show-comment" style="padding:14px; border-radius:13px; background:rgba(255,211,91,0.05); border:1.5px solid rgba(255,186,66,0.2); box-shadow:0 0 10px rgba(255,186,66,0.08);">
+                <div class="show-comment" x-data="{ deleted: false, deleting: false }" x-show="!deleted" x-transition style="padding:14px; border-radius:13px; background:rgba(255,211,91,0.05); border:1.5px solid rgba(255,186,66,0.2); box-shadow:0 0 10px rgba(255,186,66,0.08);">
                     <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:9px;">
                         <span style="display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:999px; background:rgba(0,83,122,0.06); font-size:10.5px; font-weight:700; color:rgba(1,60,88,0.55); font-family:'Poppins',sans-serif;">
                             {{ $comment->created_at->format('H:i') }} · {{ $comment->created_at->format('Y-m-d') }}
                         </span>
-                        <form method="POST" action="/comments/{{ $comment->id }}/destroy" onsubmit="return confirm('حذف هالتعليق؟');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" title="حذف التعليق" class="show-comment-delete" style="display:flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:7px; border:none; background:rgba(255,100,100,0.08); color:rgba(200,60,60,0.75); cursor:pointer;">
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="M6 6l12 12"></path></svg>
-                            </button>
-                        </form>
+                        <button
+                            type="button"
+                            title="حذف التعليق"
+                            class="show-comment-delete"
+                            :disabled="deleting"
+                            @click="
+                                if (!confirm('حذف هالتعليق؟')) return;
+                                deleting = true;
+                                fetch('/comments/{{ $comment->id }}/destroy', {
+                                    method: 'DELETE',
+                                    headers: {
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                                        'Accept': 'application/json',
+                                    },
+                                }).then(res => { if (res.ok) { deleted = true; } else { deleting = false; alert('صار في خطأ، جربي كمان مرة.'); } });
+                            "
+                            style="display:flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:7px; border:none; background:rgba(255,100,100,0.08); color:rgba(200,60,60,0.75); cursor:pointer;">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="M6 6l12 12"></path></svg>
+                        </button>
                     </div>
                     <p style="margin:0 0 9px; font-size:13px; color:rgba(1,60,88,0.75); line-height:1.6;">{{ $comment->comment }}</p>
                     <div style="display:flex; align-items:center; gap:7px;">
