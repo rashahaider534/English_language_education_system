@@ -15,6 +15,7 @@ use App\Models\Lesson;
 use Illuminate\Http\Request;
 
 use App\Http\Resources\CourseResource;
+use App\Http\Resources\Word\WordResource;
 
 class LessonController extends Controller
 {
@@ -32,6 +33,7 @@ class LessonController extends Controller
         $data = $this->service->show($lesson);
         return response()->json([
             'lesson' => new DetailLessonResource($data['lesson']),
+            'words' => WordResource::collection($data['words']),
             'comments' => CommentResource::collection($data['comments']),
         ]);
     }

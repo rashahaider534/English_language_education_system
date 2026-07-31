@@ -12,11 +12,13 @@ use App\Models\Lesson;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Log;
 use App\Services\CommentService;
+use App\Services\Word\StudentWordService;
 
 class TeacherLessonService
 {
     public function __construct(
-        private CommentService $commentService
+        private CommentService $commentService,
+        private StudentWordService $studentWordService
     ) {}
 
     public function index(Course $course)
@@ -152,7 +154,8 @@ class TeacherLessonService
         }
 
         return [
-            'lesson' => $lesson->load(['media','words']),
+            'lesson' => $lesson->load('media'),
+            'words' => $this->studentWordService->getLessonWords($lesson),
             'comments' => $this->commentService->getComments($lesson),
         ];
     }

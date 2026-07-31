@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Teacher;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Word\StoreWordRequest;
 use App\Http\Requests\Word\UpdateWordRequest;
-use App\Http\Resources\WordResource;
+use App\Http\Resources\Word\WordResource;
 use App\Models\Lesson;
 use App\Models\Word;
 use App\Services\Word\TeacherWordService;

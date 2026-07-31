@@ -9,6 +9,7 @@ use App\Http\Resources\LevelException\LevelExceptionResource;
 use App\Http\Resources\Level\LevelSimpleResource;
 use App\Http\Resources\LevelException\LevelExceptionSimpleResource;
 use App\Services\Level_Exception\StudentLevelExceptionService;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Http\Request;
 use App\Models\Level;
 use App\Models\LevelException;
@@ -20,33 +21,43 @@ class LevelExceptionController extends Controller
     ) {}
     public  function index(?string $status = null)
     {
-        $levelexceptions=$this->service->index(auth()->user(),$status);
+        $levelexceptions = $this->service->index(auth()->user(), $status);
         return LevelExceptionSimpleResource::collection($levelexceptions);
     }
 
     public function view(LevelException $levelException)
     {
         $this->authorize('view', $levelException);
-        $levelexception=$this->service->view($levelException);
+        $levelexception = $this->service->view($levelException);
         return new LevelExceptionResource($levelexception);
     }
 
-    public function create(Level $level,StoreLevelExceptionRequest $request)
+    public function create(Level $level, StoreLevelExceptionRequest $request)
     {
-        $levelexception=$this->service->create($level,auth()->user(),$request->validated());
+        $levelexception = $this->service->create($level, auth()->user(), $request->validated());
         return new LevelExceptionResource($levelexception);
     }
 
-    public function update(LevelException $levelException,UpdateLevelExceptionRequest $request)
+    public function update(LevelException $levelException, UpdateLevelExceptionRequest $request)
     {
         $this->authorize('update', $levelException);
-        $levelexception=$this->service->update($levelException,$request->validated());
+        $levelexception = $this->service->update($levelException, $request->validated());
         return new LevelExceptionResource($levelexception);
     }
 
-     public function delete(LevelException $levelException)
+    public function delete(LevelException $levelException)
     {
         $this->authorize('delete', $levelException);
         return response()->json($this->service->delete($levelException));
+    }
+    public function destroyAttachment(
+        LevelException $levelException,
+        Media $media
+    ) {
+        $this->service->deleteAttachment($levelException, $media);
+
+        return response()->json([
+            'message' => 'Attachment deleted successfully.'
+        ]);
     }
 }

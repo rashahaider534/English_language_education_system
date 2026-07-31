@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\WordStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -21,5 +22,11 @@ class Word extends Model
     {
         return $this->belongsToMany(User::class, 'user_words')
                     ->withPivot('status', 'added_at');
+    }
+     protected function casts(): array
+    {
+        return [
+            'status' => WordStatus::class,
+        ];
     }
 }

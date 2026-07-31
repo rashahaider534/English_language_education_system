@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Models\Word;
 use App\Enums\ContentStatus;
 use Illuminate\Validation\ValidationException;
-
+use Illuminate\Support\Facades\Cache;
 class TeacherWordService
 {
     public function create(Lesson $lesson, array $data)
@@ -28,6 +28,7 @@ class TeacherWordService
                 'word_ar' => $data['word_ar']
             ]
         );
+        Cache::tags(['words', 'lesson_'.$lesson->id])->flush();
         return $word;
     }
 
@@ -48,6 +49,7 @@ class TeacherWordService
                 'word_ar' => $data['word_ar']
             ]
         );
+        Cache::tags(['words', 'lesson_'.$word->lesson->id])->flush();
         return $word->fresh();
     }
     public function delete(Word $word)
@@ -62,6 +64,7 @@ class TeacherWordService
             ]);
         }
         $word->delete();
+        Cache::tags(['words', 'lesson_'.$word->lesson->id])->flush();
         return ['word deleted  successfully'];
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\WordStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,7 +16,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('word_id')->constrained('words')->onDelete('cascade');
-            $table->enum('status', ['learning', 'know'])->default('learning');
+            $table->unique(['user_id', 'word_id']);
+             $table->enum('status', array_column(WordStatus::cases(), 'value'))->default(WordStatus::LEARNING->value);
             $table->timestamp('added_at')->useCurrent();
         });
     }

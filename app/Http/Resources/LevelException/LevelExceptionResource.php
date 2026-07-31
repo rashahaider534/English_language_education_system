@@ -26,7 +26,10 @@ class LevelExceptionResource extends JsonResource
             'reason' => $this->reason,
             'review_note' => $this->review_note,
             'attachments' => $this->getMedia('attachments')->map(function ($media) {
-                return $media->getUrl();
+                return  [
+                    'id' => $media->id,
+                    'url' => $media->getUrl(),
+                ];
             }),
             'executed_at' => $this->executed_at,
             'created_at' => $this->created_at,
