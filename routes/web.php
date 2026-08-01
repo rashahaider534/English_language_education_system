@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\QuestionController;
+use App\Http\Controllers\Admin\TestController;
 use App\Http\Controllers\DashboardTemplateController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -79,5 +81,75 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
     Route::delete('/comments/{comment}/destroy', [CommentController::class, 'admindelete']);
 });
 
+Route::middleware(['auth:web'])->group(function () {
 
+    Route::middleware(['role:admin|super-admin', 'permission:manage_placement_questions'])->group(function () {
+
+        // Placement Questions Bank
+        Route::get(
+            '/questions/placement',
+            [QuestionController::class, 'indexPlacementQuestions']
+        )->name('questions.placement.index');
+
+        Route::get(
+            'questions/{question}', [QuestionController::class, 'show']
+        )->name('questions.show');
+        Route::get(
+            '/questions/placement/create',
+            [QuestionController::class, 'createPlacementQuestion']
+        )->name('questions.placement.create');
+
+        Route::post(
+            '/questions',
+            [QuestionController::class, 'store']
+        )->name('questions.store');
+
+        Route::get(
+            '/questions/{question}/edit',
+            [QuestionController::class, 'edit']
+        )->name('questions.edit');
+
+        Route::put(
+            '/questions/{question}',
+            [QuestionController::class, 'update']
+        )->name('questions.update');
+
+        Route::delete(
+            '/questions/{question}',
+            [QuestionController::class, 'deleteQuestion']
+        )->name('questions.delete');
+
+
+    });
+
+    Route::middleware(['role:admin|super-admin', 'permission:manage_placement_tests'])
+        ->prefix('tests/placement')
+        ->name('tests.placement.')
+        ->group(function () {
+            Route::get('/', [TestController::class, 'indexPlacementTests'])->name('placement.index');
+            Route::get('/create', [TestController::class, 'createPlacementTest'])->name('placement.create');
+            Route::post('/', [TestController::class, 'storePlacementTest'])->name('placement.store');
+            Route::get('/{test}', [TestController::class, 'showPlacementTest'])->name('placement.show');
+            Route::get('/{test}/edit', [TestController::class, 'editPlacementTest'])->name('placement.edit');
+        });
+
+    Route::middleware(['role:admin|super-admin', 'permission:manage_level_tests'])
+        ->prefix('levels/{level}/tests')
+        ->name('tests.level.')
+        ->group(function () {
+            // Questions available for a Level Test
+            Route::get(
+                '/questions',
+                [QuestionController::class, 'indexLevelTestQuestions']
+            )->name('questions.index');
+            Route::get('/', [TestController::class, 'indexLevelTests'])->name('levelTest.index');
+            Route::get('/create', [TestController::class, 'createLevelTest'])->name('levelTest.create');
+            Route::post('/', [TestController::class, 'generateLevelTest'])->name('levelTest.generate');
+            Route::get('/{test}', [TestController::class, 'showLevelTest'])->name('levelTest.show');
+        });
+
+    Route::middleware(['role:admin|super-admin', 'permission:manage_placement_tests|manage_level_tests'])
+        ->post('/tests/{test}', [TestController::class, 'update'])
+        ->name('tests.update');
+});
 require __DIR__ . '/auth.php';

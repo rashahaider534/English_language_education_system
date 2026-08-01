@@ -31,7 +31,8 @@ class QuestionController extends Controller
     public function show(Request $request,Question $question)
     {
         $this->authorize('view', $question);
-        return $this->questionService->show($question);
+        $question =  $this->questionService->show($question);
+        return new TeacherQuestionResource($question);
     }
 
     public function store(CreateQuestionRequest $request)

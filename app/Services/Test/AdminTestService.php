@@ -4,6 +4,7 @@ namespace App\Services\Test;
 use App\Enums\ContentStatus;
 use App\Models\Course;
 use App\Models\Lesson;
+use App\Models\Level;
 use App\Models\PlacementTest;
 use App\Models\Question;
 use App\Models\Test;
@@ -14,6 +15,31 @@ use Illuminate\Validation\ValidationException;
 class AdminTestService
 {
     public TestService $testService;
+
+    public function __construct(TestService $testService)
+    {
+        $this->testService = $testService;
+    }
+
+    public function  levelTests(Level $level)
+    {
+        $tests = Test::where('testable_type', 'level')
+            ->where('testable_id', $level->id)
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+        return $tests;
+    }
+
+    public function PlacementTests()
+    {
+        $tests = Test::where('testable_type', 'placement_test')
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        return $tests;
+    }
     public function storePlacementTest(array $data): Test
     {
         return DB::transaction(function () use ($data) {
@@ -32,7 +58,7 @@ class AdminTestService
         return DB::transaction(function () use ($data, $test) {
             $test = Test::where('id', $test->id)->lockForUpdate()->first();
 
-            if ($test->status === ContentStatus::ARCHIVED) {
+            if ($test->status === ContentStatus::ARCHIVED || $test->status === ContentStatus::CLOSED) {
                 throw ValidationException::withMessages([
                     'error' => 'This test is archived and cannot be edited.'
                 ]);
@@ -60,13 +86,14 @@ class AdminTestService
             $test->update($testData);
 
             $syncData = collect($data['questions'])
-                ->mapWithKeys(fn ($q) => [$q['id'] => ['order' => $q['order']]])
+                ->mapWithKeys(fn($q) => [$q['id'] => ['order' => $q['order']]])
                 ->all();
             $test->questions()->sync($syncData);
 
             return $test;
         });
     }
+
     public function checkQuestionsAreValidPlacementQuestions($questionIds): bool
     {
         $validCount = Question::whereIn('id', $questionIds)
@@ -140,15 +167,15 @@ class AdminTestService
             $questions = collect($selectedQuestionIds)
                 ->unique()
                 ->values()
-                ->map(fn ($id, $i) => ['id' => $id, 'order' => $i + 1])
+                ->map(fn($id, $i) => ['id' => $id, 'order' => $i + 1])
                 ->all();
 
             return $this->testService->createTest([
                 'testable_type' => 'level',
                 'testable_id' => $levelId,
-                'title_en' =>$data['$titleEn'],
-                'title_ar' => $data['$titleAr'],
-                'passing_score' => $data['$passingScore'],
+                'title_en' => $data['title_en'],
+                'title_ar' => $data['title_ar'],
+                'passing_score' => $data['passing_score'],
                 'questions' => $questions,
             ]);
         });
@@ -213,11 +240,117 @@ class AdminTestService
 
             if ($stillNeeded > 0) {
                 throw ValidationException::withMessages([
-                    'error' => "Not enough '{$shortfall}' difficulty questions available across this level's courses to generate the requested test.",
+                    'error' => "Not enough '{$difficulty}' difficulty questions available across this level's courses to generate the requested test.",
                 ]);
+
             }
         }
 
         return $selected->all();
     }
+
+    public function getEligibleQuestionIdsForLevel(int $levelId): array
+    {
+        $courseIds = Course::where('level_id', $levelId)
+            ->pluck('id');
+
+        if ($courseIds->isEmpty()) {
+            return [];
+        }
+
+        $lessonIds = Lesson::whereIn('course_id', $courseIds)
+            ->pluck('id');
+
+        if ($lessonIds->isEmpty()) {
+            return [];
+        }
+
+        return Question::whereDoesntHave('nextVersion')
+            ->whereHas('tests', function ($query) use ($lessonIds) {
+                $query->where('testable_type', 'lesson')
+                    ->whereIn('testable_id', $lessonIds)
+                    ->whereIn('status', [
+                        ContentStatus::APPROVED,
+                        ContentStatus::PUBLISHED,
+                    ]);
+            })
+            ->pluck('id')
+            ->all();
+    }
+
+    public function getEligiblePlacementQuestions()
+    {
+        return Question::query()
+            ->where('is_placement_question', true);
+    }
+
+public function filter(
+    array $data,
+    string $context,
+    ?int $levelId = null
+) {
+    $query = Question::query();
+
+
+    if ($context === 'placement') {
+
+        $query->where('is_placement_question', true);
+
+    } elseif ($context === 'level_test') {
+
+        if (!$levelId) {
+            throw ValidationException::withMessages([
+                'level' => 'Level ID is required for level-test questions.'
+            ]);
+        }
+
+        $eligibleIds = $this->getEligibleQuestionIdsForLevel($levelId);
+
+        $query->whereIn('id', $eligibleIds);
+    }
+
+    if (!empty($data['type'])) {
+        $query->where('type', $data['type']);
+    }
+
+    if (!empty($data['difficulty'])) {
+        $query->where('difficulty', $data['difficulty']);
+    }
+
+    if (isset($data['min_score'])) {
+        $query->where('score', '>=', $data['min_score']);
+    }
+
+    if (isset($data['max_score'])) {
+        $query->where('score', '<=', $data['max_score']);
+    }
+
+    if (!empty($data['search'])) {
+
+        $search = $data['search'];
+
+        $query->where(function ($q) use ($search) {
+
+            $q->where(
+                'title_question_en',
+                'like',
+                "%{$search}%"
+            )
+                ->orWhere(
+                    'title_question_ar',
+                    'like',
+                    "%{$search}%"
+                );
+
+        });
+    }
+
+    $sortDirection = $data['sort'] ?? 'desc';
+
+    $query->orderBy('created_at', $sortDirection);
+
+    return $query->paginate(10)
+                 ->withQueryString();
+}
+
 }

@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Course;
 use App\Models\Lesson;
+use App\Models\Level;
 use App\Models\Test;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;

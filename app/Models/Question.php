@@ -21,7 +21,10 @@ use Spatie\MediaLibrary\HasMedia;
 class Question extends Model implements HasMedia
 {
     use InteractsWithMedia,SoftDeletes,HasTranslations;
-    protected $fillable = ['type', 'score', 'title_question_en' , 'title_question_ar', 'text_question' , 'difficulty','user_id','previous_question_id'];
+    protected $fillable = ['type', 'score', 'title_question_en'
+        , 'title_question_ar', 'text_question'
+        , 'difficulty','user_id','previous_question_id'
+        ,'is_placement_question'];
     public function mcqAnswers():HasMany
     {
         return $this->hasMany(McqAnswer::class);
@@ -111,9 +114,6 @@ class Question extends Model implements HasMedia
     {
         return $this->tests()->where('status', ContentStatus::CLOSED)->get(['tests.id', 'tests.title_en']);
     }
-
-
-    protected $appends = ['published_tests','archived_tests','in_review_tests','approved_tests','closed_tests'];
 
     public function scopeHasChildren($query)
     {
