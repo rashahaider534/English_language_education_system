@@ -94,17 +94,10 @@ class TestController extends Controller
             'test' => $test,
         ]);
     }
-    public function createLevelTest(Level $level, FilterQuestionRequest $request): View
+    public function createLevelTest(Level $level): View
     {
-        $eligibleQuestions = $this->adminTestService->filter(
-            $request->validated(),
-            'level_test',
-            $level->id
-        );
-
         return view('admin.tests.level.create', [
             'level' => $level,
-            'eligibleQuestions' => $eligibleQuestions,
         ]);
     }
     public function generateLevelTest(GenerateLevelTestRequest $request, Level $level): RedirectResponse
