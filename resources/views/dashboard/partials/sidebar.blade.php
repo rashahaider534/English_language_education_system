@@ -3,6 +3,7 @@
         ['label' => 'Dashboard', 'route' => 'dashboard', 'icon' => 'home'],
         ['label' => 'مستويات / كورسات / دروس', 'route' => 'levels.index', 'icon' => 'levels'],
         ['label' => 'الدروس قيد الانتظار', 'route' => 'lessons.pending', 'icon' => 'pending-lessons'],
+        ['label' => 'طلبات الاستثناء', 'route' => 'levelException.index', 'icon' => 'level-exceptions', 'superAdminOnly' => true],
         ['label' => 'Users', 'route' => 'dashboard.users', 'icon' => 'users'],
         ['label' => 'Roles & Permissions', 'route' => 'dashboard.roles', 'icon' => 'shield'],
         ['label' => 'Reports', 'route' => 'dashboard.reports', 'icon' => 'reports'],
@@ -30,6 +31,7 @@
         <p class="dashboard-sidebar__section">Navigation</p>
 
         @foreach ($dashboardNav as $item)
+            @continue(($item['superAdminOnly'] ?? false) && !auth()->user()->hasRole('super-admin'))
             @php
                 $active = request()->routeIs($item['route'])
                     || ($item['route'] === 'levels.index' && (request()->routeIs('levels.*') || request()->routeIs('courses.*')));
