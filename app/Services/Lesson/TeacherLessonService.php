@@ -12,11 +12,13 @@ use App\Models\Lesson;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Log;
 use App\Services\CommentService;
+use App\Services\Word\StudentWordService;
 
 class TeacherLessonService
 {
     public function __construct(
-        private CommentService $commentService
+        private CommentService $commentService,
+        private StudentWordService $studentWordService
     ) {}
 
     public function index(Course $course)
@@ -116,6 +118,7 @@ class TeacherLessonService
             return $lesson->fresh();
         });
     }
+
     public function delete(Lesson $lesson)
     {
         if ($lesson->course->teacher_id !== auth()->id()) {
@@ -134,11 +137,12 @@ class TeacherLessonService
                 'lesson' => 'You cannot delete lessons in this status.',
             ]);
         }
-        //اشعار اذا كانت حالته changes_requested
+        //اشعار للادمن  اذا كانت حالته changes_requested
         $lesson->delete();
         Cache::tags(['lessons'])->flush();
         return response()->json(['message' => 'Lesson deleted successfully.']);
     }
+
     public function show(Lesson $lesson)
     {
         $user = auth()->user();
@@ -152,7 +156,8 @@ class TeacherLessonService
         }
 
         return [
-            'lesson' => $lesson->load(['media','words']),
+            'lesson' => $lesson->load('media'),
+            'words' => $this->studentWordService->getLessonWords($lesson),
             'comments' => $this->commentService->getComments($lesson),
         ];
     }

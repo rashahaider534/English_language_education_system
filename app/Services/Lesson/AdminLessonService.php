@@ -8,12 +8,14 @@ use App\Models\Lesson;
 use App\Services\CommentService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\ValidationException;
+use App\Services\Word\StudentWordService;
 use Illuminate\Support\Facades\DB;
 
 class AdminLessonService
 {
     public function __construct(
-        private CommentService $commentService
+        private CommentService $commentService,
+        private StudentWordService $studentWordService
     ) {}
     public function getPendingLessons()
     {
@@ -88,6 +90,7 @@ class AdminLessonService
     {
         return [
             'lesson' => $lesson,
+            'words' => $this->studentWordService->getLessonWords($lesson),
             'comments' => $this->commentService->getComments($lesson),
         ];
     }

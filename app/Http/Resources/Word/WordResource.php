@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Word;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -18,7 +18,8 @@ class WordResource extends JsonResource
             'id'=>$this->id,
             'lesson_id'=>$this->lesson_id,
             'word_en'=>$this->word_en,
-            'word_ar'=>$this->word_ar
+            'word_ar'=>$this->word_ar,
+            'audio'=>$this->getFirstMediaUrl('audios'),
          ];
     }
 }
