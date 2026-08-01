@@ -47,8 +47,8 @@ Route::middleware(['auth:sanctum', 'role:teacher'])->group(function () {
     Route::get('questions/deprecated', [QuestionController::class, 'ArchiveQuestions']);
     Route::post('questions/filter', [QuestionController::class, 'filter']);
     Route::get('/questions/{question}', [QuestionController::class, 'show']);
-//    Route::post('/questions', [QuestionController::class, 'store']);
-//    Route::post('/questions/{question}', [QuestionController::class, 'updateQuestion']);
+    Route::post('/questions', [QuestionController::class, 'store']);
+    Route::post('/questions/{question}', [QuestionController::class, 'updateQuestion']);
     Route::get('/questions/{question}/checkStatus', [QuestionController::class, 'checkStatus']);
     Route::get('/questions/{question}/delete', [QuestionController::class, 'deleteQuestion']);
     Route::get('/questions/{question}/blocking-tests', [QuestionController::class, 'blockingTests']);
@@ -104,20 +104,14 @@ Route::middleware(['auth:sanctum', 'role:student|teacher' ])->group(function () 
     Route::delete('/comments/{comment}/delete',[CommentController::class,'delete']);
 });
 
-Route::post('generateLevelTest', [AdminTestController::class, 'generateLevelTest']);
-Route::post('updateTest/{test}', [AdminTestController::class, 'update']);
-Route::post(
-    '/admin/questions/placement/filter',
-    [AdminTestController::class, 'filterPlacementQuestions']
-);
-
-Route::post(
-    '/admin/levels/{level}/questions/filter',
-    [AdminTestController::class, 'filterLevelTestQuestions']
-);
-
-
-Route::middleware(['auth:sanctum', 'role:admin','permission:manage_placement_questions'])->group(function () {
-    Route::post('/questions', [QuestionController::class, 'store']);
-    Route::post('/questions/{question}', [QuestionController::class, 'updateQuestion']);
-});
+//Route::post('generateLevelTest', [AdminTestController::class, 'generateLevelTest']);
+//Route::post('updateTest/{test}', [AdminTestController::class, 'update']);
+//Route::post(
+//    '/admin/questions/placement/filter',
+//    [AdminTestController::class, 'filterPlacementQuestions']
+//);
+//
+//Route::post(
+//    '/admin/levels/{level}/questions/filter',
+//    [AdminTestController::class, 'filterLevelTestQuestions']
+//);
