@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
@@ -13,21 +14,16 @@ class RolePermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        $admin = Role::findByName('admin', 'web');
+        $admin = User::where('id', 3)->first();
         $superAdmin = Role::findByName('super-admin', 'web');
         $studentRole=Role::findByName('student','api');
         $admin->givePermissionTo([
-            'create level',
-            'update level',
-            'archive level',
-            'view levels',
-        ]);
-        $superAdmin->givePermissionTo([
-            'create level',
-            'update level',
-            'archive level',
-            'view levels',
-            'archive lesson'
+           'manage_levels',
+           'manage_courses',
+           'manage_level_tests',
+           'manage_placement_tests',
+           'manage_placement_questions',
+           'publish_levels'
         ]);
         $studentRole->givePermissionTo(['create comments']);
     }

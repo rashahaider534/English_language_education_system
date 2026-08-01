@@ -55,13 +55,17 @@ class QuestionService
     {
         $question->load($question->getAnswersRelationName());
 
-        return new TeacherQuestionResource($question);
+        return $question;
     }
 
     public function store(array $data)
     {
         return DB::transaction(function () use ($data) {
-            $data['user_id'] = auth()->id();
+            $user = auth()->user();
+            $data['user_id'] = $user->id;
+            if($user->hasRole('admin')){
+                $data['is_placement_question'] = true;
+            }
             $questionData = Arr::except($data, ['answers']);
             $question = Question::create($questionData);
 
@@ -176,7 +180,7 @@ class QuestionService
                 return [
                     'status' => 'versioned',
                     'message' => 'a new version has been created.',
-                    'question' => new TeacherQuestionResource($newQuestion)
+                    'question' => $newQuestion
                 ];
             }
 

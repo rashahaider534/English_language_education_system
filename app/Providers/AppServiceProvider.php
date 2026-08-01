@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\View;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
@@ -43,5 +44,9 @@ class AppServiceProvider extends ServiceProvider
             'permission' => 'Spatie\Permission\Models\Permission',
             'level_exception' => LevelException::class,
         ]);
+
+        Gate::before(function ($user, $ability) {
+            return $user->hasRole('super-admin') ? true : null;
+        });
     }
 }

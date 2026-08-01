@@ -14,7 +14,7 @@ class GenerateLevelTestRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'testable_id' => ['required', 'integer', 'exists:levels,id'],
+          //  'testable_id' => ['required', 'integer', 'exists:levels,id'],
             'title_en' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z0-9\s.,!?;:()\'"-]+$/'],
             'title_ar' => ['required', 'string', 'max:255', 'regex:/^[\p{Arabic}0-9\s،؟؛:()«»"\'\-.!,]+$/u'],
             'passing_score' => ['required', 'numeric', 'min:10', 'max:100'],

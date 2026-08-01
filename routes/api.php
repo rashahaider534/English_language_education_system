@@ -104,3 +104,14 @@ Route::middleware(['auth:sanctum', 'role:student|teacher' ])->group(function () 
     Route::delete('/comments/{comment}/delete',[CommentController::class,'delete']);
 });
 
+//Route::post('generateLevelTest', [AdminTestController::class, 'generateLevelTest']);
+//Route::post('updateTest/{test}', [AdminTestController::class, 'update']);
+//Route::post(
+//    '/admin/questions/placement/filter',
+//    [AdminTestController::class, 'filterPlacementQuestions']
+//);
+//
+//Route::post(
+//    '/admin/levels/{level}/questions/filter',
+//    [AdminTestController::class, 'filterLevelTestQuestions']
+//);
