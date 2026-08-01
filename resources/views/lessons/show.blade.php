@@ -149,13 +149,33 @@
         </div>
     </div>
 
+    {{-- ============ BELOW: Lesson words (read-only) ============ --}}
+    @php $words = $lessonModel->words; @endphp
+    <div class="show-panel" style="background:linear-gradient(160deg, rgba(168,232,249,0.16), rgba(255,211,91,0.08)); border:1.5px solid rgba(14,106,150,0.35); border-radius:20px; padding:22px 24px; box-shadow:0 0 26px rgba(14,106,150,0.28), 0 0 6px rgba(14,106,150,0.18), 0 10px 26px rgba(0,83,122,0.06); margin-bottom:20px;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
+            <h3 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:18px; color:#013C58;">كلمات الدرس</h3>
+            <span style="display:inline-flex; align-items:center; justify-content:center; min-width:26px; height:26px; padding:0 6px; border-radius:8px; background:rgba(0,83,122,0.07); color:#00537A; font-family:'Poppins',sans-serif; font-weight:700; font-size:12px;">{{ $words->count() }}</span>
+        </div>
+
+        @if ($words->isEmpty())
+            <p style="margin:0; font-size:12.5px; color:rgba(1,60,88,0.45); font-weight:600;">ما ضاف الأستاذ كلمات لهذا الدرس بعد</p>
+        @else
+            <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                @foreach ($words as $word)
+                    <div style="display:flex; align-items:center; gap:8px; padding:8px 14px; border-radius:11px; background:rgba(255,211,91,0.08); border:1px solid rgba(255,186,66,0.32);">
+                        <span style="font-size:12.5px; font-weight:700; color:#013C58;">{{ $word->word_en }}</span>
+                        <span style="width:1px; height:12px; background:rgba(138,90,0,0.2);"></span>
+                        <span style="font-size:12.5px; font-weight:600; color:#8A5A00;">{{ $word->word_ar }}</span>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+    </div>
+
     {{-- ============ BELOW: Comments panel (full width) ============ --}}
     <div class="show-panel" style="background:linear-gradient(160deg, rgba(168,232,249,0.16), rgba(255,211,91,0.08)); border:1.5px solid rgba(14,106,150,0.35); border-radius:20px; padding:22px 24px; box-shadow:0 0 26px rgba(14,106,150,0.28), 0 0 6px rgba(14,106,150,0.18), 0 10px 26px rgba(0,83,122,0.06);">
         <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:16px;">
             <div style="display:flex; align-items:center; gap:8px;">
-                <div style="display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:9px; background:rgba(168,232,249,0.3); color:#00537A;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                </div>
                 <h3 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:15px; color:#013C58;">التعليقات</h3>
             </div>
             <span style="display:inline-flex; align-items:center; justify-content:center; min-width:26px; height:26px; padding:0 6px; border-radius:8px; background:rgba(0,83,122,0.07); color:#00537A; font-family:'Poppins',sans-serif; font-weight:700; font-size:12px;">{{ $comments->total() }}</span>
