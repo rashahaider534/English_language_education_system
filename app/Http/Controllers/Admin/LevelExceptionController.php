@@ -31,7 +31,7 @@ class LevelExceptionController extends Controller
         $this->authorize('review', $levelException);
         $levelException = $this->service->startReview(auth()->user(), $levelException);
         return redirect()
-        ->route('admin.level-exceptions.show', $levelException)
+        ->route('levelException.show', $levelException)
         ->with('success', 'Request moved to review.');
     }
 
@@ -44,7 +44,7 @@ class LevelExceptionController extends Controller
             $request->validated()
         );
         return redirect()
-            ->route('admin.level-exceptions.index')
+            ->route('levelException.index')
             ->with('success', 'Request approved successfully.');
     }
 
@@ -57,7 +57,7 @@ class LevelExceptionController extends Controller
             $request->validated()
         );
          return redirect()
-            ->route('admin.level-exceptions.index')
+            ->route('levelException.index')
             ->with('success', 'Request rejected successfully.');
     }
 }

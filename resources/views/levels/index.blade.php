@@ -12,7 +12,7 @@
     .course-field-wrap:focus-within {
         border-color: #F5A201;
         box-shadow: 0 0 0 4px rgba(245,162,1,0.12);
-        background: #fff;
+        background: #EFFAFD;
     }
     .course-field-wrap.is-locked {
         border-color: rgba(0,83,122,0.06);
@@ -40,8 +40,8 @@
             this.archiveTargetLocked = locked;
             this.archiveModalOpen = true;
         },
-        createModalOpen: {{ ($errors->any() && old('form_type') === 'create') ? 'true' : 'false' }},
-        editModalOpen: {{ ($errors->any() && old('form_type') === 'edit') ? 'true' : 'false' }},
+        createModalOpen: {{ ($errors->any() && old('form_type') === 'levels-create') ? 'true' : 'false' }},
+        editModalOpen: {{ ($errors->any() && old('form_type') === 'levels-edit') ? 'true' : 'false' }},
         editTarget: {
             id: {{ (int) (old('editing_level_id') ?? 0) }},
             name_en: @js(old('name_en', '')),
@@ -138,7 +138,7 @@
     </div>
 
     {{-- ============ TABLE CARD ============ --}}
-    <div style="background:#fff; border:1px solid rgba(0,83,122,0.07); border-radius:22px; overflow:hidden; box-shadow:0 18px 44px rgba(0,83,122,0.06);">
+    <div style="background:#EFFAFD; border:1.5px solid rgba(0,83,122,0.16); border-radius:22px; overflow:hidden; box-shadow:0 18px 44px rgba(0,83,122,0.06);">
 
         <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; padding:18px 22px; border-bottom:1px solid rgba(0,83,122,0.06);">
             @php
@@ -162,25 +162,25 @@
         <table style="width:100%; border-collapse:collapse; table-layout:fixed;">
             <thead>
                 <tr>
-                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.10); width:4%;">#</th>
-                    <th style="text-align:right; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.10); width:17%;">المستوى</th>
-                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.10); width:9%;">
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.22); width:4%;">#</th>
+                    <th style="text-align:right; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.22); width:17%;">المستوى</th>
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.22); width:9%;">
                         <span style="display:inline-flex; align-items:center; gap:4px;">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F5A201" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"></path><path d="m6 13 6 6 6-6"></path></svg>
                             أدنى علامة
                         </span>
                     </th>
-                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.10); width:9%;">
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.22); width:9%;">
                         <span style="display:inline-flex; align-items:center; gap:4px;">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"></path><path d="m6 11 6-6 6 6"></path></svg>
                             أعلى علامة
                         </span>
                     </th>
-                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.10); width:10%;">السعر</th>
-                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.10); width:11%;">المدة</th>
-                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.10); width:11%;">الحالة</th>
-                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.10); width:15%;">أُنشئ بواسطة</th>
-                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.10); width:14%;">الإجراءات</th>
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.22); width:10%;">السعر</th>
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.22); width:11%;">المدة</th>
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.22); width:11%;">الحالة</th>
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.22); width:15%;">أُنشئ بواسطة</th>
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; letter-spacing:0.5px; padding:13px 12px; background:rgba(168,232,249,0.22); width:14%;">الإجراءات</th>
                 </tr>
             </thead>
             <tbody>
@@ -311,7 +311,7 @@
         @click="archiveModalOpen = false"
     >
       <div style="min-height:100%; display:flex; align-items:center; justify-content:center; padding:24px;">
-        <div @click.stop style="width:100%; max-width:400px; background:#fff; border-radius:22px; padding:30px 26px; box-shadow:0 44px 100px rgba(1,42,63,0.4); text-align:center;">
+        <div @click.stop style="width:100%; max-width:400px; background:#EFFAFD; border-radius:22px; padding:30px 26px; box-shadow:0 44px 100px rgba(1,42,63,0.4); text-align:center;">
             <div style="width:58px; height:58px; border-radius:16px; background:rgba(245,162,1,0.1); color:#C97F00; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l1.5-3h15L21 7"></path><path d="M4.5 7h15v12a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1V7Z"></path><path d="M9 12h6"></path></svg>
             </div>
@@ -321,7 +321,7 @@
                 <span x-show="!archiveTargetLocked">هيصير هالمستوى مؤرشف بشكل كامل، ومش رح يظهر للطلاب الجدد. تقدري ترجعيه لاحقاً.</span>
             </p>
             <div style="display:flex; gap:10px; margin-top:22px;">
-                <button type="button" @click="archiveModalOpen = false" style="flex:1; padding:11px; border-radius:11px; border:1.5px solid rgba(0,83,122,0.12); background:#fff; color:#013C58; font-family:'Poppins',sans-serif; font-weight:600; font-size:13px; cursor:pointer;">إلغاء</button>
+                <button type="button" @click="archiveModalOpen = false" style="flex:1; padding:11px; border-radius:11px; border:1.5px solid rgba(0,83,122,0.12); background:#EFFAFD; color:#013C58; font-family:'Poppins',sans-serif; font-weight:600; font-size:13px; cursor:pointer;">إلغاء</button>
                 <form :action="'/levels/' + archiveTargetId + '/archive'" method="POST" style="flex:1;">
                     @csrf
                     @method('PATCH')
@@ -340,7 +340,7 @@
         @click="createModalOpen = false"
     >
       <div style="min-height:100%; display:flex; align-items:center; justify-content:center; padding:24px;">
-        <div @click.stop class="modal-scroll" style="position:relative; width:100%; max-width:640px; max-height:88vh; overflow-y:auto; background:#FBFEFF; border-radius:28px; padding:32px 28px 28px; box-shadow:0 50px 110px rgba(1,42,63,0.42); font-family:'Tajawal',sans-serif;" dir="rtl">
+        <div @click.stop class="modal-scroll" style="position:relative; width:100%; max-width:640px; max-height:88vh; overflow-y:auto; background:#EFFAFD; border-radius:28px; padding:32px 28px 28px; box-shadow:0 50px 110px rgba(1,42,63,0.42); font-family:'Tajawal',sans-serif;" dir="rtl">
             <button type="button" @click="createModalOpen = false" style="position:absolute; top:16px; left:16px; width:30px; height:30px; border-radius:50%; border:none; background:rgba(0,83,122,0.06); color:rgba(1,60,88,0.6); display:flex; align-items:center; justify-content:center; cursor:pointer;">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
             </button>
@@ -350,7 +350,7 @@
                 <p style="margin:6px 0 0; font-size:13px; color:rgba(1,60,88,0.5);">عبّي التفاصيل لإنشاء مستوى تعلّم جديد</p>
             </div>
 
-            @if ($errors->any() && old('form_type') === 'create')
+            @if ($errors->any() && old('form_type') === 'levels-create')
                 <div style="display:flex; align-items:flex-start; gap:9px; margin-bottom:18px; padding:13px 16px; border-radius:12px; background:rgba(148,98,0,0.08); color:#946200; font-size:13px; font-weight:600;">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:1px;"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg>
                     <ul style="margin:0; padding-inline-start:16px;">
@@ -363,7 +363,7 @@
 
             <form method="POST" action="{{ route('levels.store') }}">
                 @csrf
-                <input type="hidden" name="form_type" value="create">
+                <input type="hidden" name="form_type" value="levels-create">
 
                 @php
                     $label = 'display:block; font-size:12px; font-weight:600; color:rgba(1,60,88,0.6); margin-bottom:7px;';
@@ -377,13 +377,13 @@
                     <div>
                         <label style="{{ $label }}">بالإنكليزي</label>
                         <div class="{{ $wrap }}">
-                            <input name="name_en" value="{{ old('form_type') === 'create' ? old('name_en') : '' }}" placeholder="e.g. Beginner A1" style="{{ $input }}">
+                            <input name="name_en" value="{{ old('form_type') === 'levels-create' ? old('name_en') : '' }}" placeholder="e.g. Beginner A1" style="{{ $input }}">
                         </div>
                     </div>
                     <div>
                         <label style="{{ $label }}">بالعربي</label>
                         <div class="{{ $wrap }}">
-                            <input name="name_ar" value="{{ old('form_type') === 'create' ? old('name_ar') : '' }}" placeholder="مثال: مبتدئ A1" style="{{ $input }}">
+                            <input name="name_ar" value="{{ old('form_type') === 'levels-create' ? old('name_ar') : '' }}" placeholder="مثال: مبتدئ A1" style="{{ $input }}">
                         </div>
                     </div>
                 </div>
@@ -393,19 +393,19 @@
                     <div>
                         <label style="{{ $label }}">الترتيب</label>
                         <div class="{{ $wrap }}">
-                            <input type="number" name="order" value="{{ old('form_type') === 'create' ? old('order') : '' }}" placeholder="1" style="{{ $input }}">
+                            <input type="number" name="order" value="{{ old('form_type') === 'levels-create' ? old('order') : '' }}" placeholder="1" style="{{ $input }}">
                         </div>
                     </div>
                     <div>
                         <label style="{{ $label }}">أدنى علامة</label>
                         <div class="{{ $wrap }}">
-                            <input type="number" name="minimum_score" value="{{ old('form_type') === 'create' ? old('minimum_score') : '' }}" placeholder="0" style="{{ $input }}">
+                            <input type="number" name="minimum_score" value="{{ old('form_type') === 'levels-create' ? old('minimum_score') : '' }}" placeholder="0" style="{{ $input }}">
                         </div>
                     </div>
                     <div>
                         <label style="{{ $label }}">أعلى علامة</label>
                         <div class="{{ $wrap }}">
-                            <input type="number" name="maximum_score" value="{{ old('form_type') === 'create' ? old('maximum_score') : '' }}" placeholder="100" style="{{ $input }}">
+                            <input type="number" name="maximum_score" value="{{ old('form_type') === 'levels-create' ? old('maximum_score') : '' }}" placeholder="100" style="{{ $input }}">
                         </div>
                     </div>
                 </div>
@@ -415,13 +415,13 @@
                     <div>
                         <label style="{{ $label }}">السعر (بالدولار)</label>
                         <div class="{{ $wrap }}">
-                            <input type="number" name="price" value="{{ old('form_type') === 'create' ? old('price') : '' }}" placeholder="49" style="{{ $input }}">
+                            <input type="number" name="price" value="{{ old('form_type') === 'levels-create' ? old('price') : '' }}" placeholder="49" style="{{ $input }}">
                         </div>
                     </div>
                     <div>
                         <label style="{{ $label }}">المدة المتوقعة (أسابيع)</label>
                         <div class="{{ $wrap }}">
-                            <input type="number" name="estimated_duration" value="{{ old('form_type') === 'create' ? old('estimated_duration') : '' }}" placeholder="8" style="{{ $input }}">
+                            <input type="number" name="estimated_duration" value="{{ old('form_type') === 'levels-create' ? old('estimated_duration') : '' }}" placeholder="8" style="{{ $input }}">
                         </div>
                     </div>
                 </div>
@@ -446,7 +446,7 @@
         @click="editModalOpen = false"
     >
       <div style="min-height:100%; display:flex; align-items:center; justify-content:center; padding:24px;">
-        <div @click.stop class="modal-scroll" style="position:relative; width:100%; max-width:640px; max-height:88vh; overflow-y:auto; background:#FBFEFF; border-radius:28px; padding:32px 28px 28px; box-shadow:0 50px 110px rgba(1,42,63,0.42); font-family:'Tajawal',sans-serif;" dir="rtl">
+        <div @click.stop class="modal-scroll" style="position:relative; width:100%; max-width:640px; max-height:88vh; overflow-y:auto; background:#EFFAFD; border-radius:28px; padding:32px 28px 28px; box-shadow:0 50px 110px rgba(1,42,63,0.42); font-family:'Tajawal',sans-serif;" dir="rtl">
             <button type="button" @click="editModalOpen = false" style="position:absolute; top:16px; left:16px; width:30px; height:30px; border-radius:50%; border:none; background:rgba(0,83,122,0.06); color:rgba(1,60,88,0.6); display:flex; align-items:center; justify-content:center; cursor:pointer;">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
             </button>
@@ -456,7 +456,7 @@
                 <p style="margin:6px 0 0; font-size:13px; color:rgba(1,60,88,0.5);">حدّثي تفاصيل هالمستوى</p>
             </div>
 
-            @if ($errors->any() && old('form_type') === 'edit')
+            @if ($errors->any() && old('form_type') === 'levels-edit')
                 <div style="display:flex; align-items:flex-start; gap:9px; margin-bottom:18px; padding:13px 16px; border-radius:12px; background:rgba(148,98,0,0.08); color:#946200; font-size:13px; font-weight:600;">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:1px;"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg>
                     <ul style="margin:0; padding-inline-start:16px;">
@@ -486,7 +486,7 @@
             <form method="POST" :action="'/levels/' + editTarget.id">
                 @csrf
                 @method('PUT')
-                <input type="hidden" name="form_type" value="edit">
+                <input type="hidden" name="form_type" value="levels-edit">
                 <input type="hidden" name="editing_level_id" :value="editTarget.id">
                 <input type="hidden" name="editing_level_status" :value="editTarget.status">
 

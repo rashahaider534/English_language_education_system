@@ -12,7 +12,7 @@
     .course-field-wrap:focus-within {
         border-color: #F5A201;
         box-shadow: 0 0 0 4px rgba(245,162,1,0.12);
-        background: #fff;
+        background: #EFFAFD;
     }
     .course-field-wrap.is-locked {
         border-color: rgba(0,83,122,0.06);
@@ -65,8 +65,8 @@
             this.archiveIsDelete = isDelete; this.archiveHasInProgress = hasInProgress;
             this.archiveModalOpen = true;
         },
-        createModalOpen: {{ ($errors->any() && old('form_type') === 'create') ? 'true' : 'false' }},
-        editModalOpen: {{ ($errors->any() && old('form_type') === 'edit') ? 'true' : 'false' }},
+        createModalOpen: {{ ($errors->any() && old('form_type') === 'courses-create') ? 'true' : 'false' }},
+        editModalOpen: {{ ($errors->any() && old('form_type') === 'courses-edit') ? 'true' : 'false' }},
         editTarget: {
             id: {{ (int) (old('editing_course_id') ?? 0) }},
             name_en: @js(old('name_en', '')),
@@ -148,7 +148,7 @@
     </div>
 
     {{-- ============ FILTER TABS ============ --}}
-    <div style="display:flex; gap:6px; background:#fff; border:1px solid rgba(0,83,122,0.07); border-radius:12px; padding:4px; flex-wrap:wrap; box-shadow:0 6px 18px rgba(0,83,122,0.04); margin-bottom:22px; width:fit-content;">
+    <div style="display:flex; gap:6px; background:#EFFAFD; border:1px solid rgba(0,83,122,0.07); border-radius:12px; padding:4px; flex-wrap:wrap; box-shadow:0 6px 18px rgba(0,83,122,0.04); margin-bottom:22px; width:fit-content;">
         @php
             $tabBase = "border:none; background:transparent; padding:8px 14px; border-radius:9px; font-family:'Poppins',sans-serif; font-size:12px; font-weight:600; white-space:nowrap; text-decoration:none; display:inline-block;";
         @endphp
@@ -173,7 +173,7 @@
                 $canEditCourse = $isSuperAdmin || auth()->id() === $course->created_by;
                 $imageUrl = $course->getFirstMediaUrl('course_image');
             @endphp
-            <div style="position:relative; background:#fff; border:1px solid rgba(0,83,122,0.07); border-radius:20px; overflow:hidden; box-shadow:0 10px 26px rgba(0,83,122,0.06); transition:transform 0.25s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s;"
+            <div style="position:relative; background:#EFFAFD; border:1.5px solid rgba(0,83,122,0.16); border-radius:20px; overflow:hidden; box-shadow:0 10px 26px rgba(0,83,122,0.06); transition:transform 0.25s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s;"
                  onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 28px 56px rgba(0,83,122,0.16)';"
                  onmouseout="this.style.transform=''; this.style.boxShadow='0 10px 26px rgba(0,83,122,0.06)';">
                 <div style="position:absolute; top:0; left:0; right:0; height:3px; background:{{ $sc['dot'] }}; z-index:1;"></div>
@@ -201,6 +201,22 @@
                         <span style="font-size:12.5px; font-weight:600; color:#013C58;">{{ $nameOf($course->teacher) }}</span>
                     </div>
 
+                    @php
+                        $avgStars = round($course->rates_avg_stars ?? 0);
+                    @endphp
+                    <div style="display:flex; align-items:center; gap:2px; margin-top:8px;">
+                        @for ($i = 1; $i <= 5; $i++)
+                            @if ($i <= $avgStars)
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="#F5A201" stroke="#F5A201" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9L12 3Z"></path></svg>
+                            @else
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#F5A201" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.4;"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9L12 3Z"></path></svg>
+                            @endif
+                        @endfor
+                        @if ($course->rates_avg_stars)
+                            <span style="font-size:11px; color:rgba(1,60,88,0.5); margin-inline-start:4px;">({{ number_format($course->rates_avg_stars, 1) }})</span>
+                        @endif
+                    </div>
+
                     <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:11px; flex-wrap:wrap;">
                         <div style="display:flex; align-items:center; gap:5px; font-size:11.5px; color:#00537A; font-weight:700; background:rgba(0,83,122,0.06); border-radius:999px; padding:5px 10px;">
                             <svg width="12.5" height="12.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
@@ -213,6 +229,10 @@
                     </div>
 
                     <div style="display:flex; gap:8px; margin-top:14px; padding-top:14px; border-top:1px solid rgba(0,83,122,0.06);">
+                        <a href="{{ route('lessons.index', $course) }}" title="عرض الدروس"
+                           style="display:flex; align-items:center; justify-content:center; width:37px; height:37px; border-radius:10px; background:rgba(168,232,249,0.18); color:#00537A; text-decoration:none; flex-shrink:0;">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h9"></path><path d="M4 12h9"></path><path d="M4 18h5"></path><path d="M15 15.5v-5l4.5 2.5-4.5 2.5Z" fill="currentColor" stroke="none"></path></svg>
+                        </a>
                         @if ($canEditCourse && !in_array($course->status, ['closed', 'archived']))
                             <button type="button"
                                @click="openEdit({{ Illuminate\Support\Js::from([
@@ -257,7 +277,7 @@
          class="modal-scroll" style="position:fixed; inset:0; z-index:50; background:rgba(1,42,63,0.5); backdrop-filter:blur(4px); overflow-y:auto;"
          @click="archiveModalOpen = false">
       <div style="min-height:100%; display:flex; align-items:center; justify-content:center; padding:24px;">
-        <div @click.stop style="width:100%; max-width:400px; background:#fff; border-radius:22px; padding:30px 26px; box-shadow:0 44px 100px rgba(1,42,63,0.4); text-align:center;">
+        <div @click.stop style="width:100%; max-width:400px; background:#EFFAFD; border-radius:22px; padding:30px 26px; box-shadow:0 44px 100px rgba(1,42,63,0.4); text-align:center;">
             <div style="width:58px; height:58px; border-radius:16px; background:rgba(245,162,1,0.1); color:#C97F00; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l1.5-3h15L21 7"></path><path d="M4.5 7h15v12a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1V7Z"></path><path d="M9 12h6"></path></svg>
             </div>
@@ -270,7 +290,7 @@
                 <span x-show="!archiveIsDelete && !archiveHasInProgress">هيصير هالكورس مؤرشف بالكامل، ومش رح يظهر للطلاب الجدد.</span>
             </p>
             <div style="display:flex; gap:10px; margin-top:22px;">
-                <button type="button" @click="archiveModalOpen = false" style="flex:1; padding:11px; border-radius:11px; border:1.5px solid rgba(0,83,122,0.12); background:#fff; color:#013C58; font-family:'Poppins',sans-serif; font-weight:600; font-size:13px; cursor:pointer;">إلغاء</button>
+                <button type="button" @click="archiveModalOpen = false" style="flex:1; padding:11px; border-radius:11px; border:1.5px solid rgba(0,83,122,0.12); background:#EFFAFD; color:#013C58; font-family:'Poppins',sans-serif; font-weight:600; font-size:13px; cursor:pointer;">إلغاء</button>
                 <form :action="'/courses/' + archiveId + '/archive'" method="POST" style="flex:1;">
                     @csrf
                     @method('PATCH')
@@ -286,7 +306,7 @@
          class="modal-scroll" style="position:fixed; inset:0; z-index:50; background:rgba(1,42,63,0.5); backdrop-filter:blur(4px); overflow-y:auto;"
          @click="createModalOpen = false">
       <div style="min-height:100%; display:flex; align-items:center; justify-content:center; padding:24px;">
-        <div @click.stop class="modal-scroll" style="position:relative; width:100%; max-width:640px; max-height:88vh; overflow-y:auto; background:#FBFEFF; border-radius:28px; padding:32px 28px 28px; box-shadow:0 50px 110px rgba(1,42,63,0.42); font-family:'Tajawal',sans-serif;" dir="rtl">
+        <div @click.stop class="modal-scroll" style="position:relative; width:100%; max-width:640px; max-height:88vh; overflow-y:auto; background:#EFFAFD; border-radius:28px; padding:32px 28px 28px; box-shadow:0 50px 110px rgba(1,42,63,0.42); font-family:'Tajawal',sans-serif;" dir="rtl">
             <button type="button" @click="createModalOpen = false" style="position:absolute; top:16px; left:16px; width:30px; height:30px; border-radius:50%; border:none; background:rgba(0,83,122,0.06); color:rgba(1,60,88,0.6); display:flex; align-items:center; justify-content:center; cursor:pointer;">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
             </button>
@@ -296,7 +316,7 @@
                 <p style="margin:6px 0 0; font-size:13px; color:rgba(1,60,88,0.5);">لمستوى {{ $level->name_ar }} ({{ $level->name_en }})</p>
             </div>
 
-            @if ($errors->any() && old('form_type') === 'create')
+            @if ($errors->any() && old('form_type') === 'courses-create')
                 <div style="display:flex; align-items:flex-start; gap:9px; margin-bottom:18px; padding:13px 16px; border-radius:12px; background:rgba(148,98,0,0.08); color:#946200; font-size:13px; font-weight:600;">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:1px;"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg>
                     <ul style="margin:0; padding-inline-start:16px;">
@@ -309,7 +329,7 @@
 
             <form method="POST" action="{{ route('courses.store', $level) }}" enctype="multipart/form-data">
                 @csrf
-                <input type="hidden" name="form_type" value="create">
+                <input type="hidden" name="form_type" value="courses-create">
 
                 @php
                     $label = 'display:block; font-size:12px; font-weight:600; color:rgba(1,60,88,0.6); margin-bottom:7px;';
@@ -388,7 +408,7 @@
          class="modal-scroll" style="position:fixed; inset:0; z-index:50; background:rgba(1,42,63,0.5); backdrop-filter:blur(4px); overflow-y:auto;"
          @click="editModalOpen = false">
       <div style="min-height:100%; display:flex; align-items:center; justify-content:center; padding:24px;">
-        <div @click.stop class="modal-scroll" style="position:relative; width:100%; max-width:640px; max-height:88vh; overflow-y:auto; background:#FBFEFF; border-radius:28px; padding:32px 28px 28px; box-shadow:0 50px 110px rgba(1,42,63,0.42); font-family:'Tajawal',sans-serif;" dir="rtl">
+        <div @click.stop class="modal-scroll" style="position:relative; width:100%; max-width:640px; max-height:88vh; overflow-y:auto; background:#EFFAFD; border-radius:28px; padding:32px 28px 28px; box-shadow:0 50px 110px rgba(1,42,63,0.42); font-family:'Tajawal',sans-serif;" dir="rtl">
             <button type="button" @click="editModalOpen = false" style="position:absolute; top:16px; left:16px; width:30px; height:30px; border-radius:50%; border:none; background:rgba(0,83,122,0.06); color:rgba(1,60,88,0.6); display:flex; align-items:center; justify-content:center; cursor:pointer;">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
             </button>
@@ -398,7 +418,7 @@
                 <p style="margin:6px 0 0; font-size:13px; color:rgba(1,60,88,0.5);">{{ $level->name_ar }} ({{ $level->name_en }})</p>
             </div>
 
-            @if ($errors->any() && old('form_type') === 'edit')
+            @if ($errors->any() && old('form_type') === 'courses-edit')
                 <div style="display:flex; align-items:flex-start; gap:9px; margin-bottom:18px; padding:13px 16px; border-radius:12px; background:rgba(148,98,0,0.08); color:#946200; font-size:13px; font-weight:600;">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:1px;"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg>
                     <ul style="margin:0; padding-inline-start:16px;">
@@ -413,7 +433,7 @@
                 <form method="POST" :action="'/courses/' + editTarget.id" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
-                    <input type="hidden" name="form_type" value="edit">
+                    <input type="hidden" name="form_type" value="courses-edit">
                     <input type="hidden" name="editing_course_id" :value="editTarget.id">
                     <input type="hidden" name="editing_course_status" :value="editTarget.status">
 

@@ -16,7 +16,7 @@ class RolePermissionSeeder extends Seeder
     {
         $admin = User::where('id', 3)->first();
         $superAdmin = Role::findByName('super-admin', 'web');
-
+        $studentRole=Role::findByName('student','api');
         $admin->givePermissionTo([
            'manage_levels',
            'manage_courses',
@@ -25,5 +25,6 @@ class RolePermissionSeeder extends Seeder
            'manage_placement_questions',
            'publish_levels'
         ]);
+        $studentRole->givePermissionTo(['create comments']);
     }
 }

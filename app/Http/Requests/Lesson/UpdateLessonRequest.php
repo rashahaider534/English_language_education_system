@@ -27,9 +27,9 @@ class UpdateLessonRequest extends FormRequest
         return [
             'title_en' => [
                 'sometimes',
+                'filled',
                 'string',
                 'max:255',
-                'filled',
                 'regex:/^[a-zA-Z0-9\s\-_]+$/',
                 Rule::unique('lessons', 'title_en')->ignore($lesson->id),
             ],
