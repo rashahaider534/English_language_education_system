@@ -13,7 +13,6 @@ use App\Http\Resources\Lesson\DetailLessonResource;
 use App\Models\Course;
 use App\Models\Lesson;
 use Illuminate\Http\Request;
-
 use App\Http\Resources\CourseResource;
 use App\Http\Resources\Word\WordResource;
 

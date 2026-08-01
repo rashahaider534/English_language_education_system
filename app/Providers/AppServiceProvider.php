@@ -42,6 +42,7 @@ class AppServiceProvider extends ServiceProvider
             'role'       => 'Spatie\Permission\Models\Role',
             'permission' => 'Spatie\Permission\Models\Permission',
             'level_exception' => LevelException::class,
+            'Word'=>'App\Models\Word',
         ]);
     }
 }

@@ -40,6 +40,13 @@ class UpdateWordRequest extends FormRequest
                 'regex:/^[\x{0600}-\x{06FF}\s0-9\-_]+$/u',
                 Rule::unique('words', 'word_ar')->ignore($word->id),
             ],
+            'audio' => [
+                'sometimes',
+                'filled',
+                'file',
+                //'mimes:mp3,wav,ogg,m4a',
+                'max:5120',
+            ],
 
         ];
     }

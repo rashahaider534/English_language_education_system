@@ -118,6 +118,7 @@ class TeacherLessonService
             return $lesson->fresh();
         });
     }
+
     public function delete(Lesson $lesson)
     {
         if ($lesson->course->teacher_id !== auth()->id()) {
@@ -136,11 +137,12 @@ class TeacherLessonService
                 'lesson' => 'You cannot delete lessons in this status.',
             ]);
         }
-        //اشعار اذا كانت حالته changes_requested
+        //اشعار للادمن  اذا كانت حالته changes_requested
         $lesson->delete();
         Cache::tags(['lessons'])->flush();
         return response()->json(['message' => 'Lesson deleted successfully.']);
     }
+
     public function show(Lesson $lesson)
     {
         $user = auth()->user();

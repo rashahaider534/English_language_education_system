@@ -104,6 +104,8 @@ Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
     Route::get('/words_bank/learning',[StudentWordController::class,'learningWords']);
     Route::post('/words/{word}/know',[StudentWordController::class,'know']);
     Route::post('/words/{word}/learning',[StudentWordController::class,'learning']);
+    Route::get('/words/quiz',[StudentWordController::class,'quizWords']);
+    Route::post('/words/{word}/quiz_check',[StudentWordController::class,'checkAnswer']);
 
 
 });

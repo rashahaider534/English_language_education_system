@@ -9,6 +9,7 @@ use App\Models\Word;
 use App\Services\Word\StudentWordService;
 use App\Enums\WordStatus;
 use App\Http\Resources\Word\WordBankResource;
+use App\Http\Requests\Word\CheckAnswerRequest;
 use Illuminate\Http\Request;
 
 class WordController extends Controller
@@ -41,9 +42,9 @@ class WordController extends Controller
             $word,
             WordStatus::LEARNING
         );
-        return new WordResource($word);
+        return new WordBankResource($word);
     }
-    
+
     public function knownWords()
     {
         $knowwords = $this->service->getWordsByStatus(auth()->user(), WordStatus::KNOW);
@@ -54,5 +55,18 @@ class WordController extends Controller
     {
         $learningwords = $this->service->getWordsByStatus(auth()->user(), WordStatus::LEARNING);
         return WordBankResource::collection($learningwords);
+    }
+
+    public function quizWords()
+    {
+        $quizWords = $this->service->quizWords(auth()->user());
+        return response()->json($quizWords);
+    }
+
+    public function checkAnswer(Word $word,CheckAnswerRequest $request)
+    {
+        return response()->json(
+        $this->service->checkAnswer(auth()->user(),$word, $request->validated())
+        );
     }
 }
