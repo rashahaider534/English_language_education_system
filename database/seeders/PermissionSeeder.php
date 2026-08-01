@@ -13,11 +13,12 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        Permission::create(['name' => 'create level', 'guard_name' => 'web']);
-        Permission::create(['name' => 'update level', 'guard_name' => 'web']);
-        Permission::create(['name' => 'archive level', 'guard_name' => 'web']);
-        Permission::create(['name' => 'view levels', 'guard_name' => 'web']);
-        Permission::create(['name' => 'archive lesson', 'guard_name' => 'web']);
+        Permission::create(['name' => 'manage_levels', 'guard_name' => 'web']);
+        Permission::create(['name' => 'manage_courses', 'guard_name' => 'web']);
+        Permission::create(['name' => 'manage_level_tests', 'guard_name' => 'web']);
+        Permission::create(['name' => 'manage_placement_tests', 'guard_name' => 'web']);
+        Permission::create(['name' => 'manage_placement_questions', 'guard_name' => 'web']);
+        Permission::create(['name' => 'publish_levels', 'guard_name' => 'web']);
         Permission::create(['name' => 'create comments', 'guard_name' => 'api']);
     }
 }
