@@ -45,9 +45,28 @@ class StudentCourseService
             ]);
         }
     }
+
+    private function getProgressLevel(Level $level, User $user)
+    {
+        $completedCourses = $user->StudentCourses()->where('user_courses.status', 'completed')
+            ->whereIn(
+                'course_id',
+                $level->courses()->select('id')
+            )->count();
+        $totalCourses = $level->courses()->count();
+        return [
+            'completed_courses' => $completedCourses,
+            'total_courses' => $totalCourses,
+            'progress_percentage' => $totalCourses > 0
+                ? round(($completedCourses / $totalCourses) * 100)
+                : 0,
+        ];
+    }
+
     public function getCourses(Level $level, User $user)
     {
         $allowedOrder = $this->getAllowedOrder($level, $user);
+        $getProgressLevel = $this->getProgressLevel($level, $user);
         $currentCourse = $user->StudentCourses()
             ->with('teacher')
             ->where('level_id', $level->id)
@@ -66,6 +85,7 @@ class StudentCourseService
             ->orderBy('order')
             ->get();
         return [
+            'progress' => $getProgressLevel,
             'current_course' => $currentCourse,
             'completed_courses' => $completedCourses,
             'locked_courses' => $lockedCourses

@@ -17,10 +17,11 @@ class LevelAccessService
     {
         $placementAttempt = UserAttempt::query()
             ->where('user_id', $user->id)
+            ->where('status', 'completed')
             ->whereHas('test', function ($query) {
                 $query->where('testable_type', 'placement_test');
             })
-            ->latest()
+            ->latest('completed_at')
             ->first();
 
         if (! $placementAttempt) {
@@ -32,12 +33,11 @@ class LevelAccessService
             ->where('maximum_score', '>=', $placementAttempt->score)
             ->first();
     }
+
     public  function getAllowedOrder(User $user)
     {
 
-        $recommendedOrder = $this
-            ->getRecommendedLevel($user)
-            ?->order ?? 1;
+        $recommendedOrder = $this->getRecommendedLevel($user) ?->order ?? 1;
         $lastCompletedLevelOrder = UserLevel::where('user_id', $user->id)
             ->where('status', 'completed')
             ->with('level')
@@ -51,26 +51,30 @@ class LevelAccessService
 
         return $allowedOrder;
     }
+
     public  function getAvailableLevels(
         int $allowedOrder,
         Collection $userLevelIds,
         array $approvedExceptionLevelIds
     ): Collection {
+
         return Level::query()
             ->where('status', 'published')
             ->where(function ($query) use ($allowedOrder, $approvedExceptionLevelIds) {
                 $query->where('order', '<=', $allowedOrder)
-                    ->orWhereIn('id', $approvedExceptionLevelIds);
+                      ->orWhereIn('id', $approvedExceptionLevelIds);
             })
             ->whereNotIn('id', $userLevelIds)
             ->orderBy('order')
             ->get();
     }
+
     public function getLockedLevels(
         int $allowedOrder,
         Collection $userLevelIds,
         array $approvedExceptionLevelIds
     ): Collection {
+
         return Level::query()
             ->where('status', 'published')
             ->where('order', '>', $allowedOrder)
@@ -79,6 +83,7 @@ class LevelAccessService
             ->orderBy('order')
             ->get();
     }
+
     public function getUserLevelContext(User $user): array
     {
         $userLevels = UserLevel::with('level')
@@ -87,6 +92,7 @@ class LevelAccessService
                 $q->where('status', '!=', 'archived');
             })
             ->get();
+
         return [
             'userLevels' => $userLevels,
             'userLevelIds' => $userLevels->pluck('level_id'),

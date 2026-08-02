@@ -20,6 +20,7 @@ class LessonController extends Controller
     {
         $data = $this->service->getlessons($course, auth()->user());
         return response()->json([
+            'progress' => $data['progress'],
             'current_lesson' => $data['current_lesson']
                 ? new StudentLessonResource($data['current_lesson'])
                 : null,
@@ -27,6 +28,7 @@ class LessonController extends Controller
             'locked_lessons' => StudentLessonResource::collection($data['locked_lessons']),
         ]);
     }
+
     public function show(Lesson $lesson)
     {
         $data = $this->service->show($lesson, auth()->user());

@@ -35,7 +35,6 @@ class TeacherWordService
                     ->addMedia($data['audio'])
                     ->toMediaCollection('audios');
             }
-        Cache::tags(['words', 'lesson_'.$lesson->id])->flush();
         return $word->load('media');
          });
     }
@@ -54,6 +53,7 @@ class TeacherWordService
         }
 
         if (isset($data['audio'])) {
+             $word->clearMediaCollection('audios');
                 $word
                     ->addMedia($data['audio'])
                     ->toMediaCollection('audios');
@@ -64,7 +64,6 @@ class TeacherWordService
                 'word_ar' => $data['word_ar']
             ]
         );
-        Cache::tags(['words', 'lesson_'.$word->lesson->id])->flush();
         return $word->fresh();
         });
     }
@@ -81,7 +80,6 @@ class TeacherWordService
             ]);
         }
         $word->delete();
-        Cache::tags(['words', 'lesson_'.$word->lesson->id])->flush();
         return ['word deleted  successfully'];
     }
 }

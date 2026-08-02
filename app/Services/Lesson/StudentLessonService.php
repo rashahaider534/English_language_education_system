@@ -13,6 +13,7 @@ class StudentLessonService
     public function __construct(
         private CommentService $commentService
     ) {}
+
     private function getAllowedOrder(Course $course, User $user)
     {
         $lastCompletedlessonOrder = $user->lessons()
@@ -30,6 +31,7 @@ class StudentLessonService
 
         return $nextLesson?->order ?? ($lastCompletedlessonOrder + 1);
     }
+
     public  function openNextLesson(Course $course, User $user)
     {
         $allowedOrder = $this->getAllowedOrder($course, $user);
@@ -50,6 +52,24 @@ class StudentLessonService
             ]);
         }
     }
+
+    private function getProgressCourse(Course $course, User $user)
+    {
+        $completedLessons = $user->lessons()->where('user_lessons.status', 'completed')
+            ->whereIn(
+                'lesson_id',
+                $course->lessons()->select('id')
+            )->count();
+        $totalLessons = $course->lessons()->count();
+        return [
+            'completed_lessons' => $completedLessons,
+            'total_lessons' => $totalLessons,
+            'progress_percentage' => $totalLessons > 0
+                ? round(($completedLessons / $totalLessons) * 100)
+                : 0,
+        ];
+    }
+
     public function getlessons(Course $course, User $user)
     {
         if (
@@ -62,26 +82,33 @@ class StudentLessonService
             ]);
         }
         $allowedOrder = $this->getAllowedOrder($course, $user);
+        $getProgressCourse=$this->getProgressCourse($course, $user);
+
         $currentLesson = $user->lessons()
             ->where('course_id', $course->id)
             ->where('user_lessons.status',  'in_progress')
             ->first();
+
         $completedLessons = $user->lessons()
             ->where('course_id', $course->id)
             ->where('user_lessons.status',  'completed')
             ->get();
+
         $lockedLessons = Lesson::query()
             ->where('course_id', $course->id)
-            ->where('lessons.status', 'published')
+            //->where('lessons.status', 'published')
             ->where('order', '>', $allowedOrder)
             ->orderBy('order')
             ->get();
+
         return [
+            'progress' => $getProgressCourse,
             'current_lesson' => $currentLesson,
             'completed_lessons' => $completedLessons,
             'locked_lessons' => $lockedLessons
         ];
     }
+    
     public function show(Lesson $lesson, User $user)
     {
         $canAccess = $user->lessons()
