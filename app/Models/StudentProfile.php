@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class StudentProfile extends Model
 {
     protected $fillable = [
+        'can_comment',
         'bio',
         'points',
         'streak',
