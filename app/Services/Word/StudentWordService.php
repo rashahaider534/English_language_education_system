@@ -14,14 +14,10 @@ class StudentWordService
 
     public function getLessonWords(Lesson $lesson)
     {
-        return Cache::tags(['words', 'lesson_' . $lesson->id])
-            ->remember(
-                "lesson.{$lesson->id}.words",
-                3600,
-                fn() => $lesson->words()
+        return $lesson->words()
                     ->with('media')
-                    ->get()
-            );
+                    ->get();
+
     }
 
     public function saveWordStatus(User $user, Word $word, WordStatus $status)
