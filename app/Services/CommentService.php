@@ -21,19 +21,19 @@ class CommentService
 
     public function create(Lesson $lesson, User $user, array $data)
     {
-            if ($lesson->status !== ContentStatus::PUBLISHED->value) {
-                throw ValidationException::withMessages([
-                    'comment' => 'You cannot be create comment for this lesson.',
-                ]);
-            }
-            return Comment::create([
-                'user_id' => $user->id,
-                'lesson_id' => $lesson->id,
-                'comment' => $data['comment'],
-                'created_at' => now(),
+        if ($lesson->status !== ContentStatus::PUBLISHED->value) {
+            throw ValidationException::withMessages([
+                'comment' => 'You cannot be create comment for this lesson.',
             ]);
-
+        }
+        return Comment::create([
+            'user_id' => $user->id,
+            'lesson_id' => $lesson->id,
+            'comment' => $data['comment'],
+            'created_at' => now(),
+        ]);
     }
+
     public function update(Comment $comment,  array $data)
     {
         if (in_array($comment->lesson->status, ['archived', 'closed'])) {
@@ -44,9 +44,27 @@ class CommentService
         $comment->update($data);
         return $comment;
     }
+
     public function delete(Comment $comment)
     {
         $comment->delete();
         return ['comment deleted successfully'];
+    }
+
+    public function block(User $user)
+    {
+        $profile = $user->studentProfile;
+
+        if (! $profile->can_comment) {
+            throw ValidationException::withMessages([
+                'user' => 'The student is already blocked from commenting.',
+            ]);
+        }
+        $profile->update([
+            'can_comment' => false,
+        ]);
+        return [
+            'message' => 'User has been blocked from commenting.',
+        ];
     }
 }

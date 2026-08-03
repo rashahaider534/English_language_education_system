@@ -36,8 +36,8 @@ class CommentPolicy
             ->exists();
 
         $teacherCanComment = $lesson->course->teacher_id === $user->id;
-
-        return $studentCanComment || $teacherCanComment;
+        $canComment  = $user->studentProfile?->can_comment ?? true;
+        return ($studentCanComment && $canComment) || $teacherCanComment;
     }
 
     /**
@@ -45,7 +45,15 @@ class CommentPolicy
      */
     public function update(User $user, Comment $comment): bool
     {
-        return $comment->user_id === $user->id;
+        if ($comment->user_id !== $user->id) {
+            return false;
+        }
+
+        if ($user->hasRole('teacher') && $comment->user_id === $user->id) {
+            return true;
+        }
+
+        return $user->studentProfile?->can_comment ?? true;
     }
 
     /**

@@ -114,6 +114,7 @@ Route::middleware(['auth:sanctum', 'role:student|teacher' ])->group(function () 
     Route::post('/comments/{lesson}',[CommentController::class,'create']);
     Route::post('/comments/{comment}/update',[CommentController::class,'update']);
     Route::delete('/comments/{comment}/delete',[CommentController::class,'delete']);
+     
 });
 
 //Route::post('generateLevelTest', [AdminTestController::class, 'generateLevelTest']);

@@ -16,6 +16,9 @@ class StudentLevelService
     public function __construct(
         private LevelAccessService $levelAccessService
     ) {}
+
+  
+
     public function getStudentLevels(User $user)
     {
         $allowedOrder = $this->levelAccessService->getAllowedOrder($user);
