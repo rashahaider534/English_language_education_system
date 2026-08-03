@@ -14,7 +14,7 @@ class CommentService
     public function getComments(Lesson $lesson)
     {
         return $lesson->comments()
-            ->with('user')
+            ->with('user.studentProfile')
             ->latest()
             ->paginate(10);
     }
@@ -53,7 +53,7 @@ class CommentService
 
     public function block(User $user)
     {
-        $profile = $user->studentProfile;
+        $profile = $user->studentProfile()->firstOrCreate([]);
 
         if (! $profile->can_comment) {
             throw ValidationException::withMessages([
