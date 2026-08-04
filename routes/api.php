@@ -139,7 +139,6 @@ Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
     //Profile api
     Route::get('/student/profile', [StudentProfileController::class , 'show']);
     Route::post('/student/profile', [StudentProfileController::class , 'update']);
-
 });
 
 //Route::post('generateLevelTest', [AdminTestController::class, 'generateLevelTest']);
