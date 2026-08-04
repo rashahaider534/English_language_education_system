@@ -17,7 +17,9 @@ class UserAttemptSeeder extends Seeder
             'user_id' => 2,
             'score' => 51,
             'status' => 'completed',
-            'completed_at' => now(),
+            'started_at' => now(),
+            'completed_at' => now()->addMinutes(5),
+
         ]);
     }
 }

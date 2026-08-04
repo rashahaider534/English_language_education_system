@@ -3,8 +3,11 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SocialAuthController;
+use App\Http\Controllers\StudentProfileController;
+use App\Http\Controllers\TeacherProfileController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\Admin\TestController as AdminTestController;
+use App\Http\Controllers\UserAttemptController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\Level;
@@ -29,15 +32,20 @@ Route::post('/resendOtp/{type}', [AuthController::class, 'resendOtp'])
     ->middleware('throttle:3,1');
 Route::post('/forgotPassword', [AuthController::class, 'forgotPassword'])
     ->middleware('throttle:3,1');
-Route::post('/resetPassword', [AuthController::class, 'resetPassword'])
-    ->middleware('throttle:3,1');
 Route::post('/login', [AuthController::class, 'login']);
 //Route::get('/google/redirect' , [SocialAuthController::class, 'redirect']);
 Route::post('/google/login', [SocialAuthController::class, 'login']);
+
 Route::middleware(['auth:sanctum', 'role:student|teacher'])->group(function () {
+    Route::post('/resetPassword', [AuthController::class, 'resetPassword'])
+        ->middleware('throttle:3,1');
     Route::post('/logout', [AuthController::class, 'logout']);
     //Test api
     Route::get('/tests/{test}', [TestController::class, 'show']);
+    //comment api
+    Route::post('/comments/{lesson}',[CommentController::class,'create']);
+    Route::post('/comments/{comment}/update',[CommentController::class,'update']);
+    Route::delete('/comments/{comment}/delete',[CommentController::class,'delete']);
 });
 
 //teacher routes
@@ -72,6 +80,9 @@ Route::middleware(['auth:sanctum', 'role:teacher'])->group(function () {
     Route::post('/words/{word}/update',[TeacherWordController::class,'update']);
     Route::delete('/words/{word}/delete',[TeacherWordController::class,'delete']);
 
+    //Profile api
+    Route::get('/teacher/profile', [TeacherProfileController::class , 'show']);
+    Route::post('/teacher/profile', [TeacherProfileController::class , 'update']);
 //بس للتجريب
    Route::get('/publishTest/{test}', [TestController::class, 'publishTest']);
 });
@@ -96,12 +107,22 @@ Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
     Route::post('/rate/{course}',[RateController::class,'rate']);
     Route::delete('/rate/{rate}/delete',[RateController::class,'delete']);
 
-});
-Route::middleware(['auth:sanctum', 'role:student|teacher' ])->group(function () {
-    //comment api
-    Route::post('/comments/{lesson}',[CommentController::class,'create']);
-    Route::post('/comments/{comment}/update',[CommentController::class,'update']);
-    Route::delete('/comments/{comment}/delete',[CommentController::class,'delete']);
+    //Attempt api
+    Route::post('/tests/{test}/start', [UserAttemptController::class, 'startAndShow']);
+
+    Route::prefix('attempts/{attempt}')->group(function () {
+        Route::post('/questions/{question}/submit-answer', [UserAttemptController::class, 'submitAnswer']);
+
+        Route::post('/finish', [UserAttemptController::class, 'finish']);
+
+        Route::post('/leave', [UserAttemptController::class, 'leave']);
+
+        Route::get('/review', [UserAttemptController::class, 'review']);
+    });
+
+    //Profile api
+    Route::get('/student/profile', [StudentProfileController::class , 'show']);
+    Route::post('/student/profile', [StudentProfileController::class , 'update']);
 });
 
 //Route::post('generateLevelTest', [AdminTestController::class, 'generateLevelTest']);

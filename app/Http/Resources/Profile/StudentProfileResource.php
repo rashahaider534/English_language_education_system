@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Profile;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -22,6 +22,8 @@ class StudentProfileResource extends JsonResource
             'streak' => $this->streak,
 
             'last_activate_date' => $this->last_activate_date,
+
+            'image_url' => $this->getFirstMediaUrl('student_profile_image'),
         ];
     }
 

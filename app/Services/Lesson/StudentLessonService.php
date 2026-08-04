@@ -37,6 +37,9 @@ class StudentLessonService
         $lesson = Lesson::where('course_id', $course->id)
             ->where('order', $allowedOrder)
             ->first();
+        if (!$lesson) {
+            return;
+        }
         $exists = $user->lessons()
             ->where('lesson_id', $lesson->id)
             ->exists();

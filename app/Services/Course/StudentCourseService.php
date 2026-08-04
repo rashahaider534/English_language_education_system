@@ -32,6 +32,9 @@ class StudentCourseService
         $course = Course::where('level_id', $level->id)
             ->where('order', $allowedOrder)
             ->first();
+        if (!$course) {
+            return;
+        }
         $exists = $user->StudentCourses()
             ->where('course_id', $course->id)
             ->exists();
