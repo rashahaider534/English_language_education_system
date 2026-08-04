@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ContentStatus;
 use App\Http\Requests\Api\scoring\SubmitAnswerRequest;
 use App\Http\Resources\Test\StudentTestResource;
 use App\Models\Question;
@@ -77,5 +78,16 @@ class UserAttemptController extends Controller
         $review = $this->attemptService->review($attempt);
 
         return response()->json($review);
+    }
+
+    public function startPlacementTest()
+    {
+        $test = Test::query()
+            ->where('testable_type','placement_test')
+            ->where('status', ContentStatus::PUBLISHED)
+            ->latest('id')
+            ->firstOrFail();
+
+        return $this->startAndShow($test);
     }
 }

@@ -110,22 +110,6 @@ Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
     Route::post('/rate/{course}',[RateController::class,'rate']);
     Route::delete('/rate/{rate}/delete',[RateController::class,'delete']);
 
-    //Attempt api
-    Route::post('/tests/{test}/start', [UserAttemptController::class, 'startAndShow']);
-
-    Route::prefix('attempts/{attempt}')->group(function () {
-        Route::post('/questions/{question}/submit-answer', [UserAttemptController::class, 'submitAnswer']);
-
-        Route::post('/finish', [UserAttemptController::class, 'finish']);
-
-        Route::post('/leave', [UserAttemptController::class, 'leave']);
-
-        Route::get('/review', [UserAttemptController::class, 'review']);
-    });
-
-    //Profile api
-    Route::get('/student/profile', [StudentProfileController::class , 'show']);
-    Route::post('/student/profile', [StudentProfileController::class , 'update']);
     //word api
     Route::get('/words/{lesson}/lesson',[StudentWordController::class,'getLessonWords']);
     Route::get('/words_bank/know',[StudentWordController::class,'knownWords']);
@@ -139,14 +123,22 @@ Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
     Route::post('/payments/{level}/create-intent',[PaymentController::class,'createIntent']);
     Route::get('/payments/{paymentIntentId}/status',[PaymentController::class,'status']);
 
+    //Attempt api
+    Route::post('/tests/{test}/start', [UserAttemptController::class, 'startAndShow']);
+    Route::get('/startPlacementTest', [UserAttemptController::class, 'startPlacementTest']);
+    Route::prefix('attempts/{attempt}')->group(function () {
+        Route::post('/questions/{question}/submit-answer', [UserAttemptController::class, 'submitAnswer']);
 
-});
-Route::middleware(['auth:sanctum', 'role:student|teacher' ])->group(function () {
-    //comment api
-    Route::post('/comments/{lesson}',[CommentController::class,'create']);
-    Route::post('/comments/{comment}/update',[CommentController::class,'update']);
-    Route::delete('/comments/{comment}/delete',[CommentController::class,'delete']);
+        Route::post('/finish', [UserAttemptController::class, 'finish']);
 
+        Route::post('/leave', [UserAttemptController::class, 'leave']);
+
+        Route::get('/review', [UserAttemptController::class, 'review']);
+    });
+
+    //Profile api
+    Route::get('/student/profile', [StudentProfileController::class , 'show']);
+    Route::post('/student/profile', [StudentProfileController::class , 'update']);
 });
 
 //Route::post('generateLevelTest', [AdminTestController::class, 'generateLevelTest']);
