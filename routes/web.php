@@ -9,6 +9,9 @@ use App\Http\Controllers\Admin\LevelController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\LessonController;
 use App\Http\Controllers\Admin\LevelExceptionController;
+use App\Http\Controllers\Admin\TeacherManagementController;
+use App\Http\Controllers\Admin\StudentManagementController;
+use App\Http\Controllers\Admin\ComplaintController;
 use App\Http\Controllers\CommentController;
 
 Route::get('/', function () {
@@ -17,17 +20,8 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardTemplateController::class, 'index'])->name('dashboard');
-    Route::get('/dashboard/users', [DashboardTemplateController::class, 'users'])->name('dashboard.users');
-    Route::get('/dashboard/roles', [DashboardTemplateController::class, 'roles'])->name('dashboard.roles');
-    Route::get('/dashboard/reports', [DashboardTemplateController::class, 'reports'])->name('dashboard.reports');
-    Route::get('/dashboard/tables', [DashboardTemplateController::class, 'tables'])->name('dashboard.tables');
-    Route::get('/dashboard/forms', [DashboardTemplateController::class, 'forms'])->name('dashboard.forms');
-    Route::get('/dashboard/cards', [DashboardTemplateController::class, 'cards'])->name('dashboard.cards');
-    Route::get('/dashboard/charts', [DashboardTemplateController::class, 'charts'])->name('dashboard.charts');
-    Route::get('/dashboard/notifications', [DashboardTemplateController::class, 'notifications'])->name('dashboard.notifications');
     Route::get('/dashboard/profile', [DashboardTemplateController::class, 'profile'])->name('dashboard.profile');
     Route::get('/dashboard/settings', [DashboardTemplateController::class, 'settings'])->name('dashboard.settings');
-    Route::get('/dashboard/blank', [DashboardTemplateController::class, 'blank'])->name('dashboard.blank');
 });
 
 Route::get('/language/{locale}', function ($locale) {
@@ -80,6 +74,26 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
     //comment route
     Route::delete('/comments/{comment}/destroy', [CommentController::class, 'admindelete']);
     Route::patch('/comments/{comment}/block',[CommentController::class,'block']);
+
+    // Teachers management & monitoring — index/lessons query real data;
+    // create/store/toggle-active are UI-only placeholders pending backend work.
+    Route::prefix('management/teachers')->name('admin.teachers.')->group(function () {
+        Route::get('/', [TeacherManagementController::class, 'index'])->name('index');
+        Route::get('/create', [TeacherManagementController::class, 'create'])->name('create');
+        Route::post('/', [TeacherManagementController::class, 'store'])->name('store');
+        Route::get('/{teacher}/lessons', [TeacherManagementController::class, 'lessons'])->name('lessons');
+        Route::patch('/{teacher}/toggle-active', [TeacherManagementController::class, 'toggleActive'])->name('toggle-active');
+    });
+
+    // Students management & monitoring — index queries real data;
+    // ban is a UI-only placeholder, no ban system exists yet.
+    Route::prefix('management/students')->name('admin.students.')->group(function () {
+        Route::get('/', [StudentManagementController::class, 'index'])->name('index');
+        Route::patch('/{student}/ban', [StudentManagementController::class, 'ban'])->name('ban');
+    });
+
+    // Complaints inbox (contact_us table) — read-only listing, no actions yet.
+    Route::get('/complaints', [ComplaintController::class, 'index'])->name('admin.complaints.index');
 });
 
 Route::middleware(['auth:web'])->group(function () {
