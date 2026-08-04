@@ -8,9 +8,17 @@
     .q-type-card { transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease; cursor:pointer; }
     .q-type-card:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(1,60,88,0.1); }
 
-    .q-field-wrap { border:1.5px solid rgba(0,83,122,0.14); border-radius:11px; background:#FBFEFF; transition:border-color 0.15s ease; }
-    .q-field-wrap:focus-within { border-color:#0E6A96; }
+    .q-field-wrap { border:1.5px solid rgba(0,83,122,0.14); border-radius:11px; background:#FBFEFF; }
     .q-field-wrap input, .q-field-wrap textarea, .q-field-wrap select { width:100%; background:transparent; border:none; outline:none; padding:11px 13px; font-size:13px; color:#013C58; font-family:'Tajawal',sans-serif; }
+    .q-field-wrap input:focus, .q-field-wrap textarea:focus, .q-field-wrap select:focus,
+    .q-field-wrap input:focus-visible, .q-field-wrap textarea:focus-visible, .q-field-wrap select:focus-visible {
+        outline: none !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+    .q-field-wrap:focus-within {
+        border-color: rgba(0,83,122,0.14) !important;
+    }
 
     .q-answer-row { transition: background 0.15s ease; }
     .q-answer-row:hover { background: rgba(168,232,249,0.08); }
@@ -82,11 +90,11 @@
                 <div>
                     <label style="display:block; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.55); margin-bottom:6px;">مستوى الصعوبة</label>
                     <div class="q-field-wrap">
-                        <select name="difficulty" x-model="difficulty" required>
-                            <option value="">اختاري...</option>
-                            <option value="EASY">سهل (1-2 نقطة)</option>
-                            <option value="MEDIUM">متوسط (3-5 نقاط)</option>
-                            <option value="HARD">صعب (6-10 نقاط)</option>
+                        <select name="difficulty" x-model="difficulty" @change="score = ''" required>
+                            <option value="" style="color:#013C58;">اختاري...</option>
+                            <option value="EASY" style="color:#2E7D55;">● سهل (1-2 نقطة)</option>
+                            <option value="MEDIUM" style="color:#8A5A00;">● متوسط (3-5 نقاط)</option>
+                            <option value="HARD" style="color:#C2591A;">● صعب (6-10 نقاط)</option>
                         </select>
                     </div>
                 </div>
@@ -95,7 +103,7 @@
                         النقاط
                         <span x-show="difficulty" style="color:rgba(1,60,88,0.4); font-weight:600;" x-text="scoreHint"></span>
                     </label>
-                    <div class="q-field-wrap"><input type="number" name="score" :min="scoreMin" :max="scoreMax" required></div>
+                    <div class="q-field-wrap"><input type="number" name="score" x-model.number="score" :min="scoreMin" :max="scoreMax" required></div>
                 </div>
             </div>
 
@@ -195,6 +203,7 @@ function questionForm() {
     return {
         type: 'MCQ',
         difficulty: '',
+        score: '',
         types: [
             { value: 'MCQ', label: 'اختيار من متعدد' },
             { value: 'FILL', label: 'ملء فراغ' },

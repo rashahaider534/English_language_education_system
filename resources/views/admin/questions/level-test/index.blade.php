@@ -50,6 +50,13 @@
         </div>
     @endif
 
+    <div style="margin-bottom:18px;">
+        <a href="{{ route('tests.level.levelTest.index', $level) }}" style="display:inline-flex; align-items:center; gap:6px; color:#00537A; font-size:13px; font-weight:600; text-decoration:none;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 19-7-7 7-7"></path></svg>
+            العودة لاختبارات هالمستوى
+        </a>
+    </div>
+
     {{-- ============ HERO ============ --}}
     <div class="q-hero" style="position:relative; overflow:hidden; background:linear-gradient(135deg,#013C58 0%, #00537A 60%, #0E6A96 130%); border-radius:26px; padding:26px 32px 24px; margin-bottom:22px; box-shadow:0 24px 55px rgba(1,60,88,0.22);">
         <div style="position:absolute; width:420px; height:420px; right:-120px; top:-160px; border-radius:50%; background:radial-gradient(circle, rgba(255,211,91,0.2) 0%, rgba(255,211,91,0) 70%); pointer-events:none;"></div>
@@ -61,12 +68,12 @@
                 </div>
                 <div>
                     <p style="margin:0; font-size:11.5px; font-weight:700; letter-spacing:1.4px; text-transform:uppercase; color:rgba(168,232,249,0.8);">بنك الأسئلة</p>
-                    <h1 style="margin:6px 0 0; font-family:'Poppins',sans-serif; font-weight:800; font-size:23px; color:#fff;">أسئلة اختبار تحديد المستوى</h1>
+                    <h1 style="margin:6px 0 0; font-family:'Poppins',sans-serif; font-weight:800; font-size:23px; color:#fff;">الأسئلة المؤهلة لمستوى: {{ $level->name_ar }}</h1>
                 </div>
             </div>
-            <a href="{{ route('questions.placement.create') }}" class="q-create-btn" style="display:inline-flex; align-items:center; gap:8px; padding:12px 22px; border-radius:12px; background:linear-gradient(90deg,#F5A201,#FFBA42); color:#013C58; text-decoration:none; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px;">
+            <a href="{{ route('tests.level.levelTest.create', $level) }}" class="q-create-btn" style="display:inline-flex; align-items:center; gap:8px; padding:12px 22px; border-radius:12px; background:linear-gradient(90deg,#F5A201,#FFBA42); color:#013C58; text-decoration:none; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px;">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
-                سؤال جديد
+                إنشاء اختبار لهالمستوى
             </a>
         </div>
 
@@ -77,13 +84,13 @@
             @endphp
             <div class="q-stat" style="{{ $statCard }}">
                 <div style="{{ $iconWrapBase }} color:#FFD35B;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"></rect><path d="M3 10h18"></path></svg></div>
-                <div><p style="margin:0; font-size:11.5px; font-weight:600; color:rgba(255,236,176,0.85);">إجمالي الأسئلة</p><p style="margin:2px 0 0; font-family:'Poppins',sans-serif; font-weight:800; font-size:20px; color:#fff;">{{ $totalCount }}</p></div>
+                <div><p style="margin:0; font-size:11.5px; font-weight:600; color:rgba(255,236,176,0.85);">إجمالي الأسئلة المؤهلة</p><p style="margin:2px 0 0; font-family:'Poppins',sans-serif; font-weight:800; font-size:20px; color:#fff;">{{ $totalCount }}</p></div>
             </div>
         </div>
     </div>
 
     {{-- ============ FILTERS ============ --}}
-    <form method="GET" action="{{ route('questions.placement.index') }}" class="q-filters" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:22px; background:#EFFAFD; border:1.5px solid rgba(0,83,122,0.16); border-radius:16px; padding:14px 18px;">
+    <form method="GET" action="{{ route('tests.level.questions.index', $level) }}" class="q-filters" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:22px; background:#EFFAFD; border:1.5px solid rgba(0,83,122,0.16); border-radius:16px; padding:14px 18px;">
         <input type="text" name="search" value="{{ $currentSearch }}" placeholder="ابحث بنص السؤال..." style="flex:1; min-width:180px; padding:9px 14px; border:1.5px solid rgba(0,83,122,0.14); border-radius:10px; background:#FBFEFF; color:#013C58; font-size:13px; font-family:'Tajawal',sans-serif; outline:none;">
 
         <select name="type" style="padding:9px 14px; border:1.5px solid rgba(0,83,122,0.14); border-radius:10px; background:#FBFEFF; color:#013C58; font-size:12.5px; font-family:'Tajawal',sans-serif; outline:none;">
@@ -105,7 +112,7 @@
             فلترة
         </button>
         @if ($currentType || $currentDifficulty || $currentSearch)
-            <a href="{{ route('questions.placement.index') }}" style="font-size:12px; color:rgba(1,60,88,0.5); font-weight:600; text-decoration:none;">إلغاء الفلترة</a>
+            <a href="{{ route('tests.level.questions.index', $level) }}" style="font-size:12px; color:rgba(1,60,88,0.5); font-weight:600; text-decoration:none;">إلغاء الفلترة</a>
         @endif
     </form>
 
@@ -168,7 +175,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" style="padding:60px 20px; text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:14px;">ما في أسئلة بهالفلتر</td>
+                        <td colspan="6" style="padding:60px 20px; text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:14px;">ما في أسئلة مؤهلة لهالمستوى بهالفلتر</td>
                     </tr>
                 @endforelse
             </tbody>

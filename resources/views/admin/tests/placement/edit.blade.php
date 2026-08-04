@@ -5,9 +5,17 @@
     @keyframes lessonsFadeUp { from { opacity:0; transform:translateY(10px);} to { opacity:1; transform:translateY(0);} }
     .t-panel { animation: lessonsFadeUp 0.4s ease both; }
 
-    .t-field-wrap { border:1.5px solid rgba(0,83,122,0.14); border-radius:11px; background:#FBFEFF; transition:border-color 0.15s ease; }
-    .t-field-wrap:focus-within { border-color:#0E6A96; }
+    .t-field-wrap { border:1.5px solid rgba(0,83,122,0.14); border-radius:11px; background:#FBFEFF; }
     .t-field-wrap input, .t-field-wrap select { width:100%; background:transparent; border:none; outline:none; padding:11px 13px; font-size:13px; color:#013C58; font-family:'Tajawal',sans-serif; }
+    .t-field-wrap input:focus, .t-field-wrap select:focus,
+    .t-field-wrap input:focus-visible, .t-field-wrap select:focus-visible {
+        outline: none !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+    .t-field-wrap:focus-within {
+        border-color: rgba(0,83,122,0.14) !important;
+    }
 
     .t-pool-row { transition: background 0.15s ease; }
     .t-pool-row:hover { background: rgba(168,232,249,0.12); }
@@ -18,7 +26,16 @@
     .t-mini-btn { transition: transform 0.15s ease, background 0.15s ease; }
     .t-mini-btn:hover { transform: translateY(-1px); }
 
-    .t-submit-btn { transition: transform 0.15s ease, box-shadow 0.15s ease; }
+    .t-arrow-btn { width:22px; height:18px; border:none; border-radius:5px; background:rgba(0,83,122,0.08); color:#00537A; cursor:pointer; opacity:1; }
+    .t-arrow-btn:disabled { opacity:0.3; cursor:not-allowed; }
+
+    .t-submit-btn {
+        display:inline-flex; align-items:center; gap:8px; padding:13px 30px; border-radius:12px; border:none;
+        background:linear-gradient(90deg,#F5A201,#FFBA42); color:#013C58; font-family:'Poppins',sans-serif; font-weight:700; font-size:14px;
+        transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+    }
+    .t-submit-btn:disabled { opacity:0.45; cursor:not-allowed; }
+    .t-submit-btn:not(:disabled) { cursor:pointer; }
     .t-submit-btn:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(245,162,1,0.28); }
 </style>
 @endpush
@@ -26,7 +43,9 @@
 @section('content')
 @php
     $typeLabels = ['MCQ' => 'اختيار من متعدد', 'FILL' => 'ملء فراغ', 'ARRANGE' => 'ترتيب كلمات', 'PAIR' => 'توصيل'];
+    $typeColors = ['MCQ' => '#0E6A96', 'FILL' => '#8A5A00', 'ARRANGE' => '#2E7D55', 'PAIR' => '#C2591A'];
     $difficultyLabels = ['EASY' => 'سهل', 'MEDIUM' => 'متوسط', 'HARD' => 'صعب'];
+    $difficultyColors = ['EASY' => '#2E7D55', 'MEDIUM' => '#8A5A00', 'HARD' => '#C2591A'];
 
     $statusVal = $test->status?->value ?? $test->status;
     $isPublished = $statusVal === 'published';
@@ -108,17 +127,17 @@
                     <div class="t-field-wrap" style="flex:1;"><input type="text" x-model="search" placeholder="بحث بنص السؤال..."></div>
                     <div class="t-field-wrap" style="width:120px;">
                         <select x-model="filterType">
-                            <option value="">كل الأنواع</option>
+                            <option value="" style="color:#013C58;">كل الأنواع</option>
                             @foreach ($typeLabels as $val => $label)
-                                <option value="{{ $val }}">{{ $label }}</option>
+                                <option value="{{ $val }}" style="color:{{ $typeColors[$val] }};">● {{ $label }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="t-field-wrap" style="width:110px;">
                         <select x-model="filterDifficulty">
-                            <option value="">كل الصعوبات</option>
+                            <option value="" style="color:#013C58;">كل الصعوبات</option>
                             @foreach ($difficultyLabels as $val => $label)
-                                <option value="{{ $val }}">{{ $label }}</option>
+                                <option value="{{ $val }}" style="color:{{ $difficultyColors[$val] }};">● {{ $label }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -158,8 +177,8 @@
                             <input type="hidden" :name="'questions['+i+'][id]'" :value="s.id">
                             <input type="hidden" :name="'questions['+i+'][order]'" :value="i+1">
                             <div style="display:flex; flex-direction:column; gap:2px;">
-                                <button type="button" class="t-mini-btn" @click="moveUp(i)" :style="i === 0 ? 'opacity:0.3; cursor:not-allowed;' : ''" style="width:22px; height:18px; border:none; border-radius:5px; background:rgba(0,83,122,0.08); color:#00537A; cursor:pointer;">▲</button>
-                                <button type="button" class="t-mini-btn" @click="moveDown(i)" :style="i === selected.length - 1 ? 'opacity:0.3; cursor:not-allowed;' : ''" style="width:22px; height:18px; border:none; border-radius:5px; background:rgba(0,83,122,0.08); color:#00537A; cursor:pointer;">▼</button>
+                                <button type="button" class="t-arrow-btn" @click="moveUp(i)" :disabled="i === 0">▲</button>
+                                <button type="button" class="t-arrow-btn" @click="moveDown(i)" :disabled="i === selected.length - 1">▼</button>
                             </div>
                             <button type="button" @click="selected.splice(i,1)" style="width:28px; height:28px; border-radius:8px; border:none; background:rgba(229,72,77,0.1); color:#C2591A; cursor:pointer; flex-shrink:0;">×</button>
                         </div>
@@ -171,7 +190,7 @@
 
         <div style="margin-top:22px;">
             <p x-show="selected.length > 0 && selected.length < 2" x-cloak style="margin:0 0 12px; font-size:12px; color:#C2591A; font-weight:700;">لازم تختاري إجابتين (سؤالين) على الأقل.</p>
-            <button type="submit" class="t-submit-btn" :disabled="selected.length < 2" :style="selected.length < 2 ? 'opacity:0.45; cursor:not-allowed;' : 'cursor:pointer;'" style="display:inline-flex; align-items:center; gap:8px; padding:13px 30px; border-radius:12px; border:none; background:linear-gradient(90deg,#F5A201,#FFBA42); color:#013C58; font-family:'Poppins',sans-serif; font-weight:700; font-size:14px;">
+            <button type="submit" class="t-submit-btn" :disabled="selected.length < 2">
                 {{ $isPublished ? 'حفظ كنسخة جديدة' : 'حفظ التعديلات' }}
             </button>
         </div>
