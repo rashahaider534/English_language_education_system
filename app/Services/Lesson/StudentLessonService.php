@@ -96,7 +96,7 @@ class StudentLessonService
 
         $lockedLessons = Lesson::query()
             ->where('course_id', $course->id)
-            //->where('lessons.status', 'published')
+            ->where('lessons.status', 'published')
             ->where('order', '>', $allowedOrder)
             ->orderBy('order')
             ->get();
@@ -108,7 +108,7 @@ class StudentLessonService
             'locked_lessons' => $lockedLessons
         ];
     }
-    
+
     public function show(Lesson $lesson, User $user)
     {
         $canAccess = $user->lessons()
