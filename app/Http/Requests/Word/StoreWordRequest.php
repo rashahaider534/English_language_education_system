@@ -24,7 +24,7 @@ class StoreWordRequest extends FormRequest
     public function rules(): array
     {
         return [
-             'word_en' => [
+            'word_en' => [
                 'required',
                 'string',
                 'regex:/^[a-zA-Z0-9\s\-_]+$/',
@@ -36,6 +36,12 @@ class StoreWordRequest extends FormRequest
                 'string',
                 'regex:/^[\x{0600}-\x{06FF}\s0-9\-_]+$/u',
                 Rule::unique('words', 'word_ar'),
+            ],
+            'audio' => [
+                'required',
+                'file',
+                //'mimes:mp3,wav,ogg,m4a',
+                'max:5120',
             ],
 
         ];

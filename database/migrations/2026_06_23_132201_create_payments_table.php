@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\PaymentStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,8 +19,10 @@ return new class extends Migration
             $table->string('stripe_payment_intent_id')->unique();
             $table->decimal('amount', 8, 2);
             $table->string('currency');
-            $table->enum('status', ['pending', 'paid', 'fail'])->default('pending');
+            $table->enum('status',array_column(PaymentStatus::cases(), 'value')
+            )->default(PaymentStatus::PENDING->value);
             $table->timestamp('paid_at')->nullable();
+            $table->string('failure_reason')->nullable();
             $table->timestamps();
         });
     }

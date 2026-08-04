@@ -4,7 +4,7 @@ namespace App\Http\Resources\Lesson;
 
 use App\Http\Resources\CommentResource;
 use App\Http\Resources\CourseResource;
-use App\Http\Resources\WordResource;
+use App\Http\Resources\Word\WordResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

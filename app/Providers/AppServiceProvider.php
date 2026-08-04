@@ -45,6 +45,7 @@ class AppServiceProvider extends ServiceProvider
             'level_exception' => LevelException::class,
             'student_profile' => 'App\Models\StudentProfile',
             'teacher_profile' => 'App\Models\TeacherProfile',
+            'Word'=>'App\Models\Word',
         ]);
 
         Gate::before(function ($user, $ability) {

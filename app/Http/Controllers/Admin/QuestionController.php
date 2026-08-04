@@ -38,7 +38,7 @@ class QuestionController extends Controller
     {
         $data = $request->validated();
         $this->questionService->store($data);
-        return redirect() ->route('admin.questions.placement.index') ->with('success', 'Question created successfully.');
+        return redirect() ->route('questions.placement.index') ->with('success', 'Question created successfully.');
     }
 
     public function edit(Question $question): View
@@ -51,14 +51,14 @@ class QuestionController extends Controller
         $this->authorize('update', $question);
         $data = $request->validated();
         $this->questionService->updateQuestion( $question, $data );
-        return redirect() ->route('admin.questions.placement.index') ->with('success', 'Question updated successfully.');
+        return redirect() ->route('questions.placement.index') ->with('success', 'Question updated successfully.');
     }
 
     public function deleteQuestion( Question $question ): RedirectResponse
     {
         $this->authorize('delete', $question);
         $this->questionService->deleteQuestion($question);
-        return redirect() ->route('admin.questions.placement.index') ->with('success', 'Question deleted successfully.');
+        return redirect() ->route('questions.placement.index') ->with('success', 'Question deleted successfully.');
     }
 
     public function indexPlacementQuestions( FilterQuestionRequest $request ): View

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('bio')->nullable();
             $table->integer('points')->default(0);
             $table->integer('streak')->default(0);
+            $table->boolean('can_comment')->default(true);
             $table->date('last_activate_date')->nullable();
             $table->timestamps();
         });

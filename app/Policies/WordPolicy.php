@@ -20,9 +20,18 @@ class WordPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Word $word): bool
+    public function view(User $user,  Lesson $lesson): bool
     {
-        return false;
+        return $user->hasRole('teacher')
+        && $lesson->course->teacher_id === $user->id
+        ||
+        $user->lessons()
+            ->where('lesson_id', $lesson->id)
+            ->wherePivotIn('status', [
+                'in_progress',
+                'completed'
+            ])
+            ->exists();
     }
 
     /**

@@ -4,6 +4,9 @@ namespace Database\Seeders;
 
 use App\Models\Word;
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use App\Enums\WordStatus;
+use Illuminate\Support\Facades\DB;
 
 class WordSeeder extends Seeder
 {
@@ -13,32 +16,29 @@ class WordSeeder extends Seeder
 
         $lessonWords = [
 
-            // Lesson 1 - Nouns
-            1 => [
-                ['en' => 'Book', 'ar' => 'كتاب'],
-                ['en' => 'Table', 'ar' => 'طاولة'],
-                ['en' => 'Teacher', 'ar' => 'معلم'],
-                ['en' => 'Student', 'ar' => 'طالب'],
-                ['en' => 'House', 'ar' => 'منزل'],
+            4 => [
+                ['en' => 'Eat', 'ar' => 'يأكل'],
+                ['en' => 'Drink', 'ar' => 'يشرب'],
+                ['en' => 'run', 'ar' => 'يركض'],
+                ['en' => 'see', 'ar' => 'يرى']
+
             ],
 
-            // Lesson 2 - Pronouns
-            2 => [
+            5 => [
                 ['en' => 'I', 'ar' => 'أنا'],
                 ['en' => 'You', 'ar' => 'أنت'],
                 ['en' => 'He', 'ar' => 'هو'],
-                ['en' => 'She', 'ar' => 'هي'],
-                ['en' => 'They', 'ar' => 'هم'],
+                ['en' => 'She', 'ar' => 'هي']
+
+            ],
+             1 => [
+                ['en' => 'I', 'ar' => 'أنا'],
+                ['en' => 'You', 'ar' => 'أنت'],
+                ['en' => 'He', 'ar' => 'هو'],
+                ['en' => 'She', 'ar' => 'هي']
+
             ],
 
-            // Lesson 3 - Present Simple
-            3 => [
-                ['en' => 'Eat', 'ar' => 'يأكل'],
-                ['en' => 'Drink', 'ar' => 'يشرب'],
-                ['en' => 'Study', 'ar' => 'يدرس'],
-                ['en' => 'Play', 'ar' => 'يلعب'],
-                ['en' => 'Work', 'ar' => 'يعمل'],
-            ],
 
         ];
 
@@ -57,5 +57,31 @@ class WordSeeder extends Seeder
         }
 
         Word::insert($words);
+        $word4 = Word::find(1);
+        $word4
+            ->addMedia(database_path('seeders/audios/test2.wav'))
+            ->preservingOriginal()
+            ->toMediaCollection('audios');
+
+        $word5 = Word::find(2);
+        $word5
+            ->addMedia(database_path('seeders/audios/test2.wav'))
+            ->preservingOriginal()
+            ->toMediaCollection('audios');
+
+        $user = User::find(2);
+        $rows = [];
+        foreach (Word::take(8)->get() as $index => $word) {
+
+            $rows[] = [
+                'user_id'   => $user->id,
+                'word_id'   => $word->id,
+                'status'    => $index < 4
+                    ? WordStatus::KNOW->value
+                    : WordStatus::LEARNING->value,
+                'added_at'  => now()->subDays(rand(1, 10)),
+            ];
+        }
+        DB::table('user_words')->insert($rows);
     }
 }
