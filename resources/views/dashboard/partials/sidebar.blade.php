@@ -4,6 +4,8 @@
         ['label' => 'مستويات / كورسات / دروس', 'route' => 'levels.index', 'icon' => 'levels'],
         ['label' => 'الدروس قيد الانتظار', 'route' => 'lessons.pending', 'icon' => 'pending-lessons'],
         ['label' => 'طلبات الاستثناء', 'route' => 'levelException.index', 'icon' => 'level-exceptions', 'superAdminOnly' => true],
+        ['label' => 'بنك أسئلة تحديد المستوى', 'route' => 'questions.placement.index', 'icon' => 'question-bank', 'requiredPermission' => 'manage_placement_questions'],
+        ['label' => 'اختبارات تحديد المستوى', 'route' => 'tests.placement.placement.index', 'icon' => 'placement-tests', 'requiredPermission' => 'manage_placement_tests'],
         ['label' => 'Users', 'route' => 'dashboard.users', 'icon' => 'users'],
         ['label' => 'Roles & Permissions', 'route' => 'dashboard.roles', 'icon' => 'shield'],
         ['label' => 'Reports', 'route' => 'dashboard.reports', 'icon' => 'reports'],
@@ -31,10 +33,12 @@
         <p class="dashboard-sidebar__section">Navigation</p>
 
         @foreach ($dashboardNav as $item)
-            @continue(($item['superAdminOnly'] ?? false) && !auth()->user()->hasRole('super-admin'))
+            @continue(($item['superAdminOnly'] ?? false) && !auth()->user()->hasRole('super-admin', 'web'))
+            @continue(($item['requiredPermission'] ?? null) && !auth()->user()->can($item['requiredPermission'], 'web'))
             @php
                 $active = request()->routeIs($item['route'])
-                    || ($item['route'] === 'levels.index' && (request()->routeIs('levels.*') || request()->routeIs('courses.*')));
+                    || ($item['route'] === 'levels.index' && (request()->routeIs('levels.*') || request()->routeIs('courses.*')))
+                    || ($item['route'] === 'tests.placement.placement.index' && request()->routeIs('tests.placement.*'));
             @endphp
             <a href="{{ route($item['route']) }}" class="dashboard-nav-link {{ $active ? 'is-active' : '' }}">
                 <span class="dashboard-nav-link__icon">
