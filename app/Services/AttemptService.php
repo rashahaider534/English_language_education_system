@@ -13,6 +13,7 @@ use App\Models\UserAttemptAnswer;
 use App\Services\Course\StudentCourseService;
 use App\Services\Lesson\StudentLessonService;
 use App\Services\Scoring\QuestionScorerFactory;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -94,6 +95,9 @@ class AttemptService
     {
         return DB::transaction(function () use ($test) {
             $user = auth()->user();
+            if (!$user instanceof User) {
+                throw new AuthenticationException();
+            }
             if ($test->testable_type === 'placement_test') {
                 if (!$this->isEligibleForPlacementRetake($user)) {
                     throw ValidationException::withMessages([
@@ -120,7 +124,7 @@ class AttemptService
 
     public function isEligibleForPlacementRetake(User $user): bool
     {
-        if ($user->levels()->exists()) {
+        if ($user->userLevels()->exists()) {
             return false;
         }
 
