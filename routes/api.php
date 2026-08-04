@@ -10,22 +10,24 @@ use App\Http\Controllers\Admin\TestController as AdminTestController;
 use App\Http\Controllers\UserAttemptController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Models\Level;
 use Illuminate\Support\Facades\App;
 use App\Http\Controllers\Student\LevelController;
 use App\Http\Controllers\Student\CourseController;
 use App\Http\Controllers\Teacher\LessonController as TeacherLessonController;
 use App\Http\Controllers\Student\LessonController  as StudentLessonController;
 use App\Http\Controllers\Teacher\WordController as TeacherWordController;
+use App\Http\Controllers\Student\WordController as StudentWordController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\Student\LevelExceptionController;
 use App\Http\Controllers\Student\RateController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\StripeWebhookController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-
+Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle']);
 Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:2,1');
 Route::post('/verifyOtp/{type}', [AuthController::class, 'verifyOtp']);
 Route::post('/resendOtp/{type}', [AuthController::class, 'resendOtp'])
@@ -102,10 +104,32 @@ Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
     Route::post('/levelexceptions/{level}/create',[LevelExceptionController::class,'create']);
     Route::post('/levelexceptions/{levelException}/update',[LevelExceptionController::class,'update']);
     Route::delete('/levelexceptions/{levelException}/delete',[LevelExceptionController::class,'delete']);
+    Route::delete('/level-exceptions/{levelException}/attachments/{media}',[LevelExceptionController::class, 'destroyAttachment']);
 
     //rate api
     Route::post('/rate/{course}',[RateController::class,'rate']);
     Route::delete('/rate/{rate}/delete',[RateController::class,'delete']);
+
+    //word api
+    Route::get('/words/{lesson}/lesson',[StudentWordController::class,'getLessonWords']);
+    Route::get('/words_bank/know',[StudentWordController::class,'knownWords']);
+    Route::get('/words_bank/learning',[StudentWordController::class,'learningWords']);
+    Route::post('/words/{word}/know',[StudentWordController::class,'know']);
+    Route::post('/words/{word}/learning',[StudentWordController::class,'learning']);
+    Route::get('/words/quiz',[StudentWordController::class,'quizWords']);
+    Route::post('/words/{word}/quiz_check',[StudentWordController::class,'checkAnswer']);
+
+    //payment api
+    Route::post('/payments/{level}/create-intent',[PaymentController::class,'createIntent']);
+    Route::get('/payments/{paymentIntentId}/status',[PaymentController::class,'status']);
+
+
+});
+Route::middleware(['auth:sanctum', 'role:student|teacher' ])->group(function () {
+    //comment api
+    Route::post('/comments/{lesson}',[CommentController::class,'create']);
+    Route::post('/comments/{comment}/update',[CommentController::class,'update']);
+    Route::delete('/comments/{comment}/delete',[CommentController::class,'delete']);
 
     //Attempt api
     Route::post('/tests/{test}/start', [UserAttemptController::class, 'startAndShow']);

@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use App\Enums\WordStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-
-class Word extends Model
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+class Word extends Model implements HasMedia
 {
+    use InteractsWithMedia;
+
     protected $fillable = [
         'lesson_id',
         'word_en',
@@ -21,5 +25,17 @@ class Word extends Model
     {
         return $this->belongsToMany(User::class, 'user_words')
                     ->withPivot('status', 'added_at');
+    }
+     protected function casts(): array
+    {
+        return [
+            'status' => WordStatus::class,
+        ];
+    }
+       public function registerMediaCollections(): void
+    {
+        $this
+            ->addMediaCollection('audio')
+            ->singleFile();
     }
 }

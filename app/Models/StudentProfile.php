@@ -12,6 +12,7 @@ class StudentProfile extends Model implements HasMedia
     use InteractsWithMedia;
 
     protected $fillable = [
+        'can_comment',
         'bio',
         'points',
         'streak',

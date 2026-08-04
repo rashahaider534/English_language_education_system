@@ -25,6 +25,12 @@
 
     .show-comment-delete { transition: transform 0.15s ease, background 0.15s ease; }
     .show-comment-delete:hover { transform: scale(1.08); background: rgba(255,100,100,0.16); }
+
+    .show-comment-block { transition: transform 0.15s ease, background 0.15s ease; }
+    .show-comment-block:hover:not(:disabled) { transform: scale(1.08); background: rgba(1,60,88,0.16); }
+
+    .show-word-audio { transition: transform 0.15s ease, background 0.15s ease; }
+    .show-word-audio:hover { transform: scale(1.1); }
 </style>
 @endpush
 
@@ -57,7 +63,7 @@
     $videoUrl = $lessonModel->getFirstMediaUrl('videos');
 @endphp
 <div
-    x-data="{ archiveModalOpen: false }"
+    x-data="{ archiveModalOpen: false, blockModalOpen: false, blockTarget: null }"
     class="-mx-4 -my-6 px-4 py-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
     style="background:#DFF2F9; font-family:'Tajawal',sans-serif; min-height:100vh;" dir="rtl"
 >
@@ -149,13 +155,50 @@
         </div>
     </div>
 
+    {{-- ============ BELOW: Lesson words (read-only) ============ --}}
+    @php $words = $lesson['words']; @endphp
+    <div class="show-panel" style="background:linear-gradient(160deg, rgba(168,232,249,0.16), rgba(255,211,91,0.08)); border:1.5px solid rgba(14,106,150,0.35); border-radius:20px; padding:22px 24px; box-shadow:0 0 26px rgba(14,106,150,0.28), 0 0 6px rgba(14,106,150,0.18), 0 10px 26px rgba(0,83,122,0.06); margin-bottom:20px;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
+            <h3 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:18px; color:#013C58;">كلمات الدرس</h3>
+            <span style="display:inline-flex; align-items:center; justify-content:center; min-width:26px; height:26px; padding:0 6px; border-radius:8px; background:rgba(0,83,122,0.07); color:#00537A; font-family:'Poppins',sans-serif; font-weight:700; font-size:12px;">{{ $words->count() }}</span>
+        </div>
+
+        @if ($words->isEmpty())
+            <p style="margin:0; font-size:12.5px; color:rgba(1,60,88,0.45); font-weight:600;">ما ضاف الأستاذ كلمات لهذا الدرس بعد</p>
+        @else
+            <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                @foreach ($words as $word)
+                    @php $audioUrl = $word->getFirstMediaUrl('audios'); @endphp
+                    <div @if($audioUrl) x-data="{ playing: false }" @endif style="display:flex; align-items:center; gap:8px; padding:8px 14px; border-radius:11px; background:rgba(255,211,91,0.08); border:1px solid rgba(255,186,66,0.32);">
+                        <span style="font-size:12.5px; font-weight:700; color:#013C58;">{{ $word->word_en }}</span>
+                        <span style="width:1px; height:12px; background:rgba(138,90,0,0.2);"></span>
+                        <span style="font-size:12.5px; font-weight:600; color:#8A5A00;">{{ $word->word_ar }}</span>
+                        @if ($audioUrl)
+                            <span style="width:1px; height:12px; background:rgba(138,90,0,0.2);"></span>
+                            <button
+                                type="button"
+                                class="show-word-audio"
+                                title="تشغيل النطق"
+                                @click="if (playing) { $refs.audio.pause(); } else { $refs.audio.play(); }"
+                                :style="playing ? 'background:#F5A201; color:#fff;' : 'background:rgba(245,162,1,0.16); color:#8A5A00;'"
+                                style="display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:50%; border:none; cursor:pointer; flex-shrink:0;">
+                                <svg x-show="!playing" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>
+                                <svg x-show="playing" x-cloak width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"></path></svg>
+                            </button>
+                            <audio x-ref="audio" preload="none" style="display:none" @play="playing = true" @pause="playing = false" @ended="playing = false">
+                                <source src="{{ $audioUrl }}">
+                            </audio>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+        @endif
+    </div>
+
     {{-- ============ BELOW: Comments panel (full width) ============ --}}
     <div class="show-panel" style="background:linear-gradient(160deg, rgba(168,232,249,0.16), rgba(255,211,91,0.08)); border:1.5px solid rgba(14,106,150,0.35); border-radius:20px; padding:22px 24px; box-shadow:0 0 26px rgba(14,106,150,0.28), 0 0 6px rgba(14,106,150,0.18), 0 10px 26px rgba(0,83,122,0.06);">
         <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:16px;">
             <div style="display:flex; align-items:center; gap:8px;">
-                <div style="display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:9px; background:rgba(168,232,249,0.3); color:#00537A;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                </div>
                 <h3 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:15px; color:#013C58;">التعليقات</h3>
             </div>
             <span style="display:inline-flex; align-items:center; justify-content:center; min-width:26px; height:26px; padding:0 6px; border-radius:8px; background:rgba(0,83,122,0.07); color:#00537A; font-family:'Poppins',sans-serif; font-weight:700; font-size:12px;">{{ $comments->total() }}</span>
@@ -168,31 +211,45 @@
                     $author = $comment->user;
                     $authorName = $author ? (trim(($author->first_name ?? '').' '.($author->last_name ?? '')) ?: $author->email) : 'مستخدم محذوف';
                     $authorInitial = $author ? strtoupper(substr($author->first_name ?? $author->email, 0, 1)) : '?';
+                    $authorBlocked = $author && $author->studentProfile && ! $author->studentProfile->can_comment;
                 @endphp
                 <div class="show-comment" x-data="{ deleted: false, deleting: false }" x-show="!deleted" x-transition style="padding:14px; border-radius:13px; background:rgba(255,211,91,0.05); border:1.5px solid rgba(255,186,66,0.2); box-shadow:0 0 10px rgba(255,186,66,0.08);">
                     <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:9px;">
                         <span style="display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:999px; background:rgba(0,83,122,0.06); font-size:10.5px; font-weight:700; color:rgba(1,60,88,0.55); font-family:'Poppins',sans-serif;">
                             {{ $comment->created_at->format('H:i') }} · {{ $comment->created_at->format('Y-m-d') }}
                         </span>
-                        <button
-                            type="button"
-                            title="حذف التعليق"
-                            class="show-comment-delete"
-                            :disabled="deleting"
-                            @click="
-                                if (!confirm('حذف هالتعليق؟')) return;
-                                deleting = true;
-                                fetch('/comments/{{ $comment->id }}/destroy', {
-                                    method: 'DELETE',
-                                    headers: {
-                                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
-                                        'Accept': 'application/json',
-                                    },
-                                }).then(res => { if (res.ok) { deleted = true; } else { deleting = false; alert('صار في خطأ، جربي كمان مرة.'); } });
-                            "
-                            style="display:flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:7px; border:none; background:rgba(255,100,100,0.08); color:rgba(200,60,60,0.75); cursor:pointer;">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="M6 6l12 12"></path></svg>
-                        </button>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            @if ($author)
+                                <button
+                                    type="button"
+                                    title="{{ $authorBlocked ? 'الطالب محظور من التعليق' : 'حظر الطالب من التعليق' }}"
+                                    class="show-comment-block"
+                                    :disabled="{{ $authorBlocked ? 'true' : 'false' }}"
+                                    @click="blockTarget = { id: {{ $comment->id }}, name: {{ \Illuminate\Support\Js::from($authorName) }} }; blockModalOpen = true;"
+                                    style="display:flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:7px; border:none; background:{{ $authorBlocked ? 'rgba(1,60,88,0.04)' : 'rgba(1,60,88,0.08)' }}; color:{{ $authorBlocked ? 'rgba(1,60,88,0.3)' : 'rgba(1,60,88,0.75)' }}; cursor:{{ $authorBlocked ? 'not-allowed' : 'pointer' }};">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="m4.9 4.9 14.2 14.2"></path></svg>
+                                </button>
+                            @endif
+                            <button
+                                type="button"
+                                title="حذف التعليق"
+                                class="show-comment-delete"
+                                :disabled="deleting"
+                                @click="
+                                    if (!confirm('حذف هالتعليق؟')) return;
+                                    deleting = true;
+                                    fetch('/comments/{{ $comment->id }}/destroy', {
+                                        method: 'DELETE',
+                                        headers: {
+                                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                                            'Accept': 'application/json',
+                                        },
+                                    }).then(res => { if (res.ok) { deleted = true; } else { deleting = false; alert('صار في خطأ، جربي كمان مرة.'); } });
+                                "
+                                style="display:flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:7px; border:none; background:rgba(255,100,100,0.08); color:rgba(200,60,60,0.75); cursor:pointer;">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
                     </div>
                     <p style="margin:0 0 9px; font-size:13px; color:rgba(1,60,88,0.75); line-height:1.6;">{{ $comment->comment }}</p>
                     <div style="display:flex; align-items:center; gap:7px;">
@@ -254,6 +311,34 @@
                     @csrf
                     @method('PATCH')
                     <button type="submit" style="width:100%; padding:11px; border-radius:11px; border:none; background:linear-gradient(90deg,#F5A201,#FFBA42); color:#013C58; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; cursor:pointer;">تأكيد</button>
+                </form>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    {{-- ============ BLOCK STUDENT CONFIRM MODAL ============ --}}
+    <div x-show="blockModalOpen" x-cloak
+         x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+         style="position:fixed; inset:0; z-index:50; background:rgba(1,42,63,0.5); backdrop-filter:blur(4px); overflow-y:auto;"
+         @click="blockModalOpen = false">
+      <div style="min-height:100%; display:flex; align-items:center; justify-content:center; padding:24px;">
+        <div @click.stop
+             x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+             style="width:100%; max-width:400px; background:#EFFAFD; border-radius:22px; padding:30px 26px; box-shadow:0 44px 100px rgba(1,42,63,0.4); text-align:center;">
+            <div style="width:58px; height:58px; border-radius:16px; background:rgba(200,60,60,0.14); color:#B23A3A; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="m4.9 4.9 14.2 14.2"></path></svg>
+            </div>
+            <h3 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; color:#013C58;">حظر <span x-text="blockTarget?.name"></span> من التعليق؟</h3>
+            <p style="margin:10px 0 0; font-size:13px; color:rgba(1,60,88,0.6); line-height:1.7;">هيتحظر هالطالب من التعليق نهائيًا، ومش رح يقدر يعلق ع أي درس تاني.</p>
+            <div style="display:flex; gap:10px; margin-top:22px;">
+                <button type="button" @click="blockModalOpen = false" style="flex:1; padding:11px; border-radius:11px; border:1.5px solid rgba(0,83,122,0.12); background:#EFFAFD; color:#013C58; font-family:'Poppins',sans-serif; font-weight:600; font-size:13px; cursor:pointer;">إلغاء</button>
+                <form :action="'/comments/' + blockTarget?.id + '/block'" method="POST" style="flex:1;">
+                    @csrf
+                    @method('PATCH')
+                    <button type="submit" style="width:100%; padding:11px; border-radius:11px; border:none; background:linear-gradient(90deg,#C1392B,#E05C4E); color:#fff; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; cursor:pointer;">تأكيد الحظر</button>
                 </form>
             </div>
         </div>

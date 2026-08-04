@@ -16,6 +16,7 @@ class CourseController extends Controller
     {
        $data = $this->service->getCourses($level,auth()->user());
         return response()->json([
+            'progress'=>$data['progress'],
             'current_course' => $data['current_course']
                 ? new CourseResource($data['current_course'])
                 : null,

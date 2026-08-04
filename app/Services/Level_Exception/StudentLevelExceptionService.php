@@ -5,6 +5,8 @@ namespace App\Services\Level_Exception;
 use App\Enums\LevelExceptionStatus;
 use App\Services\LevelAccessService;
 use Illuminate\Validation\ValidationException;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use App\Models\Level;
 use App\Models\User;
 use App\Models\LevelException;
@@ -114,6 +116,24 @@ class StudentLevelExceptionService
 
             return $levelException->refresh();
         });
+    }
+
+    public function deleteAttachment(LevelException $levelException, Media $media)
+    {
+        if ($levelException->status !== LevelExceptionStatus::PENDING) {
+            throw ValidationException::withMessages([
+                'level' => 'This request cannot be updated.',
+            ]);
+        }
+
+        if (
+            $media->model_id !== $levelException->id ||
+            $media->model_type !==Relation::getMorphAlias(LevelException::class)
+        ) {
+            abort(404);
+        }
+
+        $media->delete();
     }
 
     public function delete(LevelException $levelException)
