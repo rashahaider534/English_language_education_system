@@ -19,6 +19,9 @@ class StudentDetailLessonResource extends JsonResource
             'title' => $this->translate('title'),
             'xp_points' => $this->xp_points,
             'video' => $this->getFirstMediaUrl('videos'),
+            'test_id' => $this->tests
+                ->firstWhere('status', 'published')
+                ?->id,
         ];
     }
 }
