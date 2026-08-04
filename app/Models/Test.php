@@ -32,6 +32,7 @@ class Test extends Model
     {
         return $this->belongsToMany(Question::class, 'test_questions')
                     ->withPivot('order')
+                    ->orderBy('test_questions.order')
                     ->withTimestamps() ;
 
     }

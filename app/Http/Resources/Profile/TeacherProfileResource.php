@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Profile;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -16,6 +16,7 @@ class TeacherProfileResource extends JsonResource
     {
         return [
             'bio' => $this->bio,
+            'image_url' => $this->getFirstMediaUrl('teacher_profile_image'),
         ];
     }
 }

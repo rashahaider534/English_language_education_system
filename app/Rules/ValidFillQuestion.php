@@ -78,55 +78,46 @@ class ValidFillQuestion implements ValidationRule
         }
 
         /*
-        |--------------------------------------------------------------------------
-        | 5. عدد الفراغات = عدد الإجابات
-        |--------------------------------------------------------------------------
-        */
+      |--------------------------------------------------------------------------
+      | 5. عدد الفراغات الفريدة = عدد blank_order الفريدة بالإجابات
+      |    (بدل عدد صفوف الإجابات الخام، عشان نسمح أكتر من إجابة لنفس الفراغ)
+      |--------------------------------------------------------------------------
+      */
 
-        if (count($placeholders) !== count($this->answers)) {
+        $answerOrders = collect($this->answers)
+            ->pluck('blank_order')
+            ->map(fn ($v) => (int) $v);
 
-            $fail('The number of placeholders must equal the number of answers.');
+        $uniqueAnswerOrders = $answerOrders->unique()->values();
 
+        if (count($placeholders) !== $uniqueAnswerOrders->count()) {
+            $fail('The number of unique blanks must equal the number of unique blank_order values in answers.');
             return;
         }
 
         /*
         |--------------------------------------------------------------------------
-        | 6. blank_order يجب أن يطابق الأرقام الموجودة
+        | 6. blank_order يجب أن يطابق الأرقام الموجودة بالنص (بدون تكرار بالمقارنة)
         |--------------------------------------------------------------------------
         */
 
-        $answerOrders = collect($this->answers)
-            ->pluck('blank_order')
-            ->map(fn ($v) => (int) $v)
-            ->sort()
-            ->values()
-            ->all();
+        $placeholderSet = collect($placeholders)->unique()->sort()->values();
+        $answerSet = $uniqueAnswerOrders->sort()->values();
 
-        $placeholderSet = collect($placeholders)->sort()->values();
-        $answerSet = collect($answerOrders)->sort()->values();
-
-        /*
-        |--------------------------------------------------------------------------
-        | 1. ناقص placeholders
-        |--------------------------------------------------------------------------
-        */
+        // ناقص placeholders (فراغ موجود بالنص، ما إله أي إجابة)
         $missingInAnswers = $placeholderSet->diff($answerSet);
 
         if ($missingInAnswers->isNotEmpty()) {
             $fail('Missing blank_order(s): ' . $missingInAnswers->implode(', '));
+            return;
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | 2. زائد أو غير موجود بالنص
-        |--------------------------------------------------------------------------
-        */
+        // زائد أو غير موجود بالنص (إجابة لفراغ مش موجود بالنص أصلاً)
         $extraInAnswers = $answerSet->diff($placeholderSet);
 
         if ($extraInAnswers->isNotEmpty()) {
             $fail('Invalid blank_order(s) not in question: ' . $extraInAnswers->implode(', '));
-        }
             return;
         }
+    }
 }

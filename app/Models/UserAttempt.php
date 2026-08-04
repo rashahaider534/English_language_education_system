@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\AttemptStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,7 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class UserAttempt extends Model
 {
     protected $table = 'user_attempts';
-    protected $fillable = ['user_id' , 'test_id' , 'score' , 'status' , 'completed_at'];
+    protected $fillable = ['user_id' , 'test_id' , 'score' , 'status' ,'started_at', 'completed_at'];
+    protected $casts = ['status' => AttemptStatus::class];
      public function user():BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -22,6 +24,6 @@ class UserAttempt extends Model
 
     public function answers():HasMany
     {
-        return $this->hasMany(UserAttemptAnswer::class);
+        return $this->hasMany(UserAttemptAnswer::class,'attempt_id');
     }
 }
