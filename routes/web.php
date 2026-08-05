@@ -64,6 +64,8 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
     //comment route
     Route::delete('/comments/{comment}/destroy', [CommentController::class, 'admindelete']);
     Route::patch('/comments/{comment}/block', [CommentController::class, 'block']);
+<<<<<<< HEAD
+=======
 
     Route::patch('/comments/{comment}/block',[CommentController::class,'block']);
 
@@ -86,6 +88,7 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
 
     // Complaints inbox (contact_us table) — read-only listing, no actions yet.
     Route::get('/complaints', [ComplaintController::class, 'index'])->name('admin.complaints.index');
+>>>>>>> 4ca55a9e8db4fda74042428b64ef77a7e0c47748
 });
 
 Route::middleware(['auth:web'])->group(function () {
