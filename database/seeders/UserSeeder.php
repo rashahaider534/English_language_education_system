@@ -6,7 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
-
+use App\Models\StudentProfile;
 class UserSeeder extends Seeder
 {
     /**
@@ -30,7 +30,14 @@ class UserSeeder extends Seeder
             'is_active' => true,
             'email_verified_at' => now(),
         ]);
+         StudentProfile::create([
+            'user_id' => $student->id,
+            'bio' => 'طالب معلوماتية ',
+            'points'=>80,
+            'streak' => 5,
+        ]);
          $student->assignRole('student');
+         
         $admins = [
             [
                 'first_name' => 'Admin1',

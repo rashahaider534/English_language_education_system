@@ -35,6 +35,9 @@ class DatabaseSeeder extends Seeder
             UserLessonSeeder::class,
             CommentSeeder::class,
             WordSeeder::class,
+            TopicSeeder::class,
+            PodcastSeeder::class,
+            UserPodcastSeeder::class,
         ]);
     }
 }

@@ -19,11 +19,6 @@ class AdminLessonService
     ) {}
     public function getPendingLessons()
     {
-        $page = request('page', 1);
-        return Cache::tags(['lessons'])->remember(
-            "pending_lessons.page.$page",
-            3600,
-            function () {
                 return Lesson::query()->select([
                     'id',
                     'title_ar',
@@ -40,19 +35,11 @@ class AdminLessonService
                     ->where('status', ContentStatus::PENDING->value)
                     ->paginate(10);
             }
-        );
-    }
+
+
 
     public function getlessonscourse(Course $course, ?string $status = null)
     {
-        $page = request('page', 1);
-
-        return Cache::tags(['lessons'])
-            ->remember(
-                "lessons.course.{$course->id}.status.{$status}.page.{$page}",
-                3600,
-                function () use ($course, $status) {
-
                     $query = Lesson::query()
                         ->where('course_id', $course->id)
                         ->when($status, function ($query) use ($status) {
@@ -61,17 +48,10 @@ class AdminLessonService
                         ->orderBy('order');
 
                     return $query->paginate(10);
-                }
-            );
     }
+
     public function getStatisticsLessons(Course $course)
     {
-        return Cache::tags(['lessons'])
-            ->remember(
-                "lessons.course.{$course->id}.statistics",
-                3600,
-                function () use ($course) {
-
                     return Lesson::where('course_id', $course->id)
                         ->selectRaw("
                         COUNT(*) as all_count,
@@ -83,8 +63,6 @@ class AdminLessonService
                         SUM(status = 'archived') as archived
                     ")
                         ->first();
-                }
-            );
     }
     public function show(Lesson $lesson)
     {
@@ -123,7 +101,6 @@ class AdminLessonService
                 'status' => ContentStatus::ARCHIVED->value
             ]);
         }
-        Cache::tags(['lessons'])->flush();
         return $lesson;
     }
 }

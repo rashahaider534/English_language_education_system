@@ -28,19 +28,10 @@ class TeacherLessonService
                 'course' => 'You are not allowed to view lessons in this course.',
             ]);
         }
-        $page = request('page', 1);
-        return Cache::tags(['lessons'])
-            ->remember(
-                "teacher_lessons_{$course->id}.page.{$page}",
-                3600,
-                function () use ($course) {
-                    Log::info('QUERY EXECUTED');
                     return $course->lessons()
                         ->with('media')
                         ->orderBy('order')
                         ->paginate(10);
-                }
-            );
     }
 
 
@@ -73,7 +64,6 @@ class TeacherLessonService
                     ->addMedia($data['video'])
                     ->toMediaCollection('videos');
             }
-            Cache::tags(['lessons'])->flush();
             return $lesson->load('media');
         });
     }
@@ -114,7 +104,6 @@ class TeacherLessonService
                     ->toMediaCollection('videos');
             }
             $lesson->update($data);
-            Cache::tags(['lessons'])->flush();
             return $lesson->fresh();
         });
     }
@@ -139,7 +128,6 @@ class TeacherLessonService
         }
         //اشعار للادمن  اذا كانت حالته changes_requested
         $lesson->delete();
-        Cache::tags(['lessons'])->flush();
         return response()->json(['message' => 'Lesson deleted successfully.']);
     }
 
