@@ -136,7 +136,7 @@
                     <span style="display:inline-flex; align-items:center; gap:5px; padding:4px 11px; border-radius:999px; background:{{ $sc['bg'] }}; color:{{ $sc['fg'] }}; font-size:10.5px; font-weight:700; margin-inline-start:26px;">{{ $statusLabels[$exception->status->value] ?? $exception->status->value }}</span>
                     <span style="display:inline-flex; align-items:center; gap:4px; font-size:10.5px; color:rgba(1,60,88,0.55); font-weight:700; background:rgba(1,60,88,0.06); padding:4px 10px; border-radius:999px;">
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
-                        {{ $exception->created_at->diffForHumans() }}
+                        {{ $exception->created_at ? $exception->created_at->diffForHumans() : '—' }}
                     </span>
                 </div>
 

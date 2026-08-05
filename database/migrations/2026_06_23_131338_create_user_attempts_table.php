@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\AttemptStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,7 +17,8 @@ return new class extends Migration
             $table->foreignId('test_id')->constrained('tests')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->integer('score');
-            $table->enum('status', ['completed', 'abandoned'])->default('completed');
+            $table->enum('status', array_column(AttemptStatus::cases() , 'value'))->default(AttemptStatus::IN_PROGRESS);
+            $table->timestamp('started_at');
             $table->timestamp('completed_at')->nullable();
             $table->timestamps();
         });

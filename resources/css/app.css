@@ -19,6 +19,7 @@
 
     .dashboard-sidebar {
         @apply fixed inset-y-0 left-0 z-40 flex w-72 -translate-x-full flex-col border-r border-slate-800 bg-slate-950 px-5 py-6 text-slate-200 transition duration-300 ease-out lg:translate-x-0;
+        transition-property: transform, width;
     }
 
     .dashboard-sidebar.is-open {
@@ -82,28 +83,56 @@
         @apply h-5 w-5;
     }
 
-    .dashboard-sidebar__panel {
-        @apply mt-6 rounded-3xl border border-white/10 bg-white/5 p-4;
+    .dashboard-nav-link__label {
+        @apply truncate;
     }
 
-    .dashboard-sidebar__metric {
-        @apply mt-3 flex items-center justify-between text-sm;
+    .dashboard-nav-group__trigger {
+        @apply w-full cursor-pointer border-0 bg-transparent text-right;
     }
 
-    .dashboard-sidebar__help {
-        @apply mt-3 text-sm leading-6 text-slate-400;
+    .dashboard-nav-group__chevron {
+        @apply mr-auto flex h-5 w-5 flex-shrink-0 items-center justify-center text-slate-500 transition-transform duration-200;
     }
 
-    .dashboard-progress {
-        @apply mt-3 h-2 overflow-hidden rounded-full bg-white/10;
+    .dashboard-nav-group__chevron.is-open {
+        @apply -rotate-180 text-sky-300;
     }
 
-    .dashboard-progress span {
-        @apply block h-full rounded-full bg-sky-400;
+    .dashboard-nav-group__chevron svg {
+        @apply h-4 w-4;
+    }
+
+    .dashboard-nav-group__panel {
+        @apply mt-1 space-y-1 border-r border-white/10 pr-2 mr-5;
+    }
+
+    .dashboard-nav-link--child {
+        @apply py-2 text-[13px];
+    }
+
+    .dashboard-nav-link--child .dashboard-nav-link__icon {
+        @apply h-8 w-8;
+    }
+
+    .dashboard-sidebar__footer {
+        @apply mt-6 border-t border-white/10 pt-4;
+    }
+
+    .dashboard-sidebar__logout {
+        @apply flex w-full items-center gap-3 rounded-2xl border-0 bg-rose-500/10 px-3 py-2.5 text-sm font-semibold text-rose-300 transition hover:bg-rose-500/20 hover:text-rose-200;
+    }
+
+    .dashboard-sidebar__logout .dashboard-nav-link__icon {
+        @apply bg-rose-500/10 text-rose-300;
+    }
+
+    .dashboard-sidebar__logout-label {
+        @apply truncate;
     }
 
     .dashboard-main {
-        @apply flex min-h-screen flex-1 flex-col lg:pl-72;
+        @apply flex min-h-screen flex-1 flex-col transition-[padding] duration-300 ease-out lg:pl-72;
     }
 
     .dashboard-topbar {
@@ -586,12 +615,84 @@
     .dashboard-footer {
         @apply flex flex-col gap-1 border-t border-slate-200 bg-white px-4 py-4 text-sm text-slate-500 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8;
     }
+
+    /* Notifications dropdown (topbar) */
+    .dashboard-notification-panel {
+        @apply absolute left-0 top-[calc(100%+0.75rem)] w-80 max-w-[90vw] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg shadow-slate-950/10;
+    }
+
+    .dashboard-notification-panel__header {
+        @apply flex items-center justify-between border-b border-slate-100 px-4 py-3;
+    }
+
+    .dashboard-notification-panel__title {
+        @apply text-sm font-semibold text-slate-900;
+    }
+
+    .dashboard-notification-panel__list {
+        @apply max-h-80 divide-y divide-slate-100 overflow-y-auto;
+    }
+
+    .dashboard-notification-item {
+        @apply flex items-start gap-3 px-4 py-3 transition hover:bg-slate-50;
+    }
+
+    .dashboard-notification-item__dot {
+        @apply mt-1.5 inline-flex h-2 w-2 flex-shrink-0 rounded-full;
+    }
+
+    .dashboard-notification-panel__footer {
+        @apply border-t border-slate-100 px-4 py-3 text-center text-xs font-medium text-slate-400;
+    }
+
+    /* Language toggle (topbar) */
+    .dashboard-lang-toggle {
+        @apply relative flex items-center rounded-2xl border border-slate-200 bg-white p-1 text-xs font-semibold text-slate-500;
+    }
+
+    .dashboard-lang-toggle button {
+        @apply relative z-10 rounded-xl px-3 py-1.5 transition;
+    }
+
+    .dashboard-lang-toggle button.is-active {
+        @apply bg-slate-950 text-white;
+    }
 }
 
 @layer utilities {
     @media (max-width: 1023px) {
         .dashboard-search {
             @apply min-w-0;
+        }
+    }
+
+    /* Desktop sidebar collapse: shrink the rail to icons-only and let the content stretch. */
+    @media (min-width: 1024px) {
+        .dashboard-shell.is-sidebar-collapsed .dashboard-sidebar {
+            @apply w-[5.5rem] px-3;
+        }
+
+        .dashboard-shell.is-sidebar-collapsed .dashboard-main {
+            @apply pl-[5.5rem];
+        }
+
+        .dashboard-shell.is-sidebar-collapsed .dashboard-sidebar__brand {
+            @apply justify-center;
+        }
+
+        .dashboard-shell.is-sidebar-collapsed .dashboard-sidebar__brand-text,
+        .dashboard-shell.is-sidebar-collapsed .dashboard-sidebar__section,
+        .dashboard-shell.is-sidebar-collapsed .dashboard-nav-link__label,
+        .dashboard-shell.is-sidebar-collapsed .dashboard-nav-group__chevron,
+        .dashboard-shell.is-sidebar-collapsed .dashboard-nav-group__panel,
+        .dashboard-shell.is-sidebar-collapsed .dashboard-sidebar__logout-label {
+            @apply hidden;
+        }
+
+        .dashboard-shell.is-sidebar-collapsed .dashboard-nav-link,
+        .dashboard-shell.is-sidebar-collapsed .dashboard-nav-group__trigger,
+        .dashboard-shell.is-sidebar-collapsed .dashboard-sidebar__logout {
+            @apply justify-center px-0;
         }
     }
 }

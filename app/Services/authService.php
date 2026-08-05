@@ -104,6 +104,7 @@ class authService
         ]);
 
         $user->assignRole('student');
+        $user->studentProfile()->create();
         $token = $user->createToken('auth-token')->plainTextToken;
 
         $user->load('roles');

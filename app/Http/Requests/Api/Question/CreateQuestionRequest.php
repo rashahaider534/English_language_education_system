@@ -127,7 +127,7 @@ class CreateQuestionRequest extends FormRequest
                 ),
             ],
 
-            'answers.*.blank_order' => 'required_if:type,FILL|integer|distinct|min:1',
+            'answers.*.blank_order' => 'required_if:type,FILL|integer|min:1',
 
 
             'answers.*.left_text' => 'required_if:type,PAIR|string|regex:/^[\p{Arabic}0-9\s،؟؛:()«»"\'\-.!,]+$/u',
