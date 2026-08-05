@@ -140,7 +140,7 @@
                             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
                         </div>
                         <span style="margin-top:10px; font-size:12.5px; font-weight:700; color:#013C58;">تم الإرسال</span>
-                        <span style="font-size:10.5px; color:rgba(1,60,88,0.4);">{{ $levelException->created_at->format('Y-m-d') }}</span>
+                        <span style="font-size:10.5px; color:rgba(1,60,88,0.4);">{{ $levelException->created_at ? $levelException->created_at->format('Y-m-d') : '—' }}</span>
                     </div>
 
                     <div style="position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; flex:1;">
@@ -294,7 +294,7 @@
             <div style="background:rgba(0,83,122,0.04); border:1px solid rgba(0,83,122,0.1); border-radius:16px; padding:18px 20px;">
                 <div style="display:flex; align-items:center; justify-content:space-between; font-size:14.5px;">
                     <span style="color:rgba(1,60,88,0.6); font-weight:600;">تاريخ الطلب:</span>
-                    <span style="color:#013C58; font-weight:700;">{{ $levelException->created_at->format('Y-m-d، H:i') }}</span>
+                    <span style="color:#013C58; font-weight:700;">{{ $levelException->created_at ? $levelException->created_at->format('Y-m-d، H:i') : '—' }}</span>
                 </div>
             </div>
         </div>

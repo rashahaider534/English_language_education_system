@@ -9,6 +9,9 @@ class UserAttemptAnswer extends Model
 {
     protected $table = 'user_attempt_answers';
     protected $fillable = ['attempt_id' , 'question_id' , 'answer_json' , 'score'];
+    protected $casts = [
+        'answer_json' => 'array',
+    ];
     public function userAttempt():BelongsTo
     {
         return $this->belongsTo(UserAttempt::class);

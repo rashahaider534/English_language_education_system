@@ -1,27 +1,27 @@
 @php
     $dashboardNav = [
         ['label' => 'Dashboard', 'route' => 'dashboard', 'icon' => 'home'],
-        ['label' => 'مستويات / كورسات / دروس', 'route' => 'levels.index', 'icon' => 'levels'],
+        ['label' => 'محتوى تعليمي', 'route' => 'levels.index', 'icon' => 'levels'],
         ['label' => 'الدروس قيد الانتظار', 'route' => 'lessons.pending', 'icon' => 'pending-lessons'],
         ['label' => 'طلبات الاستثناء', 'route' => 'levelException.index', 'icon' => 'level-exceptions', 'superAdminOnly' => true],
-        ['label' => 'Users', 'route' => 'dashboard.users', 'icon' => 'users'],
-        ['label' => 'Roles & Permissions', 'route' => 'dashboard.roles', 'icon' => 'shield'],
-        ['label' => 'Reports', 'route' => 'dashboard.reports', 'icon' => 'reports'],
-        ['label' => 'Tables', 'route' => 'dashboard.tables', 'icon' => 'table'],
-        ['label' => 'Forms', 'route' => 'dashboard.forms', 'icon' => 'forms'],
-        ['label' => 'Cards', 'route' => 'dashboard.cards', 'icon' => 'cards'],
-        ['label' => 'Charts', 'route' => 'dashboard.charts', 'icon' => 'charts'],
-        ['label' => 'Notifications', 'route' => 'dashboard.notifications', 'icon' => 'bell'],
-        ['label' => 'Profile', 'route' => 'dashboard.profile', 'icon' => 'profile'],
-        ['label' => 'Settings', 'route' => 'dashboard.settings', 'icon' => 'settings'],
-        ['label' => 'Blank Page', 'route' => 'dashboard.blank', 'icon' => 'blank'],
+        ['label' => 'بنك أسئلة تحديد المستوى', 'route' => 'questions.placement.index', 'icon' => 'question-bank', 'requiredPermission' => 'manage_placement_questions'],
+        ['label' => 'اختبارات تحديد المستوى', 'route' => 'tests.placement.placement.index', 'icon' => 'placement-tests', 'requiredPermission' => 'manage_placement_tests'],
+        [
+            'label' => 'إدارة ومتابعة',
+            'icon' => 'management',
+            'children' => [
+                ['label' => 'أساتذة', 'route' => 'admin.teachers.index', 'icon' => 'teachers'],
+                ['label' => 'طلاب', 'route' => 'admin.students.index', 'icon' => 'students'],
+            ],
+        ],
+        ['label' => 'صندوق الشكاوي', 'route' => 'admin.complaints.index', 'icon' => 'complaints'],
     ];
 @endphp
 
 <aside class="dashboard-sidebar" data-dashboard-sidebar>
     <div class="dashboard-sidebar__brand">
         <div class="dashboard-sidebar__logo">EL</div>
-        <div>
+        <div class="dashboard-sidebar__brand-text">
             <p class="dashboard-sidebar__eyebrow">Admin Workspace</p>
             <h1 class="dashboard-sidebar__title">{{ config('app.name', 'English System') }}</h1>
         </div>
@@ -31,30 +31,73 @@
         <p class="dashboard-sidebar__section">Navigation</p>
 
         @foreach ($dashboardNav as $item)
-            @continue(($item['superAdminOnly'] ?? false) && !auth()->user()->hasRole('super-admin'))
+            @continue(($item['superAdminOnly'] ?? false) && !auth()->user()->hasRole('super-admin', 'web'))
+            @continue(($item['requiredPermission'] ?? null) && !auth()->user()->can($item['requiredPermission'], 'web'))
+
+            @if (!empty($item['children']))
+                @php
+                    $children = collect($item['children'])->filter(function ($child) {
+                        return (!($child['superAdminOnly'] ?? false) || auth()->user()->hasRole('super-admin', 'web'))
+                            && (!($child['requiredPermission'] ?? null) || auth()->user()->can($child['requiredPermission'], 'web'));
+                    })->values();
+                    $groupActive = $children->contains(fn ($child) => request()->routeIs($child['route']) || request()->routeIs($child['route'].'.*'));
+                @endphp
+                @if ($children->isNotEmpty())
+                    <div x-data="{ open: {{ $groupActive ? 'true' : 'false' }} }" class="dashboard-nav-group">
+                        <button type="button"
+                            class="dashboard-nav-link dashboard-nav-group__trigger {{ $groupActive ? 'is-active' : '' }}"
+                            @click="open = !open; document.querySelector('[data-dashboard-shell]')?.classList.remove('is-sidebar-collapsed'); try { localStorage.setItem('dashboardSidebarCollapsed', '0'); } catch (e) {}"
+                            :aria-expanded="open.toString()"
+                            title="{{ $item['label'] }}">
+                            <span class="dashboard-nav-link__icon">
+                                @include('dashboard.partials.icons.'.$item['icon'])
+                            </span>
+                            <span class="dashboard-nav-link__label">{{ $item['label'] }}</span>
+                            <span class="dashboard-nav-group__chevron" :class="{ 'is-open': open }">
+                                @include('dashboard.partials.icons.chevron-down')
+                            </span>
+                        </button>
+
+                        <div class="dashboard-nav-group__panel" x-show="open" x-transition x-cloak>
+                            @foreach ($children as $child)
+                                @php $childActive = request()->routeIs($child['route']) || request()->routeIs($child['route'].'.*'); @endphp
+                                <a href="{{ route($child['route']) }}" class="dashboard-nav-link dashboard-nav-link--child {{ $childActive ? 'is-active' : '' }}" title="{{ $child['label'] }}">
+                                    <span class="dashboard-nav-link__icon">
+                                        @include('dashboard.partials.icons.'.$child['icon'])
+                                    </span>
+                                    <span class="dashboard-nav-link__label">{{ $child['label'] }}</span>
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+                @continue
+            @endif
+
             @php
                 $active = request()->routeIs($item['route'])
-                    || ($item['route'] === 'levels.index' && (request()->routeIs('levels.*') || request()->routeIs('courses.*')));
+                    || ($item['route'] === 'levels.index' && (request()->routeIs('levels.*') || request()->routeIs('courses.*')))
+                    || ($item['route'] === 'tests.placement.placement.index' && request()->routeIs('tests.placement.*'));
             @endphp
-            <a href="{{ route($item['route']) }}" class="dashboard-nav-link {{ $active ? 'is-active' : '' }}">
+            <a href="{{ route($item['route']) }}" class="dashboard-nav-link {{ $active ? 'is-active' : '' }}" title="{{ $item['label'] }}">
                 <span class="dashboard-nav-link__icon">
                     @include('dashboard.partials.icons.'.$item['icon'])
                 </span>
-                <span>{{ $item['label'] }}</span>
+                <span class="dashboard-nav-link__label">{{ $item['label'] }}</span>
             </a>
         @endforeach
     </nav>
 
-    <div class="dashboard-sidebar__panel">
-        <p class="dashboard-sidebar__section">System Status</p>
-        <div class="dashboard-sidebar__metric">
-            <span>Uptime</span>
-            <strong>99.94%</strong>
-        </div>
-        <div class="dashboard-progress">
-            <span style="width: 81%"></span>
-        </div>
-        <p class="dashboard-sidebar__help">Demo dashboard template ready for extension inside Laravel Blade.</p>
+    <div class="dashboard-sidebar__footer">
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="dashboard-sidebar__logout" title="تسجيل الخروج">
+                <span class="dashboard-nav-link__icon">
+                    @include('dashboard.partials.icons.logout')
+                </span>
+                <span class="dashboard-sidebar__logout-label">تسجيل الخروج</span>
+            </button>
+        </form>
     </div>
 </aside>
 

@@ -261,6 +261,12 @@
                                    style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; background:rgba(168,232,249,0.18); color:#00537A; text-decoration:none;">
                                     <svg width="15.5" height="15.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5c-1.6-1.1-3.7-1.6-6-1.6v13c2.3 0 4.4.5 6 1.6 1.6-1.1 3.7-1.6 6-1.6v-13c-2.3 0-4.4.5-6 1.6Z"></path><path d="M12 6.5V19.5"></path></svg>
                                 </a>
+                                @can('manage_level_tests', 'web')
+                                    <a href="{{ route('tests.level.levelTest.index', $level) }}" title="اختبارات هالمستوى"
+                                       style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; background:rgba(255,211,91,0.16); color:#8A5A00; text-decoration:none;">
+                                        <svg width="15.5" height="15.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"></rect><path d="M8 2v4M16 2v4M3 10h18"></path></svg>
+                                    </a>
+                                @endcan
                                 <button type="button" title="تعديل"
                                    @click="openEdit({{ Illuminate\Support\Js::from([
                                         'id' => $level->id,

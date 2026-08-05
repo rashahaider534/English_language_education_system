@@ -16,7 +16,12 @@ namespace App\Services\Test;
 
  class TestService
  {
-     public AdminTestService $adminTestService;
+     private ?AdminTestService $adminTestServiceInstance = null;
+
+     private function adminTestService(): AdminTestService
+     {
+         return $this->adminTestServiceInstance ??= app(AdminTestService::class);
+     }
 
      public function index()
      {
@@ -202,7 +207,7 @@ namespace App\Services\Test;
 
              $stillEligible = $dependentTest->testable_type === 'course'
                  ? $this->checkQuestionsAvailableForCourse($dependentTest->testable_id, $currentQuestionIds, throwOnFailure: false)
-                 : $this->adminTestService->checkQuestionsAvailableForLevel($dependentTest->testable_id, $currentQuestionIds, throwOnFailure: false);
+                 : $this->adminTestService()->checkQuestionsAvailableForLevel($dependentTest->testable_id, $currentQuestionIds, throwOnFailure: false);
 
              logger('cascade eligibility result', [
                  'dependentTest_id' => $dependentTest->id,
@@ -310,7 +315,7 @@ namespace App\Services\Test;
 
          return $test->testable_type === 'course'
              ? $this->checkQuestionsAvailableForCourse($test->testable_id, $questionIds, throwOnFailure: false)
-             : $this->adminTestService->checkQuestionsAvailableForLevel($test->testable_id, $questionIds, throwOnFailure: false);
+             : $this->adminTestService()->checkQuestionsAvailableForLevel($test->testable_id, $questionIds, throwOnFailure: false);
      }
      public function publishTest(Test $test):void
      {
@@ -389,9 +394,9 @@ namespace App\Services\Test;
              if ($test->testable_type === 'course') {
                  $this->checkQuestionsAvailableForCourse($test->testable_id, $questions->pluck('id'));
              } elseif ($test->testable_type === 'level') {
-                 $this->adminTestService->checkQuestionsAvailableForLevel($test->testable_id, $questions->pluck('id'));
+                 $this->adminTestService()->checkQuestionsAvailableForLevel($test->testable_id, $questions->pluck('id'));
              } elseif ($test->testable_type === 'placement_test') {
-                 $this->adminTestService->checkQuestionsAreValidPlacementQuestions($questions->pluck('id'));
+                 $this->adminTestService()->checkQuestionsAreValidPlacementQuestions($questions->pluck('id'));
              }
 
 
