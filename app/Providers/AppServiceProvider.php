@@ -44,6 +44,8 @@ class AppServiceProvider extends ServiceProvider
             'permission' => 'Spatie\Permission\Models\Permission',
             'level_exception' => LevelException::class,
             'Word'=>'App\Models\Word',
+            'Topic'=>'App\Models\Topic',
+            'Podcast'=>'App\Models\Podcast',
         ]);
 
         Gate::before(function ($user, $ability) {

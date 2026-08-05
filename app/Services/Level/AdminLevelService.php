@@ -22,7 +22,7 @@ class AdminLevelService
                 "levels.$status.page.$page",
                 3600,
                 function () use ($status) {
-                    $query = Level::with('creator')
+                    $query = Level::with(['creator','tests'])
                         ->when($status, function ($query) use ($status) {
                             $query->where('status', $status);
                         })
@@ -53,6 +53,15 @@ class AdminLevelService
     public function create(array $data): Level
     {
         return DB::transaction(function () use ($data) {
+            $user = auth()->user();
+            if (
+                !$user->hasRole('super-admin')
+                && !$user->hasPermissionTo('manage_levels')
+            ) {
+                throw ValidationException::withMessages([
+                    'level' => 'You are not allowed to create  level.',
+                ]);
+            }
             $level = Level::create([
                 'name_en' => $data['name_en'],
                 'name_ar' => $data['name_ar'],
@@ -74,6 +83,7 @@ class AdminLevelService
             $user = auth()->user();
             if (
                 !$user->hasRole('super-admin')
+                && !$user->hasPermissionTo('manage_levels')
                 && $level->created_by !== $user->id
             ) {
                 throw ValidationException::withMessages([
@@ -107,6 +117,7 @@ class AdminLevelService
         $user = auth()->user();
         if (
             !$user->hasRole('super-admin')
+            && !$user->hasPermissionTo('manage_levels')
             && $level->created_by !== $user->id
         ) {
             throw ValidationException::withMessages([

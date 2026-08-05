@@ -56,7 +56,11 @@ class AdminCourseService
     {
         return DB::transaction(function () use ($data, $level) {
             $user = auth()->user();
-            if (!$user->hasRole('super-admin') && $level->created_by !== $user->id) {
+            if (
+                !$user->hasRole('super-admin') &&
+                !$user->hasPermissionTo('manage_courses') &&
+                $level->created_by !== $user->id
+            ) {
                 throw ValidationException::withMessages([
                     'course' => 'is not your permission .',
                 ]);
@@ -91,8 +95,9 @@ class AdminCourseService
         return DB::transaction(function () use ($course, $data) {
             $user = auth()->user();
             if (
-                !$user->hasRole('super-admin')
-                && $course->created_by !== $user->id
+                !$user->hasRole('super-admin') &&
+                !$user->hasPermissionTo('manage_courses') &&
+                $course->created_by !== $user->id
             ) {
                 throw ValidationException::withMessages([
                     'course' => 'You are not allowed to edit this course.',
@@ -132,6 +137,7 @@ class AdminCourseService
 
         if (
             !$user->hasRole('super-admin')
+            && !$user->hasPermissionTo('manage_courses')
             && $course->created_by !== $user->id
         ) {
             throw ValidationException::withMessages([

@@ -1,5 +1,6 @@
 <?php
 
+
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SocialAuthController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\Student\LevelExceptionController;
 use App\Http\Controllers\Student\RateController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\StripeWebhookController;
+use App\Http\Controllers\Student\PodcastController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -43,6 +45,7 @@ Route::middleware(['auth:sanctum', 'role:student|teacher'])->group(function () {
 
 //teacher routes
 Route::middleware(['auth:sanctum', 'role:teacher'])->group(function () {
+
     //question api
     Route::get('/questions', [QuestionController::class, 'index']);
     Route::get('questions/deprecated', [QuestionController::class, 'ArchiveQuestions']);
@@ -76,6 +79,7 @@ Route::middleware(['auth:sanctum', 'role:teacher'])->group(function () {
 //بس للتجريب
    Route::get('/publishTest/{test}', [TestController::class, 'publishTest']);
 });
+
 Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
     //level api
     Route::get('/getStudentLevels', [LevelController::class, 'getStudentLevels']);
@@ -110,6 +114,12 @@ Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
     //payment api
     Route::post('/payments/{level}/create-intent',[PaymentController::class,'createIntent']);
     Route::get('/payments/{paymentIntentId}/status',[PaymentController::class,'status']);
+
+    //Podcast api
+    Route::get('/podcasts/topics',[PodcastController::class,'getTopics']);
+    Route::get('/podcasts/{topic}',[PodcastController::class,'getPodcastsByTopic']);
+    Route::get('/podcasts/{podcast}/details',[PodcastController::class,'showDetail']);
+    Route::post('/podcasts/{podcast}/open',[PodcastController::class,'openPodcast']);
 
 
 });
