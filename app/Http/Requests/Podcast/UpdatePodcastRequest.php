@@ -1,0 +1,61 @@
+<?php
+
+namespace App\Http\Requests\Podcast;
+
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+
+class UpdatePodcastRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+         $podcast = $this->route('podcast');
+        return [
+            'name_en' => [
+                'sometimes',
+                'filled',
+                'string',
+                'max:255',
+                'regex:/^[a-zA-Z0-9\s\-_]+$/',
+                Rule::unique('podcasts', 'name_en')->ignore($podcast->id),
+            ],
+            'name_ar' => [
+                'sometimes',
+                'filled',
+                'string',
+                'max:255',
+                'regex:/^[\x{0600}-\x{06FF}\s0-9\-_]+$/u',
+                Rule::unique('podcasts', 'name_ar')->ignore($podcast->id),
+            ],
+
+            'point_required' => [
+                'sometimes',
+                'filled',
+                'integer',
+                'min:1',
+            ],
+
+            'video' => [
+                'sometimes',
+                'filled',
+                'file',
+                'mimetypes:video/mp4,video/quicktime,video/x-msvideo,video/x-matroska',
+
+            ],
+        ];
+    }
+}

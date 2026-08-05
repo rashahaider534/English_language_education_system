@@ -30,6 +30,5 @@ class RolePermissionSeeder extends Seeder
             ->get();
 
         $admin->givePermissionTo($permissions);
-        $studentRole->givePermissionTo(['create comments']);
     }
 }
