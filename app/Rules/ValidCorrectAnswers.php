@@ -9,7 +9,7 @@ use Illuminate\Contracts\Validation\ValidationRule;
 class ValidCorrectAnswers implements ValidationRule
 {
     public function __construct(
-        private string $type,
+        private QuestionType $type,
         private array $answers
     ) {}
 
@@ -19,7 +19,7 @@ class ValidCorrectAnswers implements ValidationRule
             ->where('is_correct', true)
             ->count();
 
-        if ($this->type === QuestionType::MCQ->value) {
+        if ($this->type === QuestionType::MCQ) {
 
             if ($correctAnswers === 0) {
                 $fail('MCQ questions must contain one correct answer.');
@@ -32,7 +32,7 @@ class ValidCorrectAnswers implements ValidationRule
             }
         }
 
-        if ($this->type === QuestionType::ARRANGE->value) {
+        if ($this->type === QuestionType::ARRANGE) {
 
             if ($correctAnswers < 2) {
                 $fail('Arrange questions must contain at least two correct items.');

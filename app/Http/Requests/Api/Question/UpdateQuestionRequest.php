@@ -106,17 +106,17 @@ class UpdateQuestionRequest extends FormRequest
     {
         return match ($type) {
 
-            'MCQ' => [
+            QuestionType::MCQ => [
                 'answers.*.text_answer' => 'required|string|distinct',
                 'answers.*.is_correct' => 'required|boolean',
             ],
 
-            'FILL' => [
+            QuestionType::FILL => [
                 'answers.*.text_answer' => 'required|string',
-                'answers.*.blank_order' => 'required|integer|distinct|min:1',
+                'answers.*.blank_order' => 'required|integer|min:1',
             ],
 
-            'ARRANGE' => [
+            QuestionType::ARRANGE => [
                 'answers.*.text_answer' => 'required|string',
                 'answers.*.order' =>  [
                     'integer',
@@ -127,7 +127,7 @@ class UpdateQuestionRequest extends FormRequest
                 'answers.*.is_correct' => 'required|boolean',
             ],
 
-            'PAIR' => [
+            QuestionType::PAIR => [
                 'answers.*.left_text' => 'required|string|regex:/^[\p{Arabic}0-9\s،؟؛:()«»"\'\-.!,]+$/u|distinct',
                 'answers.*.right_text' => 'required|string|regex:/^[a-zA-Z0-9\s.,!?;:()\'"-]+$/|distinct',
             ],
