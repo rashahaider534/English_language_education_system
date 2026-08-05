@@ -16,7 +16,7 @@ return new class extends Migration
         {
             $table->id();
             $table->morphs('testable');
-            $table->integer('passing_score')->nullable();
+            $table->integer('passing_score')->default(0);
             $table->string('title_en');
             $table->string('title_ar');
             $table->enum('status', array_column(ContentStatus::cases(), 'value'))->default(ContentStatus::DRAFT->value);
