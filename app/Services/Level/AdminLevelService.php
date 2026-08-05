@@ -22,7 +22,7 @@ class AdminLevelService
                 "levels.$status.page.$page",
                 3600,
                 function () use ($status) {
-                    $query = Level::with(['creator','tests'])
+                    $query = Level::with(['creator','tests:id'])
                         ->when($status, function ($query) use ($status) {
                             $query->where('status', $status);
                         })

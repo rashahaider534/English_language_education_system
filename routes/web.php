@@ -70,7 +70,6 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
     //comment route
     Route::delete('/comments/{comment}/destroy', [CommentController::class, 'admindelete']);
     Route::patch('/comments/{comment}/block', [CommentController::class, 'block']);
-
 });
 
 Route::middleware(['auth:web'])->group(function () {
