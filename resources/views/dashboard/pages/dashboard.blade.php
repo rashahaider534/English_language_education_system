@@ -67,6 +67,11 @@
     .db-status-row { display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:13px; transition:background .15s ease; }
     .db-status-row:hover { background:rgba(168,232,249,.14); }
 
+    .db-status-row-v2 { padding:13px 14px; border-radius:14px; background:rgba(255,255,255,.5); border:1px solid rgba(0,83,122,.08); transition:background .2s ease, transform .2s ease; }
+    .db-status-row-v2:hover { background:rgba(255,255,255,.85); transform:translateX(-2px); }
+    .db-status-row-v2 .db-progress-fill { animation:dashGrow 1s cubic-bezier(.16,1,.3,1) both; }
+    @keyframes dashGrow { from { width:0%; } }
+
     @media (max-width:900px) {
         .db-grid-2 { grid-template-columns:1fr !important; }
     }
@@ -76,6 +81,9 @@
 @section('content')
 @php
     $lessonsStatusTotal = max(1, $lessonsDraft + $lessonsPending + $lessonsReviewed);
+    $reviewedRowPct = round(($lessonsReviewed / $lessonsStatusTotal) * 100);
+    $pendingRowPct = round(($lessonsPending / $lessonsStatusTotal) * 100);
+    $draftRowPct = round(($lessonsDraft / $lessonsStatusTotal) * 100);
 
     $coursesTotal = max(1, $coursesPublished + $coursesPending + $coursesClosed);
     $pubPct = round(($coursesPublished / $coursesTotal) * 100);
