@@ -50,7 +50,7 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::patch('/levelexceptions/{levelException}/approve', [LevelExceptionController::class, 'approve'])->name('levelException.approve');
     Route::patch('/levelexceptions/{levelException}/reject', [LevelExceptionController::class, 'reject'])->name('levelException.reject');
 
-    //permisstion route
+    //permission route
     Route::post('/admins', [RoleController::class, 'storeAdmin'])->name('admins.store');
     Route::get('/admins/create', [RoleController::class, 'create'])->name('admins.create');
     Route::get('/admins/{user}/permissions', [RoleController::class, 'choosePermissions'])->name('permissions');
