@@ -10,6 +10,7 @@ use UnexpectedValueException;
 class StripeWebhookController extends Controller
 {
     public function __construct(private StripeWebhookService $webhookService) {}
+    
      public function handle(Request $request)
     {
         try {

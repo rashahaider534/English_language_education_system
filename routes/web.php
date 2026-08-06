@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\ComplaintController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\Admin\TopicController;
 use App\Http\Controllers\Admin\PodcastController;
+use App\Http\Controllers\Admin\RoleController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -48,6 +49,14 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::patch('/levelexceptions/{levelException}/start', [LevelExceptionController::class, 'startReview'])->name('levelException.review');
     Route::patch('/levelexceptions/{levelException}/approve', [LevelExceptionController::class, 'approve'])->name('levelException.approve');
     Route::patch('/levelexceptions/{levelException}/reject', [LevelExceptionController::class, 'reject'])->name('levelException.reject');
+
+    //permisstion route
+    Route::post('/admins', [RoleController::class, 'storeAdmin'])->name('admins.store');
+    Route::get('/admins/create', [RoleController::class, 'create'])->name('admins.create');
+    Route::get('/admins/{user}/permissions', [RoleController::class, 'choosePermissions'])->name('permissions');
+    Route::post('/admins/{user}/permissions', [RoleController::class, 'assignPermissions'])->name('assignPermissions');
+    Route::get('/teachers/create', [RoleController::class, 'createteacher'])->name('teachers.create');
+    Route::post('/teachers', [RoleController::class, 'storeTeacher'])->name('teachers.store');
 });
 
 Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
