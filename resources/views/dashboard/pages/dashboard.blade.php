@@ -8,26 +8,35 @@
           --orange-600:#F5A201; --orange-400:#FFBA42; --yellow-300:#FFD35B;
           --green-600:#1E8A57; --green-100:#E3F6EC;
           --ink:#0B2436; --muted:#5D7C8D; --muted-soft:#8FA6B3;
-          --line:rgba(1,60,88,0.09); --bg:#F4F8FB; --card:#FFFFFF;
-          --shadow-sm:0 1px 2px rgba(2,32,71,.05), 0 1px 1px rgba(2,32,71,.04);
-          --shadow-md:0 10px 26px rgba(2,32,71,.07);
+          --line:rgba(0,83,122,0.16); --bg:#DFF2F9; --card:#FBFEFF; --card-sky:#EFFAFD;
+          --border-accent:rgba(14,106,150,.32); --border-accent-hover:rgba(14,106,150,.5);
+          --glow-yellow:0 0 0 3px rgba(255,211,91,.22);
+          --glow-yellow-hover:0 0 0 4px rgba(255,211,91,.32);
+          --shadow-elev:0 16px 34px rgba(1,60,88,.10);
+          --shadow-elev-hover:0 22px 44px rgba(1,60,88,.16);
           --shadow-lg:0 22px 48px rgba(1,60,88,.20);
           --r-lg:20px; --r-md:16px; --r-sm:12px;
           background:var(--bg); font-family:'Tajawal',sans-serif; min-height:100vh; color:var(--ink); }
 
     .db .num { font-family:'Poppins','Tajawal',sans-serif; }
 
-    .db-card { background:var(--card); border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow-sm); animation:dashFadeUp .45s ease both; }
+    .db-card, .db-stat { border-radius:var(--r-lg); border:1.5px solid var(--border-accent); box-shadow:var(--glow-yellow), var(--shadow-elev); transition:box-shadow .2s ease, transform .2s ease, border-color .2s ease; animation:dashFadeUp .45s ease both; }
+    .db-card { background:var(--card-sky); }
+    .db-card:hover, .db-stat:hover { transform:translateY(-3px); border-color:var(--border-accent-hover); box-shadow:var(--glow-yellow-hover), var(--shadow-elev-hover); }
     .db-grid-4 > .db-card:nth-child(2) { animation-delay:.05s; }
     .db-grid-4 > .db-card:nth-child(3) { animation-delay:.1s; }
     .db-grid-4 > .db-card:nth-child(4) { animation-delay:.15s; }
 
-    .db-stat { padding:20px 22px; transition:transform .2s ease, box-shadow .2s ease; }
-    .db-stat:hover { transform:translateY(-3px); box-shadow:var(--shadow-md); }
+    .db-stat { padding:20px 22px; }
+
+    .db-stat-orange { background:radial-gradient(circle at 102% -12%, rgba(255,255,255,.8) 0%, rgba(255,255,255,0) 55%), linear-gradient(135deg,#FFFBF3 0%, #FFF3DC 55%, #FFE9C3 100%); }
+    .db-stat-blue { background:radial-gradient(circle at 102% -12%, rgba(255,255,255,.7) 0%, rgba(255,255,255,0) 55%), linear-gradient(135deg,#E9F7FC 0%, #C9EAF7 55%, #A9DBF0 100%); }
+    .db-stat-navy { background:radial-gradient(circle at 102% -12%, rgba(255,211,91,.45) 0%, rgba(255,211,91,0) 55%), linear-gradient(135deg,#E7F2F9 0%, #CBE1F0 55%, #A9CBE2 100%); }
 
     .db-icon-box { display:flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:12px; flex-shrink:0; }
 
-    .db-hero { background:linear-gradient(135deg,var(--navy-900) 0%, var(--navy-700) 55%, var(--blue-500) 130%); border:none; box-shadow:var(--shadow-lg); position:relative; overflow:hidden; }
+    .db-hero { background:linear-gradient(135deg,var(--navy-900) 0%, var(--navy-700) 55%, var(--blue-500) 130%); border:1.5px solid rgba(168,232,249,.35); box-shadow:var(--glow-yellow), var(--shadow-lg); position:relative; overflow:hidden; }
+    .db-hero:hover { border-color:rgba(168,232,249,.55); }
     .db-hero::before { content:''; position:absolute; width:190px; height:190px; left:-60px; top:-70px; border-radius:50%; background:radial-gradient(circle, rgba(255,211,91,.24) 0%, rgba(255,211,91,0) 70%); pointer-events:none; }
     .db-hero::after { content:''; position:absolute; width:140px; height:140px; right:-40px; bottom:-60px; border-radius:50%; background:radial-gradient(circle, rgba(168,232,249,.14) 0%, rgba(168,232,249,0) 70%); pointer-events:none; }
 
@@ -90,9 +99,9 @@
 @endphp
 <div class="db -mx-4 -my-6 px-4 py-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8" dir="rtl">
 
-    <div style="margin-bottom:24px;">
-        <p style="margin:0; font-size:11.5px; font-weight:700; letter-spacing:1.4px; text-transform:uppercase; color:var(--muted-soft);">لوحة تحكم الأدمن</p>
-        <h1 style="margin:6px 0 0; font-family:'Poppins',sans-serif; font-weight:800; font-size:23px; color:var(--navy-900);">مرحبًا بك، {{ $dashboardUser['name'] }}</h1>
+    <div style="margin-bottom:26px; text-align:center;">
+        <h1 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:24px; color:var(--navy-900);">مرحبًا بك، {{ $dashboardUser['name'] }}</h1>
+        <span style="display:block; width:84px; height:4px; margin:12px auto 0; border-radius:999px; background:linear-gradient(90deg, var(--yellow-300), var(--blue-500));"></span>
     </div>
 
     {{-- ============ ROW 1: TOP STATS ============ --}}
@@ -112,36 +121,36 @@
             </p>
         </div>
 
-        <div class="db-card db-stat">
+        <div class="db-card db-stat db-stat-orange">
             <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-                <div class="db-icon-box" style="background:rgba(255,186,66,.16); color:#8A5A00;">
+                <div class="db-icon-box" style="background:rgba(255,255,255,.6); color:#8A5A00;">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
                 </div>
                 <p style="margin:0; font-size:12px; font-weight:600; color:var(--muted);">دروس قيد المراجعة</p>
             </div>
             <p style="margin:0; font-size:27px; font-weight:800; color:var(--navy-900);" class="num">{{ $lessonsPending }}</p>
-            <div class="db-progress-track" style="margin-top:12px; background:rgba(255,186,66,.15);">
+            <div class="db-progress-track" style="margin-top:12px; background:rgba(255,255,255,.55);">
                 <div class="db-progress-fill" style="width:{{ round(($lessonsPending / $lessonsStatusTotal) * 100) }}%; background:var(--orange-600);"></div>
             </div>
         </div>
 
-        <div class="db-card db-stat">
+        <div class="db-card db-stat db-stat-blue">
             <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-                <div class="db-icon-box" style="background:rgba(14,106,150,.13); color:var(--blue-500);">
+                <div class="db-icon-box" style="background:rgba(255,255,255,.6); color:var(--blue-500);">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"></rect><path d="M3 10h18"></path></svg>
                 </div>
                 <p style="margin:0; font-size:12px; font-weight:600; color:var(--muted);">كورسات منشورة</p>
             </div>
             <p style="margin:0; font-size:27px; font-weight:800; color:var(--navy-900);" class="num">{{ $coursesPublished }}</p>
-            <span class="db-pill" style="margin-top:12px; background:var(--green-100); color:var(--green-600);">
+            <span class="db-pill" style="margin-top:12px; background:rgba(255,255,255,.6); color:var(--green-600);">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
                 {{ round(($coursesPublished / $coursesTotal) * 100) }}% من إجمالي الكورسات
             </span>
         </div>
 
-        <div class="db-card db-stat">
+        <div class="db-card db-stat db-stat-navy">
             <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-                <div class="db-icon-box" style="background:rgba(0,83,122,.08); color:var(--navy-700);">
+                <div class="db-icon-box" style="background:rgba(255,255,255,.6); color:var(--navy-700);">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7.5 12 3l10 4.5-10 4.5-10-4.5Z"></path><path d="M6 10v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"></path></svg>
                 </div>
                 <p style="margin:0; font-size:12px; font-weight:600; color:var(--muted);">إجمالي الطلاب</p>
@@ -166,7 +175,7 @@
             </div>
             <div style="display:flex; justify-content:center; margin-bottom:24px;">
                 <div style="position:relative; width:150px; height:150px; flex-shrink:0; border-radius:50%; background:conic-gradient(var(--navy-900) 0% {{ $pubPct }}%, var(--sky-300) {{ $pubPct }}% {{ $pubPct + $pendPct }}%, rgba(1,60,88,0.10) {{ $pubPct + $pendPct }}% 100%);">
-                    <div style="position:absolute; inset:20px; background:var(--card); border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow:inset 0 0 0 1px var(--line);">
+                    <div style="position:absolute; inset:20px; background:var(--card-sky); border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow:inset 0 0 0 1px var(--line);">
                         <span style="font-size:23px; font-weight:800; color:var(--navy-900);" class="num">{{ $coursesPublished + $coursesPending + $coursesClosed }}</span>
                         <span style="font-size:10.5px; color:var(--muted-soft); font-weight:600;">إجمالي</span>
                     </div>
