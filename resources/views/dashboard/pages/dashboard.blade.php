@@ -59,10 +59,12 @@
     .db-bar-col { display:flex; flex-direction:column; align-items:center; gap:8px; flex:1; min-width:56px; }
     .db-bar-fill { width:100%; max-width:38px; border-radius:10px 10px 4px 4px; transition:height .7s cubic-bezier(.16,1,.3,1); }
 
-    .db-lb-row { display:flex; align-items:center; gap:12px; padding:11px 10px; border-radius:13px; transition:background .15s ease; }
-    .db-lb-row:hover { background:rgba(168,232,249,.14); }
-    .db-lb-rank { display:flex; align-items:center; justify-content:center; width:24px; height:24px; border-radius:8px; font-family:'Poppins',sans-serif; font-weight:700; font-size:11.5px; color:#fff; flex-shrink:0; }
-    .db-avatar { display:flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:50%; font-family:'Poppins',sans-serif; font-weight:700; font-size:13.5px; color:#fff; flex-shrink:0; }
+    .db-lb-row { display:flex; align-items:center; gap:12px; padding:12px 12px; border-radius:14px; background:rgba(255,255,255,.45); border:1px solid rgba(0,83,122,.07); margin-bottom:6px; transition:background .2s ease, transform .2s ease, border-color .2s ease; }
+    .db-lb-row:hover { background:rgba(255,255,255,.85); transform:translateX(-2px); border-color:rgba(14,106,150,.2); }
+    .db-lb-rank { display:flex; align-items:center; justify-content:center; width:24px; height:24px; border-radius:8px; font-family:'Poppins',sans-serif; font-weight:700; font-size:11.5px; color:#fff; flex-shrink:0; box-shadow:0 3px 8px rgba(1,60,88,.18); }
+    .db-avatar { display:flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:50%; font-family:'Poppins',sans-serif; font-weight:700; font-size:13.5px; color:#fff; flex-shrink:0; box-shadow:0 3px 10px rgba(1,60,88,.16); }
+    .db-lb-meta { display:flex; align-items:center; gap:5px; font-size:10.5px; font-weight:600; color:var(--muted); margin-top:5px; }
+    .db-lb-row-empty { display:flex; align-items:center; gap:12px; padding:12px 12px; border-radius:14px; border:1.5px dashed rgba(0,83,122,.18); margin-bottom:6px; opacity:.6; }
 
     .db-status-row { display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:13px; transition:background .15s ease; }
     .db-status-row:hover { background:rgba(168,232,249,.14); }
@@ -250,13 +252,15 @@
                 @php
                     $rank = $i + 1;
                     $points = $student->studentProfile->points ?? 0;
+                    $streak = $student->studentProfile->streak ?? 0;
                     $studentName = trim(($student->first_name ?? '').' '.($student->last_name ?? '')) ?: $student->email;
                     $initial = strtoupper(substr($student->first_name ?? $student->email, 0, 1));
                     $style = $rankStyles[$rank] ?? $defaultRankStyle;
                     $barPct = max(6, round(($points / $maxPoints) * 100));
+                    $medals = [1 => '🥇', 2 => '🥈', 3 => '🥉'];
                 @endphp
                 <div class="db-lb-row">
-                    <span class="db-lb-rank" style="background:{{ $style['badge'] }};">{{ $rank }}</span>
+                    <span class="db-lb-rank" style="background:{{ $style['badge'] }};">{{ $medals[$rank] ?? $rank }}</span>
                     <div class="db-avatar" style="background:{{ $style['avatar'] }};">{{ $initial }}</div>
                     <div style="flex:1; min-width:0;">
                         <div style="display:flex; align-items:baseline; justify-content:space-between; gap:8px; margin-bottom:6px;">
@@ -266,11 +270,24 @@
                         <div class="db-progress-track" style="background:rgba(1,60,88,.08);">
                             <div class="db-progress-fill" style="width:{{ $barPct }}%; background:{{ $style['bar'] }};"></div>
                         </div>
+                        <div class="db-lb-meta">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--orange-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1 3-2 4-2 7a4 4 0 0 0 8 0c0-1-.5-2-1-2 .5 2-1 3-2 3-2 0-2-2-1-3-3 0-3-3-2-5Z"></path></svg>
+                            <span>{{ $streak }} يوم متتالي</span>
+                            <span style="opacity:.5;">•</span>
+                            <span>{{ $barPct }}% من الأعلى نقاطًا</span>
+                        </div>
                     </div>
                 </div>
             @empty
                 <p style="text-align:center; color:var(--muted-soft); font-size:12.5px; padding:40px 0;">ما في طلاب حاليًا</p>
             @endforelse
+            @for ($p = $leaderboard->count() + 1; $p <= 5; $p++)
+                <div class="db-lb-row-empty">
+                    <span class="db-lb-rank" style="background:rgba(1,60,88,.14); color:var(--muted-soft); box-shadow:none;">{{ $p }}</span>
+                    <div class="db-avatar" style="background:rgba(1,60,88,.08); color:var(--muted-soft); box-shadow:none;">؟</div>
+                    <span style="flex:1; font-size:12.5px; font-weight:600; color:var(--muted-soft);">بانتظار طالب جديد ينضم للمنافسة</span>
+                </div>
+            @endfor
         </div>
 
         <div class="db-card" style="padding:22px;">
