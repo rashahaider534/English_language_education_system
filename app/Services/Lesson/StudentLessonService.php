@@ -39,6 +39,9 @@ class StudentLessonService
         $lesson = Lesson::where('course_id', $course->id)
             ->where('order', $allowedOrder)
             ->first();
+        if (!$lesson) {
+            return;
+        }
         $exists = $user->lessons()
             ->where('lesson_id', $lesson->id)
             ->exists();
@@ -96,7 +99,7 @@ class StudentLessonService
 
         $lockedLessons = Lesson::query()
             ->where('course_id', $course->id)
-            //->where('lessons.status', 'published')
+            ->where('lessons.status', 'published')
             ->where('order', '>', $allowedOrder)
             ->orderBy('order')
             ->get();
@@ -108,7 +111,7 @@ class StudentLessonService
             'locked_lessons' => $lockedLessons
         ];
     }
-    
+
     public function show(Lesson $lesson, User $user)
     {
         $canAccess = $user->lessons()

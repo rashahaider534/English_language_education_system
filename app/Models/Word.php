@@ -32,10 +32,5 @@ class Word extends Model implements HasMedia
             'status' => WordStatus::class,
         ];
     }
-       public function registerMediaCollections(): void
-    {
-        $this
-            ->addMediaCollection('audio')
-            ->singleFile();
-    }
+    
 }

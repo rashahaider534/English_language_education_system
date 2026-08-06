@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ContentStatus;
+use App\Enums\QuestionType;
 use App\Http\Resources\Answer\ArrangeAnswerResource;
 use App\Http\Resources\Answer\FillAnswerResource;
 use App\Http\Resources\Answer\McqAnswerResource;
@@ -25,6 +26,7 @@ class Question extends Model implements HasMedia
         , 'title_question_ar', 'text_question'
         , 'difficulty','user_id','previous_question_id'
         ,'is_placement_question'];
+    protected $casts = ['type'=> QuestionType::class];
     public function mcqAnswers():HasMany
     {
         return $this->hasMany(McqAnswer::class);
@@ -52,10 +54,10 @@ class Question extends Model implements HasMedia
     public function getAnswersRelationName(): string
     {
         return match ($this->type) {
-            'MCQ'     => 'mcqAnswers',
-            'FILL'    => 'fillAnswers',
-            'ARRANGE' => 'arrangeAnswers',
-            'PAIR'    => 'pairAnswers',
+            QuestionType::MCQ     => 'mcqAnswers',
+            QuestionType::FILL    => 'fillAnswers',
+            QuestionType::ARRANGE => 'arrangeAnswers',
+            QuestionType::PAIR   => 'pairAnswers',
             default   => throw new \Exception("Unknown question type"),
         };
     }
@@ -63,10 +65,10 @@ class Question extends Model implements HasMedia
     public function getAnswerResource(): string
     {
         return match ($this->type) {
-            'MCQ' => McqAnswerResource::class,
-            'FILL' => FillAnswerResource::class,
-            'ARRANGE' => ArrangeAnswerResource::class,
-            'PAIR' => PairAnswerResource::class,
+            QuestionType::MCQ => McqAnswerResource::class,
+            QuestionType::FILL => FillAnswerResource::class,
+            QuestionType::ARRANGE => ArrangeAnswerResource::class,
+            QuestionType::PAIR => PairAnswerResource::class,
         };
     }
 

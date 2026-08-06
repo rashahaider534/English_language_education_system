@@ -1,13 +1,16 @@
 <?php
 
+
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SocialAuthController;
+use App\Http\Controllers\StudentProfileController;
+use App\Http\Controllers\TeacherProfileController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\Admin\TestController as AdminTestController;
+use App\Http\Controllers\UserAttemptController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Models\Level;
 use Illuminate\Support\Facades\App;
 use App\Http\Controllers\Student\LevelController;
 use App\Http\Controllers\Student\CourseController;
@@ -18,31 +21,40 @@ use App\Http\Controllers\Student\WordController as StudentWordController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\Student\LevelExceptionController;
 use App\Http\Controllers\Student\RateController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\StripeWebhookController;
+use App\Http\Controllers\Student\PodcastController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-
+Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle']);
 Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:2,1');
 Route::post('/verifyOtp/{type}', [AuthController::class, 'verifyOtp']);
 Route::post('/resendOtp/{type}', [AuthController::class, 'resendOtp'])
     ->middleware('throttle:3,1');
 Route::post('/forgotPassword', [AuthController::class, 'forgotPassword'])
     ->middleware('throttle:3,1');
-Route::post('/resetPassword', [AuthController::class, 'resetPassword'])
-    ->middleware('throttle:3,1');
 Route::post('/login', [AuthController::class, 'login']);
 //Route::get('/google/redirect' , [SocialAuthController::class, 'redirect']);
 Route::post('/google/login', [SocialAuthController::class, 'login']);
+
 Route::middleware(['auth:sanctum', 'role:student|teacher'])->group(function () {
+    Route::post('/resetPassword', [AuthController::class, 'resetPassword'])
+        ->middleware('throttle:3,1');
     Route::post('/logout', [AuthController::class, 'logout']);
     //Test api
     Route::get('/tests/{test}', [TestController::class, 'show']);
+    //comment api
+    Route::post('/comments/{lesson}',[CommentController::class,'create']);
+    Route::post('/comments/{comment}/update',[CommentController::class,'update']);
+    Route::delete('/comments/{comment}/delete',[CommentController::class,'delete']);
 });
 
 //teacher routes
 Route::middleware(['auth:sanctum', 'role:teacher'])->group(function () {
+
     //question api
     Route::get('/questions', [QuestionController::class, 'index']);
     Route::get('questions/deprecated', [QuestionController::class, 'ArchiveQuestions']);
@@ -73,9 +85,13 @@ Route::middleware(['auth:sanctum', 'role:teacher'])->group(function () {
     Route::post('/words/{word}/update',[TeacherWordController::class,'update']);
     Route::delete('/words/{word}/delete',[TeacherWordController::class,'delete']);
 
+    //Profile api
+    Route::get('/teacher/profile', [TeacherProfileController::class , 'show']);
+    Route::post('/teacher/profile', [TeacherProfileController::class , 'update']);
 //بس للتجريب
    Route::get('/publishTest/{test}', [TestController::class, 'publishTest']);
 });
+
 Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
     //level api
     Route::get('/getStudentLevels', [LevelController::class, 'getStudentLevels']);
@@ -107,14 +123,32 @@ Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
     Route::get('/words/quiz',[StudentWordController::class,'quizWords']);
     Route::post('/words/{word}/quiz_check',[StudentWordController::class,'checkAnswer']);
 
+    //payment api
+    Route::post('/payments/{level}/create-intent',[PaymentController::class,'createIntent']);
+    Route::get('/payments/{paymentIntentId}/status',[PaymentController::class,'status']);
 
-});
-Route::middleware(['auth:sanctum', 'role:student|teacher' ])->group(function () {
-    //comment api
-    Route::post('/comments/{lesson}',[CommentController::class,'create']);
-    Route::post('/comments/{comment}/update',[CommentController::class,'update']);
-    Route::delete('/comments/{comment}/delete',[CommentController::class,'delete']);
-     
+    //Podcast api
+    Route::get('/podcasts/topics',[PodcastController::class,'getTopics']);
+    Route::get('/podcasts/{topic}',[PodcastController::class,'getPodcastsByTopic']);
+    Route::get('/podcasts/{podcast}/details',[PodcastController::class,'showDetail']);
+    Route::post('/podcasts/{podcast}/open',[PodcastController::class,'openPodcast']);
+
+    //Attempt api
+    Route::post('/tests/{test}/start', [UserAttemptController::class, 'startAndShow']);
+    Route::get('/startPlacementTest', [UserAttemptController::class, 'startPlacementTest']);
+    Route::prefix('attempts/{attempt}')->group(function () {
+        Route::post('/questions/{question}/submit-answer', [UserAttemptController::class, 'submitAnswer']);
+
+        Route::post('/finish', [UserAttemptController::class, 'finish']);
+
+        Route::post('/leave', [UserAttemptController::class, 'leave']);
+
+        Route::get('/review', [UserAttemptController::class, 'review']);
+    });
+
+    //Profile api
+    Route::get('/student/profile', [StudentProfileController::class , 'show']);
+    Route::post('/student/profile', [StudentProfileController::class , 'update']);
 });
 
 //Route::post('generateLevelTest', [AdminTestController::class, 'generateLevelTest']);

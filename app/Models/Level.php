@@ -54,10 +54,6 @@ class Level extends Model
         return $this->hasMany(LevelException::class, 'recommended_level_id');
     }
 
-    public function podcasts(): HasMany
-    {
-        return $this->hasMany(Podcast::class);
-    }
        public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');

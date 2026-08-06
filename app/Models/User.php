@@ -45,7 +45,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(Level::class, 'created_by');
     }
-       public function createdCourses(): HasMany
+    public function createdCourses(): HasMany
     {
         return $this->hasMany(Course::class, 'created_by');
     }
@@ -130,7 +130,20 @@ class User extends Authenticatable
     {
         return $this->hasMany(LessonReview::class, 'assigned_to');
     }
-
+    public function podcasts()
+    {
+        return $this->belongsToMany(Podcast::class,'user_podcasts')
+            ->withPivot('listened_at')
+            ->withTimestamps();
+    }
+    public function createdTopics(): HasMany
+    {
+        return $this->hasMany(Topic::class, 'created_by');
+    }
+    public function createdPodcasts(): HasMany
+    {
+        return $this->hasMany(Podcast::class, 'created_by');
+    }
 
     /**
      * The attributes that should be hidden for serialization.

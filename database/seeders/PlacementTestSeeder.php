@@ -51,7 +51,7 @@ class PlacementTestSeeder extends Seeder
         $test = Test::create([
             'testable_type' => 'placement_test', // adjust to match your Relation::morphMap() alias
             'testable_id' => $placementTest->id,
-            'passing_score' => 60,
+            'passing_score' => 0,
             'title_en' => $titleEn,
             'title_ar' => $titleAr,
             'status' => $status,

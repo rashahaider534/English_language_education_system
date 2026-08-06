@@ -18,7 +18,7 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'manage_level_tests', 'guard_name' => 'web']);
         Permission::create(['name' => 'manage_placement_tests', 'guard_name' => 'web']);
         Permission::create(['name' => 'manage_placement_questions', 'guard_name' => 'web']);
+        Permission::create(['name' => 'manage_podcasts', 'guard_name' => 'web']);
         Permission::create(['name' => 'publish_levels', 'guard_name' => 'web']);
-        Permission::create(['name' => 'create comments', 'guard_name' => 'api']);
     }
 }

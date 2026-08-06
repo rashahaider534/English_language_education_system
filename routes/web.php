@@ -13,6 +13,8 @@ use App\Http\Controllers\Admin\TeacherManagementController;
 use App\Http\Controllers\Admin\StudentManagementController;
 use App\Http\Controllers\Admin\ComplaintController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\Admin\TopicController;
+use App\Http\Controllers\Admin\PodcastController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -51,20 +53,8 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
 Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
     //level route
     Route::get('/levels', [LevelController::class, 'index'])->name('levels.index');
-    Route::get('/levels/create', [LevelController::class, 'create'])->name('levels.create');
-    Route::post('/levels', [LevelController::class, 'store'])->name('levels.store');
-    Route::get('/levels/{level}/edit', [LevelController::class, 'edit'])->name('levels.edit');
-    Route::put('/levels/{level}', [LevelController::class, 'update'])->name('levels.update');
-    Route::patch('/levels/{level}/archive', [LevelController::class, 'archive'])->name('levels.archive');
-
     //course route
     Route::get('/courses/{level}', [CourseController::class, 'index'])->name('courses.index');
-    Route::get('/courses/{level}/create', [CourseController::class, 'create'])->name('courses.create');
-    Route::post('/courses/{level}', [CourseController::class, 'store'])->name('courses.store');
-    Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])->name('courses.edit');
-    Route::put('/courses/{course}', [CourseController::class, 'update'])->name('courses.update');
-    Route::patch('/courses/{course}/archive', [CourseController::class, 'archive'])->name('courses.archive');
-
     //lesson route
     Route::get('/courses/{course}/lessons/{status?}', [LessonController::class, 'index'])->name('lessons.index');
     Route::get('/lessons/pending', [LessonController::class, 'pending'])->name('lessons.pending');
@@ -73,6 +63,8 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
 
     //comment route
     Route::delete('/comments/{comment}/destroy', [CommentController::class, 'admindelete']);
+    Route::patch('/comments/{comment}/block', [CommentController::class, 'block']);
+
     Route::patch('/comments/{comment}/block',[CommentController::class,'block']);
 
     // Teachers management & monitoring — index/lessons query real data;
@@ -97,6 +89,24 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
 });
 
 Route::middleware(['auth:web'])->group(function () {
+    Route::middleware(['role:admin|super-admin', 'permission:manage_levels'])
+        ->group(function () {
+            //level route
+            Route::get('/levels/create', [LevelController::class, 'create'])->name('levels.create');
+            Route::post('/levels', [LevelController::class, 'store'])->name('levels.store');
+            Route::get('/levels/{level}/edit', [LevelController::class, 'edit'])->name('levels.edit');
+            Route::put('/levels/{level}', [LevelController::class, 'update'])->name('levels.update');
+            Route::patch('/levels/{level}/archive', [LevelController::class, 'archive'])->name('levels.archive');
+        });
+
+    Route::middleware(['role:admin|super-admin', 'permission:manage_courses'])
+        ->group(function () {
+            Route::get('/courses/{level}/create', [CourseController::class, 'create'])->name('courses.create');
+            Route::post('/courses/{level}', [CourseController::class, 'store'])->name('courses.store');
+            Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])->name('courses.edit');
+            Route::put('/courses/{course}', [CourseController::class, 'update'])->name('courses.update');
+            Route::patch('/courses/{course}/archive', [CourseController::class, 'archive'])->name('courses.archive');
+        });
 
     Route::middleware(['role:admin|super-admin', 'permission:manage_placement_questions'])->group(function () {
 
@@ -107,7 +117,8 @@ Route::middleware(['auth:web'])->group(function () {
         )->name('questions.placement.index');
 
         Route::get(
-            'questions/{question}', [QuestionController::class, 'show']
+            'questions/{question}',
+            [QuestionController::class, 'show']
         )->name('questions.show');
         Route::get(
             '/questions/placement/create',
@@ -133,8 +144,6 @@ Route::middleware(['auth:web'])->group(function () {
             '/questions/{question}',
             [QuestionController::class, 'deleteQuestion']
         )->name('questions.delete');
-
-
     });
 
     Route::middleware(['role:admin|super-admin', 'permission:manage_placement_tests'])
@@ -166,5 +175,26 @@ Route::middleware(['auth:web'])->group(function () {
     Route::middleware(['role:admin|super-admin', 'permission:manage_placement_tests|manage_level_tests'])
         ->post('/tests/{test}', [TestController::class, 'update'])
         ->name('tests.update');
+
+    Route::middleware(['role:admin|super-admin', 'permission:manage_podcast'])
+        ->group(function () {
+            //topic route
+            Route::get('/topics', [TopicController::class, 'index'])->name('topics.index');
+            Route::get('/topics/create', [TopicController::class, 'create'])->name('topics.create');
+            Route::post('/topics', [TopicController::class, 'store'])->name('topics.store');
+            Route::get('/topics/{topic}/edit', [TopicController::class, 'edit'])->name('topics.edit');
+            Route::patch('/topics/{topic}/update', [TopicController::class, 'update'])->name('topics.update');
+            Route::post('/topics/{topic}/publish', [TopicController::class, 'publish'])->name('topics.publish');
+            Route::delete('/topics/{topic}/delete', [TopicController::class, 'destroy'])->name('topics.delete');
+
+            //podcast route
+            Route::get('/podcasts/{topic}', [PodcastController::class, 'index'])->name('podcasts.index');
+            Route::get('/podcasts/{podcast}', [PodcastController::class, 'show'])->name('podcasts.show');
+            Route::get('/podcasts/create', [PodcastController::class, 'create'])->name('podcasts.create');
+            Route::post('/podcasts/{topic}', [PodcastController::class, 'store'])->name('podcasts.store');
+            Route::get('/podcasts/{podcast}/edit', [PodcastController::class, 'edit'])->name('podcasts.edit');
+            Route::patch('/podcasts/{podcast}/update', [PodcastController::class, 'update'])->name('podcasts.update');
+            Route::delete('/podcasts/{podcast}/delete', [PodcastController::class, 'destroy'])->name('podcasts.delete');
+        });
 });
 require __DIR__ . '/auth.php';

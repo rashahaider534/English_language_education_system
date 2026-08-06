@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\TopicandPodcast;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class TeacherProfileResource extends JsonResource
+class TopicResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,8 +14,10 @@ class TeacherProfileResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
-            'bio' => $this->bio,
+           return [
+            'id' => $this->id,
+            'name' => $this->translate('name'),
+            'image_url' => $this->getFirstMediaUrl('topic_image'),
         ];
     }
 }

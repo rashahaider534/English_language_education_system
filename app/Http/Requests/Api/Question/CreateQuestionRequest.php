@@ -28,11 +28,10 @@ class CreateQuestionRequest extends FormRequest
         ];
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
+    private function questionType(): ?QuestionType
+    {
+        return QuestionType::tryFrom((string) $this->input('type'));
+    }
     public function rules(): array
     {
         return [
@@ -45,7 +44,7 @@ class CreateQuestionRequest extends FormRequest
                 'required_if:type,FILL',
 
                 Rule::when(
-                    $this->input('type') === QuestionType::FILL->value,
+                    $this->questionType() === QuestionType::FILL,
                     [new ValidFillQuestion($this->input('answers', []))]
                 ),
             ],
@@ -75,25 +74,25 @@ class CreateQuestionRequest extends FormRequest
                 'required',
                 'array',
                 Rule::when(
-                    in_array($this->input('type'), [
-                        QuestionType::MCQ->value,
-                        QuestionType::ARRANGE->value,
-                        QuestionType::PAIR->value,
+                    in_array($this->questionType(), [
+                        QuestionType::MCQ,
+                        QuestionType::ARRANGE,
+                        QuestionType::PAIR,
                     ]),
                     ['min:2']
                 ),
                 Rule::when(
-                    $this->input('type') === QuestionType::ARRANGE->value,
+                    $this->questionType() === QuestionType::ARRANGE,
                     [new SequentialOrder($this->input('answers', []))]
                 ),
                 Rule::when(
-                    in_array($this->input('type'), [
-                        QuestionType::MCQ->value,
-                        QuestionType::ARRANGE->value,
+                    in_array($this->questionType(), [
+                        QuestionType::MCQ,
+                        QuestionType::ARRANGE,
                     ]),
                     [
                         new ValidCorrectAnswers(
-                            $this->input('type'),
+                            $this->questionType(),
                             $this->input('answers', [])
                         )
                     ]
@@ -104,11 +103,11 @@ class CreateQuestionRequest extends FormRequest
                 'string','filled',
 
                 Rule::requiredIf(
-                    in_array($this->input('type'), ['MCQ', 'FILL', 'ARRANGE'])
+                    in_array($this->questionType(), [QuestionType::MCQ, QuestionType::FILL, QuestionType::PAIR])
                 ),
 
                 Rule::when(
-                    $this->input('type') === QuestionType::MCQ->value,
+                    $this->questionType() === QuestionType::MCQ,
                     ['distinct']
                 ),
             ],
@@ -118,16 +117,16 @@ class CreateQuestionRequest extends FormRequest
                 'distinct',
                 'min:1',
                 Rule::when(
-                    $this->input('type') === QuestionType::ARRANGE->value,
+                    $this->questionType() === QuestionType::ARRANGE,
                     ['required_if:answers.*.is_correct,true', 'prohibited_if:answers.*.is_correct,false']
                 ),
                 Rule::when(
-                    $this->input('type') !== QuestionType::ARRANGE->value,
+                    $this->questionType() !== QuestionType::ARRANGE,
                     ['prohibited']
                 ),
             ],
 
-            'answers.*.blank_order' => 'required_if:type,FILL|integer|distinct|min:1',
+            'answers.*.blank_order' => 'required_if:type,FILL|integer|min:1',
 
 
             'answers.*.left_text' => 'required_if:type,PAIR|string|regex:/^[\p{Arabic}0-9\s،؟؛:()«»"\'\-.!,]+$/u',
