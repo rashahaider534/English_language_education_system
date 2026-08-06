@@ -29,7 +29,7 @@
 
     .db-stat { padding:20px 22px; }
 
-    .db-stat-orange { background:radial-gradient(circle at 102% -12%, rgba(255,255,255,.8) 0%, rgba(255,255,255,0) 55%), linear-gradient(135deg,#FFFBF3 0%, #FFF3DC 55%, #FFE9C3 100%); }
+    .db-stat-gold { background:radial-gradient(circle at 102% -12%, rgba(255,255,255,.6) 0%, rgba(255,255,255,0) 55%), linear-gradient(135deg,#FFF8E3 0%, #F0E3C0 50%, #D9E2E8 100%); }
     .db-stat-blue { background:radial-gradient(circle at 102% -12%, rgba(255,255,255,.7) 0%, rgba(255,255,255,0) 55%), linear-gradient(135deg,#E9F7FC 0%, #C9EAF7 55%, #A9DBF0 100%); }
     .db-stat-navy { background:radial-gradient(circle at 102% -12%, rgba(255,211,91,.45) 0%, rgba(255,211,91,0) 55%), linear-gradient(135deg,#E7F2F9 0%, #CBE1F0 55%, #A9CBE2 100%); }
 
@@ -131,16 +131,16 @@
             </p>
         </div>
 
-        <div class="db-card db-stat db-stat-orange">
+        <div class="db-card db-stat db-stat-gold">
             <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-                <div class="db-icon-box" style="background:rgba(255,255,255,.6); color:#8A5A00;">
+                <div class="db-icon-box" style="background:rgba(255,255,255,.55); color:var(--navy-700);">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
                 </div>
                 <p style="margin:0; font-size:12px; font-weight:600; color:var(--muted);">دروس قيد المراجعة</p>
             </div>
             <p style="margin:0; font-size:27px; font-weight:800; color:var(--navy-900);" class="num">{{ $lessonsPending }}</p>
-            <div class="db-progress-track" style="margin-top:12px; background:rgba(255,255,255,.55);">
-                <div class="db-progress-fill" style="width:{{ round(($lessonsPending / $lessonsStatusTotal) * 100) }}%; background:var(--orange-600);"></div>
+            <div class="db-progress-track" style="margin-top:12px; background:rgba(255,255,255,.5);">
+                <div class="db-progress-fill" style="width:{{ round(($lessonsPending / $lessonsStatusTotal) * 100) }}%; background:linear-gradient(90deg,#E8C46B,#6B8CA0);"></div>
             </div>
         </div>
 
@@ -291,28 +291,51 @@
         </div>
 
         <div class="db-card" style="padding:22px;">
-            <h3 class="db-card-title" style="margin-bottom:16px;">حالة الدروس</h3>
-            <div style="display:flex; flex-direction:column; gap:6px;">
-                <div class="db-status-row">
-                    <div class="db-icon-box" style="background:var(--green-100); color:var(--green-600);">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+            <div class="db-card-head" style="margin-bottom:16px;">
+                <h3 class="db-card-title">حالة الدروس</h3>
+                <span class="db-pill" style="background:rgba(255,255,255,.6); color:var(--navy-700);">إجمالي {{ $lessonsStatusTotal }} درس</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <div class="db-status-row-v2">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <div class="db-icon-box" style="background:var(--green-100); color:var(--green-600);">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+                        </div>
+                        <span style="flex:1; font-size:13px; font-weight:600; color:var(--navy-900);">دروس تمّت مراجعتها</span>
+                        <span class="num" style="font-weight:800; font-size:16px; color:var(--navy-900);">{{ $lessonsReviewed }}</span>
                     </div>
-                    <span style="flex:1; font-size:13px; font-weight:600; color:var(--navy-900);">دروس تمّت مراجعتها</span>
-                    <span class="num" style="font-weight:800; font-size:15px; color:var(--navy-900);">{{ $lessonsReviewed }}</span>
+                    <div class="db-progress-track" style="margin-top:10px; margin-right:50px; background:var(--green-100);">
+                        <div class="db-progress-fill" style="width:{{ $reviewedRowPct }}%; background:var(--green-600);"></div>
+                    </div>
+                    <p style="margin:6px 50px 0 0; font-size:10.5px; font-weight:600; color:var(--muted);">{{ $reviewedRowPct }}% من إجمالي الدروس</p>
                 </div>
-                <div class="db-status-row">
-                    <div class="db-icon-box" style="background:rgba(255,186,66,.16); color:#8A5A00;">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
+
+                <div class="db-status-row-v2">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <div class="db-icon-box" style="background:rgba(255,186,66,.16); color:#8A5A00;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
+                        </div>
+                        <span style="flex:1; font-size:13px; font-weight:600; color:var(--navy-900);">دروس بانتظار المراجعة</span>
+                        <span class="num" style="font-weight:800; font-size:16px; color:var(--navy-900);">{{ $lessonsPending }}</span>
                     </div>
-                    <span style="flex:1; font-size:13px; font-weight:600; color:var(--navy-900);">دروس بانتظار المراجعة</span>
-                    <span class="num" style="font-weight:800; font-size:15px; color:var(--navy-900);">{{ $lessonsPending }}</span>
+                    <div class="db-progress-track" style="margin-top:10px; margin-right:50px; background:rgba(255,186,66,.16);">
+                        <div class="db-progress-fill" style="width:{{ $pendingRowPct }}%; background:var(--orange-600);"></div>
+                    </div>
+                    <p style="margin:6px 50px 0 0; font-size:10.5px; font-weight:600; color:var(--muted);">{{ $pendingRowPct }}% من إجمالي الدروس</p>
                 </div>
-                <div class="db-status-row">
-                    <div class="db-icon-box" style="background:rgba(1,60,88,.07); color:var(--muted);">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4"></path><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"></path></svg>
+
+                <div class="db-status-row-v2">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <div class="db-icon-box" style="background:rgba(1,60,88,.07); color:var(--muted);">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4"></path><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"></path></svg>
+                        </div>
+                        <span style="flex:1; font-size:13px; font-weight:600; color:var(--navy-900);">مسوّدات</span>
+                        <span class="num" style="font-weight:800; font-size:16px; color:var(--navy-900);">{{ $lessonsDraft }}</span>
                     </div>
-                    <span style="flex:1; font-size:13px; font-weight:600; color:var(--navy-900);">مسوّدات</span>
-                    <span class="num" style="font-weight:800; font-size:15px; color:var(--navy-900);">{{ $lessonsDraft }}</span>
+                    <div class="db-progress-track" style="margin-top:10px; margin-right:50px; background:rgba(1,60,88,.08);">
+                        <div class="db-progress-fill" style="width:{{ $draftRowPct }}%; background:var(--muted);"></div>
+                    </div>
+                    <p style="margin:6px 50px 0 0; font-size:10.5px; font-weight:600; color:var(--muted);">{{ $draftRowPct }}% من إجمالي الدروس</p>
                 </div>
             </div>
         </div>

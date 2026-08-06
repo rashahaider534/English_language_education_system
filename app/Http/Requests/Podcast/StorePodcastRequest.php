@@ -29,7 +29,7 @@ class StorePodcastRequest extends FormRequest
                 'string',
                 'max:255',
                 'regex:/^[a-zA-Z0-9\s\-_]+$/',
-                Rule::unique('topics', 'name_en'),
+                Rule::unique('podcasts', 'name_en'),
             ],
 
             'name_ar' => [
@@ -37,7 +37,7 @@ class StorePodcastRequest extends FormRequest
                 'string',
                 'max:255',
                 'regex:/^[\x{0600}-\x{06FF}\s0-9\-_]+$/u',
-                Rule::unique('topics', 'name_ar'),
+                Rule::unique('podcasts', 'name_ar'),
             ],
             'point_required' => [
                 'required',

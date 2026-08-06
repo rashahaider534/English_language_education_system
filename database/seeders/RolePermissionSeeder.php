@@ -25,6 +25,7 @@ class RolePermissionSeeder extends Seeder
                 'manage_level_tests',
                 'manage_placement_tests',
                 'manage_placement_questions',
+                'manage_podcasts',
                 'publish_levels',
             ])
             ->get();

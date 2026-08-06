@@ -125,7 +125,8 @@
             <tbody>
                 @forelse ($questions as $question)
                     @php
-                        $tc = $typeColors[$question->type] ?? $typeColors['MCQ'];
+                        $questionType = $question->type instanceof \BackedEnum ? $question->type->value : $question->type;
+                        $tc = $typeColors[$questionType] ?? $typeColors['MCQ'];
                         $dc = $difficultyColors[$question->difficulty] ?? $difficultyColors['EASY'];
                         $isPublished = $question->isUsedInPublishedTests();
                         $isClosed = $question->isUsedInClosedTests();
@@ -140,7 +141,7 @@
                             <div style="font-size:12px; color:#0E6A96; opacity:0.75; margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $question->title_question_ar }}</div>
                         </td>
                         <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); text-align:center;">
-                            <span style="display:inline-flex; padding:5px 11px; border-radius:999px; background:{{ $tc['bg'] }}; color:{{ $tc['fg'] }}; font-size:11px; font-weight:700;">{{ $typeLabels[$question->type] ?? $question->type }}</span>
+                            <span style="display:inline-flex; padding:5px 11px; border-radius:999px; background:{{ $tc['bg'] }}; color:{{ $tc['fg'] }}; font-size:11px; font-weight:700;">{{ $typeLabels[$questionType] ?? $questionType }}</span>
                         </td>
                         <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); text-align:center;">
                             <span style="display:inline-flex; padding:5px 11px; border-radius:999px; background:{{ $dc['bg'] }}; color:{{ $dc['fg'] }}; font-size:11px; font-weight:700;">{{ $difficultyLabels[$question->difficulty] ?? $question->difficulty }}</span>

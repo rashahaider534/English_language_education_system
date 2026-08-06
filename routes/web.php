@@ -176,7 +176,7 @@ Route::middleware(['auth:web'])->group(function () {
         ->post('/tests/{test}', [TestController::class, 'update'])
         ->name('tests.update');
 
-    Route::middleware(['role:admin|super-admin', 'permission:manage_podcast'])
+    Route::middleware(['role:admin|super-admin', 'permission:manage_podcasts'])
         ->group(function () {
             //topic route
             Route::get('/topics', [TopicController::class, 'index'])->name('topics.index');
@@ -188,10 +188,10 @@ Route::middleware(['auth:web'])->group(function () {
             Route::delete('/topics/{topic}/delete', [TopicController::class, 'destroy'])->name('topics.delete');
 
             //podcast route
-            Route::get('/podcasts/{topic}', [PodcastController::class, 'index'])->name('podcasts.index');
-            Route::get('/podcasts/{podcast}', [PodcastController::class, 'show'])->name('podcasts.show');
             Route::get('/podcasts/create', [PodcastController::class, 'create'])->name('podcasts.create');
-            Route::post('/podcasts/{topic}', [PodcastController::class, 'store'])->name('podcasts.store');
+            Route::get('/topics/{topic}/podcasts', [PodcastController::class, 'index'])->name('podcasts.index');
+            Route::post('/topics/{topic}/podcasts', [PodcastController::class, 'store'])->name('podcasts.store');
+            Route::get('/podcasts/{podcast}', [PodcastController::class, 'show'])->name('podcasts.show');
             Route::get('/podcasts/{podcast}/edit', [PodcastController::class, 'edit'])->name('podcasts.edit');
             Route::patch('/podcasts/{podcast}/update', [PodcastController::class, 'update'])->name('podcasts.update');
             Route::delete('/podcasts/{podcast}/delete', [PodcastController::class, 'destroy'])->name('podcasts.delete');

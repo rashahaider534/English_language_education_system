@@ -54,7 +54,7 @@
         'id' => $q->id,
         'title_en' => $q->title_question_en,
         'title_ar' => $q->title_question_ar,
-        'type' => $q->type,
+        'type' => $q->type instanceof \BackedEnum ? $q->type->value : $q->type,
         'difficulty' => $q->difficulty,
         'score' => $q->score,
     ]);
@@ -63,7 +63,7 @@
         'id' => $q->id,
         'title_en' => $q->title_question_en,
         'title_ar' => $q->title_question_ar,
-        'type' => $q->type,
+        'type' => $q->type instanceof \BackedEnum ? $q->type->value : $q->type,
         'difficulty' => $q->difficulty,
         'score' => $q->score,
     ])->values();
@@ -155,7 +155,7 @@
                             </button>
                         </div>
                     </template>
-                    <p x-show="filteredPool.length === 0" x-cloak style="text-align:center; color:rgba(1,60,88,0.4); font-size:12.5px; padding:20px 0;">ما في أسئلة مطابقة</p>
+                    <p x-show="filteredPool.length === 0" x-cloak style="text-align:center; color:rgba(1,60,88,0.4); font-size:12.5px; padding:20px 0;">لا يوجد أسئلة مطابقة</p>
                 </div>
             </div>
 
@@ -163,7 +163,7 @@
             <div class="t-panel" style="background:#EFFAFD; border:1.5px solid rgba(14,106,150,0.35); border-radius:20px; padding:24px; box-shadow:0 10px 26px rgba(0,83,122,0.06);">
                 <h3 style="margin:0 0 6px; font-family:'Poppins',sans-serif; font-weight:800; font-size:14px; color:#013C58;">أسئلة الاختبار المختارة</h3>
                 <p style="margin:0 0 14px; font-size:11.5px; color:rgba(1,60,88,0.5);">
-                    عدد الأسئلة: <span x-text="selected.length" style="font-weight:700;"></span> (لازم إجابتين على الأقل). رتبيهن بالأسهم.
+                    عدد الأسئلة: <span x-text="selected.length" style="font-weight:700;"></span> (يجب  إجابتين على الأقل). الترتيب عبر  الاسهم.
                 </p>
 
                 <div style="display:flex; flex-direction:column; gap:8px;">

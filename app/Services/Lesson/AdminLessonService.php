@@ -57,7 +57,7 @@ class AdminLessonService
                         COUNT(*) as all_count,
                         SUM(status = 'pending') as pending,
                         SUM(status = 'in_review') as in_review,
-                        SUM(status = 'request_changes') as request_changes,
+                        SUM(status = 'changes_requested') as request_changes,
                         SUM(status = 'published') as published,
                         SUM(status = 'closed') as closed,
                         SUM(status = 'archived') as archived

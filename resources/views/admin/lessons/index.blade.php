@@ -42,14 +42,14 @@
 @section('content')
 @php
     $statusLabels = [
-        'pending' => 'قيد الانتظار', 'in_review' => 'قيد المراجعة', 'request_changes' => 'طلب تعديل',
+        'pending' => 'قيد الانتظار', 'in_review' => 'قيد المراجعة', 'changes_requested' => 'طلب تعديل',
         'published' => 'منشور', 'closed' => 'مغلق', 'archived' => 'مؤرشف',
     ];
     // Soft, muted palette — each status has its own distinct hue, always visible (not only on hover/active)
     $statusColors = [
         'pending'         => ['bg' => 'rgba(255,186,66,0.16)', 'fg' => '#8A5A00', 'dot' => '#F5A201', 'tabFg' => '#013C58'],
         'in_review'       => ['bg' => 'rgba(14,106,150,0.14)', 'fg' => '#0E6A96', 'dot' => '#0E6A96', 'tabFg' => '#fff'],
-        'request_changes' => ['bg' => 'rgba(255,138,101,0.13)', 'fg' => '#C2591A', 'dot' => '#FF8A65', 'tabFg' => '#fff'],
+        'changes_requested' => ['bg' => 'rgba(255,138,101,0.13)', 'fg' => '#C2591A', 'dot' => '#FF8A65', 'tabFg' => '#fff'],
         'published'       => ['bg' => 'rgba(76,175,120,0.16)', 'fg' => '#2E7D55', 'dot' => '#4CAF78', 'tabFg' => '#fff'],
         'closed'          => ['bg' => 'rgba(1,60,88,0.12)', 'fg' => '#013C58', 'dot' => '#013C58', 'tabFg' => '#fff'],
         'archived'        => ['bg' => 'rgba(1,60,88,0.05)', 'fg' => 'rgba(1,60,88,0.4)', 'dot' => 'rgba(1,60,88,0.65)', 'tabFg' => '#fff'],
@@ -165,7 +165,7 @@
                 ['status' => null, 'label' => 'الكل', 'bg' => 'rgba(1,60,88,0.06)', 'fg' => 'rgba(1,60,88,0.6)', 'activeBg' => '#013C58', 'activeFg' => '#fff'],
                 ['status' => 'pending', 'label' => 'قيد الانتظار', 'bg' => $statusColors['pending']['bg'], 'fg' => $statusColors['pending']['fg'], 'activeBg' => $statusColors['pending']['dot'], 'activeFg' => $statusColors['pending']['tabFg']],
                 ['status' => 'in_review', 'label' => 'قيد المراجعة', 'bg' => $statusColors['in_review']['bg'], 'fg' => $statusColors['in_review']['fg'], 'activeBg' => $statusColors['in_review']['dot'], 'activeFg' => $statusColors['in_review']['tabFg']],
-                ['status' => 'request_changes', 'label' => 'طلب تعديل', 'bg' => $statusColors['request_changes']['bg'], 'fg' => $statusColors['request_changes']['fg'], 'activeBg' => $statusColors['request_changes']['dot'], 'activeFg' => $statusColors['request_changes']['tabFg']],
+                ['status' => 'changes_requested', 'label' => 'طلب تعديل', 'bg' => $statusColors['changes_requested']['bg'], 'fg' => $statusColors['changes_requested']['fg'], 'activeBg' => $statusColors['changes_requested']['dot'], 'activeFg' => $statusColors['changes_requested']['tabFg']],
                 ['status' => 'published', 'label' => 'منشورة', 'bg' => $statusColors['published']['bg'], 'fg' => $statusColors['published']['fg'], 'activeBg' => $statusColors['published']['dot'], 'activeFg' => $statusColors['published']['tabFg']],
                 ['status' => 'closed', 'label' => 'مغلقة', 'bg' => $statusColors['closed']['bg'], 'fg' => $statusColors['closed']['fg'], 'activeBg' => $statusColors['closed']['dot'], 'activeFg' => $statusColors['closed']['tabFg']],
                 ['status' => 'archived', 'label' => 'مؤرشفة', 'bg' => $statusColors['archived']['bg'], 'fg' => $statusColors['archived']['fg'], 'activeBg' => $statusColors['archived']['dot'], 'activeFg' => $statusColors['archived']['tabFg']],
@@ -264,8 +264,8 @@
                                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
                                 </div>
                                 <div style="text-align:center;">
-                                    <p style="margin:0; font-size:14.5px; font-weight:700; color:#013C58;">ما في دروس بهالفلتر</p>
-                                    <p style="margin:5px 0 0; font-size:12.5px; color:rgba(1,60,88,0.45);">جرّبي تبدّلي التصنيف من فوق، أو ضيفي درس جديد للكورس</p>
+                                    <p style="margin:0; font-size:14.5px; font-weight:700; color:#013C58;"> لايوجد دروس بهذا القسم    </p>
+                                    <p style="margin:5px 0 0; font-size:12.5px; color:rgba(1,60,88,0.45);">      </p>
                                 </div>
                             </div>
                         </td>
