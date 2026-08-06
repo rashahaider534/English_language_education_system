@@ -13,12 +13,8 @@
         </div>
     </div>
 
-    <div style="display:flex; align-items:center; gap:10px; background:rgba(255,186,66,0.16); color:#8A5A00; border:1px solid rgba(245,162,1,0.25); border-radius:14px; padding:14px 18px; margin-bottom:20px; font-size:13px; font-weight:600;">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4M12 8h.01"></path></svg>
-        هذا النموذج تصميم واجهة فقط لحد هلق — الإرسال ما رح ينشئ حساب أستاذ حقيقي إلى حين ربطه بالباك-إند.
-    </div>
-
-    <form method="POST" action="{{ route('admin.teachers.store') }}" style="background:#EFFAFD; border:1.5px solid rgba(0,83,122,0.16); border-radius:22px; padding:26px; max-width:640px; box-shadow:0 18px 44px rgba(0,83,122,0.06);">
+    <div x-data="{ saved: false }">
+    <form method="POST" action="{{ route('admin.teachers.store') }}" @submit.prevent="saved = true" style="background:#EFFAFD; border:1.5px solid rgba(0,83,122,0.16); border-radius:22px; padding:26px; max-width:640px; box-shadow:0 18px 44px rgba(0,83,122,0.06);">
         @csrf
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
@@ -47,5 +43,10 @@
             <button type="submit" style="display:inline-flex; align-items:center; padding:10px 24px; border-radius:10px; border:none; background:linear-gradient(90deg,#F5A201,#FFBA42); color:#013C58; font-family:'Poppins',sans-serif; font-weight:700; font-size:12.5px; cursor:pointer;">حفظ</button>
         </div>
     </form>
-</div>
+
+    <div x-show="saved" x-cloak x-transition style="display:flex; align-items:center; gap:10px; background:rgba(76,175,120,0.14); color:#2E7D55; border:1px solid rgba(76,175,120,0.3); border-radius:14px; padding:12px 18px; margin-top:16px; max-width:640px; font-size:12.5px; font-weight:600;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><path d="M22 4 12 14.01l-3-3"></path></svg>
+        تم استلام البيانات بالواجهة (ما في ربط بالباك-إند لهلق).
+    </div>
+    </div>
 @endsection

@@ -168,7 +168,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" style="padding:60px 20px; text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:14px;">ما في أسئلة بهالفلتر</td>
+                        <td colspan="6" style="padding:60px 20px; text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:14px;">لايوجد  أسئلة داخل هذا القسم </td>
                     </tr>
                 @endforelse
             </tbody>

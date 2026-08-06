@@ -55,7 +55,7 @@ class User extends Authenticatable
     }
     public function levels()
     {
-        return $this->belongsToMany(Level::class)
+        return $this->belongsToMany(Level::class, 'user_levels')
             ->using(UserLevel::class)
             ->withPivot(
                 'status',

@@ -74,6 +74,13 @@
         </div>
     @endif
 
+    @if ($errors->has('lesson'))
+        <div style="display:flex; align-items:center; gap:10px; background:rgba(255,138,101,0.14); color:#C2591A; border:1px solid rgba(255,138,101,0.3); border-radius:14px; padding:14px 18px; margin-bottom:20px; font-size:13.5px; font-weight:600;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg>
+            {{ $errors->first('lesson') }}
+        </div>
+    @endif
+
     {{-- ============ HERO HEAD ============ --}}
     <div class="lessons-hero" style="position:relative; overflow:hidden; background:linear-gradient(135deg,#013C58 0%, #00537A 60%, #0E6A96 130%); border-radius:26px; padding:26px 32px 24px; margin-bottom:22px; box-shadow:0 24px 55px rgba(1,60,88,0.22);">
         <div style="position:absolute; width:420px; height:420px; right:-120px; top:-160px; border-radius:50%; background:radial-gradient(circle, rgba(168,232,249,0.25) 0%, rgba(168,232,249,0) 70%); pointer-events:none;"></div>
@@ -202,7 +209,9 @@
                 @forelse ($lessons as $lesson)
                     @php
                         $sc = $statusColors[$lesson->status] ?? $statusColors['pending'];
-                        $canArchive = $lesson->status === 'published';
+                        $isPublished = $lesson->status === 'published';
+                        $canArchivePermission = auth()->user()->hasRole('super-admin', 'web') || auth()->user()->can('archive lesson');
+                        $canArchive = $isPublished && $canArchivePermission;
                         $hasStudents = $lesson->users()->exists();
                     @endphp
                     <tr class="lesson-row">
@@ -239,7 +248,7 @@
                                     type="button"
                                     class="lesson-icon-btn"
                                     @if($canArchive) @click="archiveModalOpen = true; archiveId = {{ $lesson->id }}; archiveName = '{{ addslashes($lesson->title_ar) }}';" @else disabled @endif
-                                    title="{{ !$canArchive ? 'الأرشفة متاحة بس للدروس المنشورة' : ($hasStudents ? 'أرشفة (رح يصير مغلق)' : 'أرشفة') }}"
+                                    title="{{ !$isPublished ? 'الأرشفة متاحة بس للدروس المنشورة' : (!$canArchivePermission ? 'ما عندك صلاحية أرشفة الدروس' : ($hasStudents ? 'أرشفة (رح يصير مغلق)' : 'أرشفة')) }}"
                                     style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; border:none; background:rgba(230,126,34,0.14); color:#C1650A; cursor:{{ $canArchive ? 'pointer' : 'not-allowed' }}; opacity:{{ $canArchive ? 1 : 0.35 }};"
                                 >
                                     <svg width="15.5" height="15.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l1.5-3h15L21 7"></path><path d="M4.5 7h15v12a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1V7Z"></path><path d="M9 12h6"></path></svg>

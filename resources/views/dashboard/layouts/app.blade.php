@@ -8,7 +8,7 @@
         <title>{{ ($title ?? 'Dashboard').' | '.config('app.name', 'Laravel') }}</title>
 
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600;700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600;700|tajawal:400,500,600,700,800|poppins:500,600,700,800&display=swap" rel="stylesheet" />
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @stack('styles')
@@ -17,15 +17,16 @@
         <div class="dashboard-shell" data-dashboard-shell>
             @include('dashboard.partials.sidebar')
 
-            <div class="dashboard-main">
-                @include('dashboard.partials.topbar')
+            <button type="button" class="dashboard-mobile-toggle" data-sidebar-toggle aria-label="Toggle sidebar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                    <path d="M4 7h16M4 12h16M4 17h16" />
+                </svg>
+            </button>
 
+            <div class="dashboard-main">
                 <main class="dashboard-content">
-                    @include('dashboard.partials.breadcrumbs')
                     @yield('content')
                 </main>
-
-                @include('dashboard.partials.footer')
             </div>
         </div>
 

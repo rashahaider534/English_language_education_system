@@ -39,7 +39,7 @@
     $activeStatus = request('status');
 
     $currentUser = auth()->user();
-    $isSuperAdmin = $currentUser->hasRole('super-admin');
+    $isSuperAdmin = $currentUser->hasRole('super-admin', 'web');
     $canCreate = $level->status !== 'published' && ($isSuperAdmin || $level->created_by === $currentUser->id);
 
     $nameOf = function ($user) {
@@ -95,6 +95,14 @@
         </div>
     @endif
 
+    {{-- generic error flash (e.g. archive rejected by the backend for a reason the UI doesn't already explain) --}}
+    @if ($errors->has('course'))
+        <div style="display:flex; align-items:center; gap:10px; background:rgba(255,138,101,0.14); color:#C2591A; border:1px solid rgba(255,138,101,0.3); border-radius:14px; padding:14px 18px; margin-bottom:20px; font-size:13.5px; font-weight:600;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg>
+            {{ $errors->first('course') }}
+        </div>
+    @endif
+
     {{-- ============ HERO HEAD ============ --}}
     <div style="position:relative; overflow:hidden; background:linear-gradient(135deg,#013C58 0%, #00537A 60%, #0E6A96 130%); border-radius:26px; padding:26px 32px 24px; margin-bottom:22px; box-shadow:0 24px 55px rgba(1,60,88,0.2);">
         <div style="position:absolute; width:380px; height:380px; right:-110px; top:-150px; border-radius:50%; background:radial-gradient(circle, rgba(255,211,91,0.22) 0%, rgba(255,211,91,0) 70%); pointer-events:none;"></div>
@@ -128,7 +136,7 @@
             @else
                 <div style="display:flex; align-items:center; gap:8px; background:rgba(255,211,91,0.14); color:#FFD35B; border-radius:12px; padding:11px 16px; font-size:12.5px; font-weight:600;">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10.5" width="16" height="10" rx="2.5"></rect><path d="M7.5 10.5V7a4.5 4.5 0 0 1 9 0v3.5"></path></svg>
-                    المستوى منشور أو ما عندك صلاحية إضافة كورس
+                    المستوى منشور ولا يوجد لديك صلاحية إضافة كورس
                 </div>
             @endif
         </div>
@@ -164,7 +172,7 @@
         @forelse ($courses as $i => $course)
             @php
                 $sc = $statusColors[$course->status] ?? $statusColors['pending'];
-                $canArchive = !in_array($course->status, ['closed', 'archived']);
+                $canArchive = !in_array($course->status, ['closed', 'archived']) && ($isSuperAdmin || auth()->id() === $course->created_by);
                 $hasInProgress = $course->usercourses()->wherePivot('status', 'in_progress')->exists();
                 $hasLessons = $course->lessons()->exists();
                 $isHardDelete = $course->status === 'pending' && !$hasLessons;
@@ -252,7 +260,7 @@
                         @endif
                         <button type="button"
                             @if($canArchive) @click="openArchive({{ $course->id }}, '{{ addslashes($course->name_ar) }}', {{ $isHardDelete ? 'true' : 'false' }}, {{ $hasInProgress ? 'true' : 'false' }})" @else disabled @endif
-                            title="{{ !$canArchive ? 'مغلق أو مؤرشف من قبل' : ($isHardDelete ? 'حذف نهائي' : 'أرشفة') }}"
+                            title="{{ !$isSuperAdmin && auth()->id() !== $course->created_by ? 'ما فيك تؤرشفي هالكورس لأنه مش من إنشائك' : (!$canArchive ? 'مغلق أو مؤرشف من قبل' : ($isHardDelete ? 'حذف نهائي' : 'أرشفة')) }}"
                             style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:9px; border-radius:10px; border:none; cursor:{{ $canArchive ? 'pointer' : 'not-allowed' }}; opacity:{{ $canArchive ? 1 : 0.35 }}; background:rgba(245,162,1,0.1); color:#C97F00; font-family:'Poppins',sans-serif; font-weight:600; font-size:12px;">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l1.5-3h15L21 7"></path><path d="M4.5 7h15v12a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1V7Z"></path><path d="M9 12h6"></path></svg>
                             {{ $isHardDelete ? 'حذف' : 'أرشفة' }}
@@ -263,7 +271,7 @@
         @empty
             <div style="grid-column:1/-1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:60px 20px;">
                 <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="color:rgba(1,60,88,0.25);"><rect x="3" y="4" width="18" height="16" rx="3"></rect><circle cx="9" cy="10" r="2"></circle><path d="m21 16-5-5-4 4-3-3-4 4"></path></svg>
-                <p style="margin:0; font-size:14px; color:rgba(1,60,88,0.45); font-weight:600;">ما في كورسات بهالفلتر</p>
+                <p style="margin:0; font-size:14px; color:rgba(1,60,88,0.45); font-weight:600;">  لايوجد كورسات بهذا القسم  </p>
             </div>
         @endforelse
     </div>

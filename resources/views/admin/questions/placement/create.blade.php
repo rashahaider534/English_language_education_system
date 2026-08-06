@@ -46,7 +46,7 @@
 
     <div style="background:linear-gradient(135deg,#013C58 0%, #00537A 60%, #0E6A96 130%); border-radius:22px; padding:26px 32px; margin-bottom:22px; box-shadow:0 20px 44px rgba(1,60,88,0.2);">
         <h1 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:22px; color:#fff;">سؤال جديد لبنك اختبار تحديد المستوى</h1>
-        <p style="margin:6px 0 0; font-size:13px; color:rgba(168,232,249,0.8);">اختاري نوع السؤال أول، وبيتغير شكل الفورم حسب النوع</p>
+        <p style="margin:6px 0 0; font-size:13px; color:rgba(168,232,249,0.8);">      </p>
     </div>
 
     @if ($errors->any())
@@ -82,7 +82,7 @@
                 </div>
                 <div>
                     <label style="display:block; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.55); margin-bottom:6px;">نص السؤال (عربي)</label>
-                    <div class="q-field-wrap"><input type="text" name="title_question_ar" placeholder="مثال: شو هو الاسم؟" required></div>
+                    <div class="q-field-wrap"><input type="text" name="title_question_ar" placeholder=":  ماهو الاسم؟" required></div>
                 </div>
             </div>
 
@@ -117,7 +117,7 @@
                     <div class="q-field-wrap"><input type="file" name="audio" accept=".mp3,.wav,.ogg" @change="if($event.target.files.length) imageCleared = true"></div>
                 </div>
             </div>
-            <p style="margin:8px 0 0; font-size:11px; color:rgba(1,60,88,0.45);">صورة أو صوت، مش الاثنين مع بعض.</p>
+            <p style="margin:8px 0 0; font-size:11px; color:rgba(1,60,88,0.45);">صورة أو صوت، وليس الاثنين  معا .</p>
         </div>
 
         {{-- ============ MCQ ============ --}}

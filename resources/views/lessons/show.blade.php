@@ -164,7 +164,7 @@
         </div>
 
         @if ($words->isEmpty())
-            <p style="margin:0; font-size:12.5px; color:rgba(1,60,88,0.45); font-weight:600;">ما ضاف الأستاذ كلمات لهذا الدرس بعد</p>
+            <p style="margin:0; font-size:12.5px; color:rgba(1,60,88,0.45); font-weight:600;"> لم يتم اضافة كلمات لهذا الدرس بعد  </p>
         @else
             <div style="display:flex; flex-wrap:wrap; gap:10px;">
                 @foreach ($words as $word)
@@ -332,7 +332,7 @@
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="m4.9 4.9 14.2 14.2"></path></svg>
             </div>
             <h3 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; color:#013C58;">حظر <span x-text="blockTarget?.name"></span> من التعليق؟</h3>
-            <p style="margin:10px 0 0; font-size:13px; color:rgba(1,60,88,0.6); line-height:1.7;">هيتحظر هالطالب من التعليق نهائيًا، ومش رح يقدر يعلق ع أي درس تاني.</p>
+            <p style="margin:10px 0 0; font-size:13px; color:rgba(1,60,88,0.6); line-height:1.7;">سيتم حظر الطالب من التعليقات </p>
             <div style="display:flex; gap:10px; margin-top:22px;">
                 <button type="button" @click="blockModalOpen = false" style="flex:1; padding:11px; border-radius:11px; border:1.5px solid rgba(0,83,122,0.12); background:#EFFAFD; color:#013C58; font-family:'Poppins',sans-serif; font-weight:600; font-size:13px; cursor:pointer;">إلغاء</button>
                 <form :action="'/comments/' + blockTarget?.id + '/block'" method="POST" style="flex:1;">

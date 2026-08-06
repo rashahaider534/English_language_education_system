@@ -69,7 +69,7 @@
 
     <div style="background:linear-gradient(135deg,#013C58 0%, #00537A 60%, #0E6A96 130%); border-radius:22px; padding:26px 32px; margin-bottom:22px; box-shadow:0 20px 44px rgba(1,60,88,0.2);">
         <h1 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:22px; color:#fff;">اختبار تحديد مستوى جديد</h1>
-        <p style="margin:6px 0 0; font-size:13px; color:rgba(168,232,249,0.8);">اختاري عنوان الاختبار، وضيفي أسئلة من بنك أسئلة تحديد المستوى ورتبيهن.</p>
+        <p style="margin:6px 0 0; font-size:13px; color:rgba(168,232,249,0.8);">قم باختيار  عنوان الاختبار، واضافة أسئلة من بنك أسئلة تحديد المستوى ولاتنسى ترتيب الاسئلة .</p>
     </div>
 
     @if ($errors->any())
