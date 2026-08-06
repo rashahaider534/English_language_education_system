@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreCommentRequest extends FormRequest
+class AssignPermissionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,10 +23,13 @@ class StoreCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'comment' => [
+             'permissions' => [
                 'required',
-                'string',
-                'max:1000',
+                'array',
+            ],
+
+            'permissions.*' => [
+                'exists:permissions,name',
             ],
         ];
     }

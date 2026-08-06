@@ -4,7 +4,6 @@ namespace App\Services\Lesson;
 
 use App\Models\Course;
 use App\Models\User;
-
 use Illuminate\Support\Facades\Cache;
 use App\Enums\ContentStatus;
 use Illuminate\Support\Facades\DB;
