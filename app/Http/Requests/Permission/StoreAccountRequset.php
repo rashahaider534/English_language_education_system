@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Permission;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreAdmin_TeacherRequset extends FormRequest
+class StoreAccountRequset extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

@@ -11,7 +11,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use App\Models\User;
 
-class TeacherCreatedMail extends Mailable
+class AccountCreatedMail extends Mailable
 {
     use Queueable, SerializesModels;
 

@@ -20,6 +20,8 @@ class RolePermissionSeeder extends Seeder
         $studentRole=Role::findByName('student','api');
         $permissions = Permission::where('guard_name', 'web')
             ->whereIn('name', [
+                'manage_comment',
+                'manage_levelexceotion',
                 'manage_levels',
                 'manage_courses',
                 'manage_level_tests',
@@ -30,6 +32,6 @@ class RolePermissionSeeder extends Seeder
             ])
             ->get();
 
-        $admin->givePermissionTo($permissions);
+        $superAdmin->givePermissionTo($permissions);
     }
 }

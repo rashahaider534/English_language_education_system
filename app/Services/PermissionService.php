@@ -9,11 +9,52 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use Spatie\Permission\Models\Role;
 use App\Mail\AdminCreatedMail;
-use App\Mail\TeacherCreatedMail;
+use App\Mail\AccountCreatedMail;
 use Spatie\Permission\Models\Permission;
 
-class RoleService
+class PermissionService
 {
+    public function index(User $user)
+    {
+        if (!$user->hasRole('super-admin')) {
+            throw ValidationException::withMessages([
+                'error' => 'You are not allowed to view Admin.',
+            ]);
+        }
+
+        $admins = User::role('admin', 'web')
+            ->with('permissions')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10, ['*'], 'admin_page');
+
+        $teachers = User::role('teacher', 'api')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10, ['*'], 'teacher_page');
+
+        return [
+            'admins' => $admins,
+            'teachers' => $teachers
+        ];
+    }
+
+    public function getAdmin(User $user)
+    {
+        if (!auth()->user()->hasRole('super-admin')) {
+            throw ValidationException::withMessages([
+                'error' => 'You are not allowed to view Admin.',
+            ]);
+        }
+
+        if (!$user->hasRole('admin')) {
+            throw ValidationException::withMessages([
+                'error' => 'This user is not an admin.',
+            ]);
+        }
+
+
+        return  $user->load('permissions');
+    }
+
     public function storeAdmin(User $user, array $data)
     {
         if (!$user->hasRole('super-admin')) {
@@ -33,12 +74,12 @@ class RoleService
                 'last_name' => $data['last_name'],
                 'email' => $data['email'],
                 'password' => Hash::make($data['password']),
-                'email_verified_at' => now(),
+                'email_verified_at' => null,
             ]
         );
-        $admin->assignRole('admin');
+        $admin->assignRole(Role::findByName('admin', 'web'));
 
-        Mail::to($admin->email)->send(new TeacherCreatedMail($admin, $plainPassword));
+        Mail::to($admin->email)->send(new AccountCreatedMail($admin, $plainPassword));
         return $admin;
     }
 
@@ -61,17 +102,17 @@ class RoleService
                 'last_name' => $data['last_name'],
                 'email' => $data['email'],
                 'password' => Hash::make($data['password']),
-                'email_verified_at' => now(),
+                'email_verified_at' => null,
             ]
         );
         $teacher->assignRole(Role::findByName('teacher', 'api'));
-        Mail::to($teacher->email)->send(new TeacherCreatedMail($teacher, $plainPassword));
+        Mail::to($teacher->email)->send(new AccountCreatedMail($teacher, $plainPassword));
         return $teacher;
     }
 
     public function delete(User $user)
     {
-        if (!auth()->user->hasRole('super-admin')) {
+        if (!auth()->user()->hasRole('super-admin')) {
             throw ValidationException::withMessages([
                 'error' => 'You are not allowed to add Admin.',
             ]);
@@ -82,6 +123,11 @@ class RoleService
 
     public function permissions()
     {
+        if (!auth()->user()->hasRole('super-admin')) {
+            throw ValidationException::withMessages([
+                'error' => 'Not allowed.'
+            ]);
+        }
         return Permission::where('guard_name', 'web')->get();
     }
 
@@ -92,7 +138,7 @@ class RoleService
                 'error' => 'Not allowed.'
             ]);
         }
-        
+
         if (!$admin->hasRole('admin')) {
             throw ValidationException::withMessages([
                 'error' => 'this not admin.'
@@ -100,6 +146,25 @@ class RoleService
         }
 
         $admin->syncPermissions($permissions);
+
+        return $admin;
+    }
+
+    public function revokePermissions(User $admin, array $permissions)
+    {
+        if (!auth()->user()->hasRole('super-admin')) {
+            throw ValidationException::withMessages([
+                'error' => 'Not allowed.'
+            ]);
+        }
+
+        if (!$admin->hasRole('admin')) {
+            throw ValidationException::withMessages([
+                'error' => 'this not admin.'
+            ]);
+        }
+
+        $admin->revokePermissionTo($permissions);
 
         return $admin;
     }
