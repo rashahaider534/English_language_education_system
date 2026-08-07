@@ -145,7 +145,11 @@ class PermissionService
             ]);
         }
 
-        $admin->syncPermissions($permissions);
+        $permissionModels = Permission::where('guard_name', 'web')
+            ->whereIn('name', $permissions)
+            ->get();
+
+        $admin->syncPermissions($permissionModels);
 
         return $admin;
     }
@@ -164,7 +168,11 @@ class PermissionService
             ]);
         }
 
-        $admin->revokePermissionTo($permissions);
+        $permissionModels = Permission::where('guard_name', 'web')
+            ->whereIn('name', $permissions)
+            ->get();
+
+        $admin->revokePermissionTo($permissionModels);
 
         return $admin;
     }

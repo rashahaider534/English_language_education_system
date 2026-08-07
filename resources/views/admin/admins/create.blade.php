@@ -23,7 +23,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('admins.store') }}" style="background:#EFFAFD; border:1.5px solid rgba(0,83,122,0.16); border-radius:22px; padding:26px; max-width:640px; box-shadow:0 18px 44px rgba(0,83,122,0.06);">
+    <form method="POST" action="{{ route('admins.permission.store') }}" style="background:#EFFAFD; border:1.5px solid rgba(0,83,122,0.16); border-radius:22px; padding:26px; max-width:640px; box-shadow:0 18px 44px rgba(0,83,122,0.06);">
         @csrf
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">

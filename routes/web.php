@@ -51,7 +51,7 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     //permissions route
     Route::get('/permissions/index', [PermissionController::class, 'index'])->name('admin.permission.index');
     Route::get('/permission/{user}/showadmin', [PermissionController::class, 'getAdmin'])->name('admin.permission.show');
-    Route::get('/permission/admins/create', [PermissionController::class, 'create'])->name('admins.permission.create');
+    Route::get('/permission/admins/create', [PermissionController::class, 'createadmin'])->name('admins.permission.create');
     Route::post('/permission/admin', [PermissionController::class, 'storeAdmin'])->name('admins.permission.store');
     Route::delete('/permission/{user}/delete', [PermissionController::class, 'destroy'])->name('admins.permission.destroy');
     Route::get('/permission/{user}/admin', [PermissionController::class, 'choosePermissions'])->name('admin.permissions');

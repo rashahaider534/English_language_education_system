@@ -39,7 +39,7 @@ class PermissionController extends Controller
 
     public function createteacher()
     {
-        return view('admin.teacher.create');
+        return view('admin.teachers.create');
     }
 
     public function storeAdmin(StoreAccountRequset $request)
@@ -67,15 +67,15 @@ class PermissionController extends Controller
             ->with('success', 'User deleted successfully');
     }
 
-    public function choosePermissions()
+    public function choosePermissions(User $user)
     {
         $permissions = $this->roleservice->permissions();
-        return view('admin.permissions.assign',compact('permissions'));
+        return view('admin.permissions.assign', compact('permissions', 'user'));
     }
 
     public function assignPermissions(User $user, AssignPermissionRequest $request)
     {
-        $this->roleservice->assignPermissions($user, $request->validated());
+        $this->roleservice->assignPermissions($user, $request->validated('permissions'));
         return redirect()
             ->route('admin.permission.index')
             ->with('success', 'Permissions assigned successfully');
@@ -83,7 +83,7 @@ class PermissionController extends Controller
 
     public function revokePermissions(User $user, RevokePermissionRequset $request)
     {
-        $this->roleservice->revokePermissions($user, $request->validated());
+        $this->roleservice->revokePermissions($user, $request->validated('permissions'));
         return redirect()
             ->route('admin.permission.index')
             ->with('success', 'Permissions revoked successfully');

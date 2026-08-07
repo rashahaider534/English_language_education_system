@@ -197,7 +197,7 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('teachers.store') }}">
+            <form method="POST" action="{{ route('admin.permission.teacher.store') }}">
                 @csrf
 
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">

@@ -35,7 +35,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('assignPermissions', $user->id) }}" style="background:#EFFAFD; border:1.5px solid rgba(0,83,122,0.16); border-radius:22px; padding:28px; box-shadow:0 18px 44px rgba(0,83,122,0.06);">
+    <form method="POST" action="{{ route('admin.permission.assignPermissions', $user->id) }}" style="background:#EFFAFD; border:1.5px solid rgba(0,83,122,0.16); border-radius:22px; padding:28px; box-shadow:0 18px 44px rgba(0,83,122,0.06);">
         @csrf
 
         <p style="margin:0 0 18px; font-size:12.5px; font-weight:700; color:#00537A;">حدد الصلاحيات التي تريد منحها لهذا الأدمن:</p>
@@ -67,7 +67,7 @@
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
                 حفظ الصلاحيات
             </button>
-            <a href="{{ route('admin.admins.index') }}" style="display:inline-flex; align-items:center; padding:12px 20px; border-radius:999px; background:rgba(0,83,122,0.08); color:#00537A; text-decoration:none; font-family:'Poppins',sans-serif; font-weight:600; font-size:13px;">تخطي الآن</a>
+            <a href="{{ route('admin.permission.index') }}" style="display:inline-flex; align-items:center; padding:12px 20px; border-radius:999px; background:rgba(0,83,122,0.08); color:#00537A; text-decoration:none; font-family:'Poppins',sans-serif; font-weight:600; font-size:13px;">تخطي الآن</a>
         </div>
     </form>
 </div>
