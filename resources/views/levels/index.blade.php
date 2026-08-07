@@ -342,7 +342,7 @@
             <h3 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; color:#013C58;">أرشفة مستوى "<span x-text="archiveTargetName"></span>"؟</h3>
             <p style="margin:10px 0 0; font-size:13px; color:rgba(1,60,88,0.6); line-height:1.7;">
                 <span x-show="archiveTargetLocked">      يوجد طلاب تقوم بدراسة هذا المستوى لذلك ستتحول حالة هذا المستوى الى مغلق </span>
-                <span x-show="!archiveTargetLocked">سيصبح هذا السمتوى مؤرشف بشكل كامل.</span>
+                <span x-show="!archiveTargetLocked"></span>
             </p>
             <div style="display:flex; gap:10px; margin-top:22px;">
                 <button type="button" @click="archiveModalOpen = false" style="flex:1; padding:11px; border-radius:11px; border:1.5px solid rgba(0,83,122,0.12); background:#EFFAFD; color:#013C58; font-family:'Poppins',sans-serif; font-weight:600; font-size:13px; cursor:pointer;">إلغاء</button>
@@ -371,7 +371,7 @@
 
             <div style="text-align:center; margin-bottom:22px;">
                 <h1 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:20px; color:#013C58;">إضافة مستوى جديد</h1>
-                <p style="margin:6px 0 0; font-size:13px; color:rgba(1,60,88,0.5);">عبّي التفاصيل لإنشاء مستوى تعلّم جديد</p>
+                <p style="margin:6px 0 0; font-size:13px; color:rgba(1,60,88,0.5);">     </p>
             </div>
 
             @if ($errors->any() && old('form_type') === 'levels-create')

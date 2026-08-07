@@ -135,9 +135,6 @@
                         <span style="font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; color:#013C58;" dir="ltr">{{ $podcast->created_at->format('Y-m-d') }}</span>
                     </div>
                 </div>
-                @if ($isPublished)
-                    <p style="margin:14px 0 0; font-size:11.5px; color:#8A5A00; background:rgba(255,186,66,0.14); border-radius:10px; padding:10px 12px; line-height:1.6;">هذا التوبك منشور، لذلك يمكن تعديل الاسم والنقاط فقط دون الفيديو، ولا يمكن حذف البودكاست إلا بعد إعادة التوبك إلى حالة قيد الانتظار.</p>
-                @endif
             </div>
         </div>
     </div>

@@ -13,9 +13,14 @@
             'children' => [
                 ['label' => 'أساتذة', 'route' => 'admin.teachers.index', 'icon' => 'teachers'],
                 ['label' => 'طلاب', 'route' => 'admin.students.index', 'icon' => 'students'],
+                ['label' => 'أدمنز', 'route' => 'admin.admins.index', 'icon' => 'teachers', 'superAdminOnly' => true],
             ],
         ],
         ['label' => 'صندوق الشكاوي', 'route' => 'admin.complaints.index', 'icon' => 'complaints'],
+        ['label' => 'الخصومات والعروض', 'route' => 'admin.offers.index', 'icon' => 'offers', 'superAdminOnly' => true],
+        ['label' => 'المدفوعات', 'route' => 'admin.payments.index', 'icon' => 'payments', 'superAdminOnly' => true],
+        ['label' => 'الرقابة وإدارة الأعمال', 'route' => 'admin.audit.index', 'icon' => 'audit', 'superAdminOnly' => true],
+        ['label' => 'الصلاحيات', 'route' => 'admin.permissions.index', 'icon' => 'permissions', 'superAdminOnly' => true],
     ];
 @endphp
 

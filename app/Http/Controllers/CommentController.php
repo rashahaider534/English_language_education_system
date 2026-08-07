@@ -52,9 +52,9 @@ class CommentController extends Controller
     {
         $this->authorize('delete', $comment);
         $this->service->delete($comment);
-        return redirect()
-            ->back()
-            ->with('success', 'Comment deleted successfully.');
+        return response()->json([
+            'message' => 'Comment deleted successfully.'
+        ]);
     }
 
     public function block(Comment $comment)

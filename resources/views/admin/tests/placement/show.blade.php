@@ -101,7 +101,7 @@
                     <span style="font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; color:rgba(1,60,88,0.7); flex-shrink:0;">{{ $q->score }} نقطة</span>
                 </a>
             @empty
-                <p style="text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:13px; padding:30px 0;">ما في أسئلة بهالاختبار</p>
+                <p style="text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:13px; padding:30px 0;">لايوجد اسئلة داخل هذا الاختبار </p>
             @endforelse
         </div>
     </div>

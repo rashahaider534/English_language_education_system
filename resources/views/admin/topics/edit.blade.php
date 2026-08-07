@@ -86,7 +86,7 @@
                 @endif
                 <div style="flex:1;">
                     <div class="tp-field-wrap"><input type="file" name="image" accept="image/*"></div>
-                    <p style="margin:6px 0 0; font-size:11px; color:rgba(1,60,88,0.4);">اختاري صورة جديدة لاستبدال الحالية، أو اتركيه فاضي.</p>
+                    <p style="margin:6px 0 0; font-size:11px; color:rgba(1,60,88,0.4);"> </p>
                 </div>
             </div>
         </div>

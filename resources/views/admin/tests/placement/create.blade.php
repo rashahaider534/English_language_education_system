@@ -169,7 +169,7 @@
         </div>
 
         <div style="margin-top:22px;">
-            <p x-show="selected.length > 0 && selected.length < 2" x-cloak style="margin:0 0 12px; font-size:12px; color:#C2591A; font-weight:700;">لازم تختاري إجابتين (سؤالين) على الأقل.</p>
+            <p x-show="selected.length > 0 && selected.length < 2" x-cloak style="margin:0 0 12px; font-size:12px; color:#C2591A; font-weight:700;">يجب   إجابتين (سؤالين) على الأقل.</p>
             <button type="submit" class="t-submit-btn" :disabled="selected.length < 2">
                 حفظ الاختبار
             </button>

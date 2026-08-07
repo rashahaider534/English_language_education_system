@@ -189,11 +189,11 @@
     }
 
     .dashboard-sidebar__logout {
-        @apply flex w-full items-center gap-3 rounded-2xl border-0 bg-[#F5A201]/10 px-3 py-2.5 text-sm font-semibold text-[#F5A201] transition hover:bg-[#F5A201]/20 hover:text-[#FFBA42];
+        @apply flex w-full items-center gap-3 rounded-2xl border-0 bg-[#F5A201]/10 px-3 py-2.5 text-sm font-semibold text-[#F5A201]/70 transition hover:bg-[#F5A201]/20 hover:text-[#F5A201];
     }
 
     .dashboard-sidebar__logout .dashboard-nav-link__icon {
-        @apply bg-[#F5A201]/10 text-[#F5A201];
+        @apply bg-[#F5A201]/10 text-[#F5A201]/70;
     }
 
     .dashboard-sidebar__logout-label {
