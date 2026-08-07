@@ -16,11 +16,11 @@ class RoleService
 {
     public function storeAdmin(User $user, array $data)
     {
-        // if (!$user->hasRole('super-admin')) {
-        //     throw ValidationException::withMessages([
-        //         'error' => 'You are not allowed to add Admin.',
-        //     ]);
-        // }
+        if (!$user->hasRole('super-admin')) {
+            throw ValidationException::withMessages([
+                'error' => 'You are not allowed to add Admin.',
+            ]);
+        }
         if (User::where('email', $data['email'])->exists()) {
             throw ValidationException::withMessages([
                 'email' => ['Email already exists']
@@ -44,11 +44,11 @@ class RoleService
 
     public function storeTeacher(User $user, array $data)
     {
-        // if (!$user->hasRole('super-admin')) {
-        //     throw ValidationException::withMessages([
-        //         'error' => 'You are not allowed to add Admin.',
-        //     ]);
-        // }
+        if (!$user->hasRole('super-admin')) {
+            throw ValidationException::withMessages([
+                'error' => 'You are not allowed to add Admin.',
+            ]);
+        }
         if (User::where('email', $data['email'])->exists()) {
             throw ValidationException::withMessages([
                 'email' => ['Email already exists']
@@ -71,11 +71,11 @@ class RoleService
 
     public function delete(User $user)
     {
-        // if (!auth()->user->hasRole('super-admin')) {
-        //     throw ValidationException::withMessages([
-        //         'error' => 'You are not allowed to add Admin.',
-        //     ]);
-        // }
+        if (!auth()->user->hasRole('super-admin')) {
+            throw ValidationException::withMessages([
+                'error' => 'You are not allowed to add Admin.',
+            ]);
+        }
         $user->delete();
         return ['account unactive successfully'];
     }
@@ -87,11 +87,12 @@ class RoleService
 
     public function assignPermissions(User $admin, array $permissions)
     {
-        // if (!auth()->user()->hasRole('super-admin')) {
-        //     throw ValidationException::withMessages([
-        //         'error' => 'Not allowed.'
-        //     ]);
-        // }
+        if (!auth()->user()->hasRole('super-admin')) {
+            throw ValidationException::withMessages([
+                'error' => 'Not allowed.'
+            ]);
+        }
+        
         if (!$admin->hasRole('admin')) {
             throw ValidationException::withMessages([
                 'error' => 'this not admin.'
