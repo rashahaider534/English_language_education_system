@@ -295,7 +295,7 @@
             <p style="margin:10px 0 0; font-size:13px; color:rgba(1,60,88,0.6); line-height:1.7;">
                 <span x-show="archiveIsDelete">هالكورس لسا ما فيه دروس أو طلاب، فبينحذف نهائياً من قاعدة البيانات بدل الأرشفة.</span>
                 <span x-show="!archiveIsDelete && archiveHasInProgress">في طلاب عم يدرسو هلق هالكورس، فبيصير "مغلق" لحتى يخلّصو. ما رح يقبل طلاب جدد.</span>
-                <span x-show="!archiveIsDelete && !archiveHasInProgress">هيصير هالكورس مؤرشف بالكامل، ومش رح يظهر للطلاب الجدد.</span>
+                <span x-show="!archiveIsDelete && !archiveHasInProgress"> </span>
             </p>
             <div style="display:flex; gap:10px; margin-top:22px;">
                 <button type="button" @click="archiveModalOpen = false" style="flex:1; padding:11px; border-radius:11px; border:1.5px solid rgba(0,83,122,0.12); background:#EFFAFD; color:#013C58; font-family:'Poppins',sans-serif; font-weight:600; font-size:13px; cursor:pointer;">إلغاء</button>
@@ -462,7 +462,7 @@
                     </div>
                     <div x-show="!editIsLocked && editIsPublished" style="display:flex; align-items:center; gap:9px; background:rgba(255,211,91,0.14); color:#946200; border-radius:12px; padding:12px 16px; font-size:13px; font-weight:600; margin-bottom:18px;">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg>
-                        <span>هالكورس منشور، فبس فيك تعدّلي الاسم/المدة/الصورة.</span>
+                        <span>  هذا الكورس منشور يمكن تعديل فقط الاسم,المدة,الصورة</span>
                     </div>
 
                     <p style="{{ $section }}">الاسم</p>

@@ -53,7 +53,7 @@ class UpdateLevelRequest extends FormRequest
                     $max = $this->input('maximum_score', null);
 
                     if ($max !== null && $value >= $max) {
-                        $fail('Minimum score must be less than maximum score.');
+                        $fail('أدنى علامة يجب أن تكون أقل من أعلى علامة.');
                     }
                 }
             ],
@@ -67,7 +67,7 @@ class UpdateLevelRequest extends FormRequest
                     $min = $this->input('minimum_score', null);
 
                     if ($min !== null && $value <= $min) {
-                        $fail('Maximum score must be greater than minimum score.');
+                        $fail('أعلى علامة يجب أن تكون أكبر من أدنى علامة.');
                     }
                 }
             ],
@@ -78,4 +78,28 @@ class UpdateLevelRequest extends FormRequest
         ];
     }
 
+    public function attributes(): array
+    {
+        return [
+            'name_en' => 'الاسم بالإنكليزي',
+            'name_ar' => 'الاسم بالعربي',
+            'order' => 'الترتيب',
+            'minimum_score' => 'أدنى علامة',
+            'maximum_score' => 'أعلى علامة',
+            'price' => 'السعر',
+            'estimated_duration' => 'المدة المتوقعة',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name_en.regex' => 'الاسم بالإنكليزي يجب أن يحتوي أحرف إنكليزية وأرقام فقط.',
+            'name_en.unique' => 'هذا الاسم بالإنكليزي مستخدم مسبقًا لمستوى آخر.',
+            'name_ar.regex' => 'الاسم بالعربي يجب أن يحتوي أحرف عربية فقط.',
+            'name_ar.unique' => 'هذا الاسم بالعربي مستخدم مسبقًا لمستوى آخر.',
+            'order.integer' => 'الترتيب يجب أن يكون رقمًا صحيحًا.',
+            'order.unique' => 'هذا الترتيب مستخدم مسبقًا من مستوى آخر، الرجاء اختيار رقم ترتيب مختلف.',
+        ];
+    }
 }

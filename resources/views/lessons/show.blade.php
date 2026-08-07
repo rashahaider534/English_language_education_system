@@ -376,7 +376,7 @@
                             } else if (res.status === 403) {
                                 deleteError = 'لاتملك صلاحية حذف هذا التعليق.';
                             } else {
-                                deleteError = 'صار في خطأ، جربي كمان مرة.';
+                                deleteError = 'يرجى اعادة المحاولة .';
                             }
                         }).catch(() => { deleting = false; deleteError = 'صار في خطأ بالاتصال، جربي كمان مرة.'; });
                     "

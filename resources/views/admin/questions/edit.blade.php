@@ -75,7 +75,7 @@
             <span style="display:inline-flex; padding:5px 12px; border-radius:999px; background:rgba(255,255,255,0.12); color:#A8E8F9; font-size:11px; font-weight:700; border:1px solid rgba(255,255,255,0.18);">{{ $typeLabels[$questionType] ?? $questionType }}</span>
         </div>
         <h1 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:22px; color:#fff;">تعديل السؤال</h1>
-        <p style="margin:6px 0 0; font-size:13px; color:rgba(168,232,249,0.8);">نوع السؤال ثابت وما بينتغير بعد الإنشاء.</p>
+        <p style="margin:6px 0 0; font-size:13px; color:rgba(168,232,249,0.8);"></p>
     </div>
 
     @if ($willVersion)
@@ -138,7 +138,7 @@
                         <img src="{{ $imageUrl }}" alt="" style="max-width:100%; max-height:120px; border-radius:10px; margin-bottom:8px; border:1px solid rgba(0,83,122,0.12);">
                     @endif
                     <div class="q-field-wrap"><input type="file" name="image" accept=".jpg,.jpeg,.png"></div>
-                    <p style="margin:6px 0 0; font-size:10.5px; color:rgba(1,60,88,0.4);">اتركيه فاضي للاحتفاظ بالصورة الحالية.</p>
+                    <p style="margin:6px 0 0; font-size:10.5px; color:rgba(1,60,88,0.4);"></p>
                 </div>
                 <div>
                     <label style="display:block; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.55); margin-bottom:6px;">صوت (اختياري)</label>
@@ -146,7 +146,7 @@
                         <audio controls src="{{ $audioUrl }}" style="width:100%; margin-bottom:8px;"></audio>
                     @endif
                     <div class="q-field-wrap"><input type="file" name="audio" accept=".mp3,.wav,.ogg"></div>
-                    <p style="margin:6px 0 0; font-size:10.5px; color:rgba(1,60,88,0.4);">اتركيه فاضي للاحتفاظ بالصوت الحالي.</p>
+                    <p style="margin:6px 0 0; font-size:10.5px; color:rgba(1,60,88,0.4);"></p>
                 </div>
             </div>
         </div>

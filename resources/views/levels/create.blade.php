@@ -9,7 +9,7 @@
         </a>
         <div>
             <h1 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:22px; color:#013C58;">إضافة مستوى جديد</h1>
-            <p style="margin:4px 0 0; font-size:13px; color:rgba(1,60,88,0.55);">عبّي التفاصيل لإنشاء مستوى تعلّم جديد</p>
+            <p style="margin:4px 0 0; font-size:13px; color:rgba(1,60,88,0.55);"> </p>
         </div>
     </div>
 

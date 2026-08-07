@@ -16,6 +16,11 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\Admin\TopicController;
 use App\Http\Controllers\Admin\PodcastController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\AdminManagementController;
+use App\Http\Controllers\Admin\OfferController;
+use App\Http\Controllers\Admin\PermissionManagementController;
+use App\Http\Controllers\Admin\PaymentManagementController;
+use App\Http\Controllers\Admin\AuditController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -57,6 +62,36 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::post('/admins/{user}/permissions', [RoleController::class, 'assignPermissions'])->name('assignPermissions');
     Route::get('/teachers/create', [RoleController::class, 'createteacher'])->name('teachers.create');
     Route::post('/teachers', [RoleController::class, 'storeTeacher'])->name('teachers.store');
+
+    // Admin management (super-admin only)
+    Route::prefix('management/admins')->name('admin.admins.')->group(function () {
+        Route::get('/', [AdminManagementController::class, 'index'])->name('index');
+        Route::get('/create', [AdminManagementController::class, 'create'])->name('create');
+        Route::post('/', [AdminManagementController::class, 'store'])->name('store');
+        Route::patch('/{admin}/toggle-active', [AdminManagementController::class, 'toggleActive'])->name('toggle-active');
+    });
+
+    // Discounts & offers
+    Route::prefix('offers')->name('admin.offers.')->group(function () {
+        Route::get('/', [OfferController::class, 'index'])->name('index');
+        Route::get('/create', [OfferController::class, 'create'])->name('create');
+        Route::post('/', [OfferController::class, 'store'])->name('store');
+    });
+
+    // Permissions
+    Route::prefix('permissions')->name('admin.permissions.')->group(function () {
+        Route::get('/', [PermissionManagementController::class, 'index'])->name('index');
+        Route::post('/', [PermissionManagementController::class, 'update'])->name('update');
+    });
+
+    // Payments
+    Route::get('/payments', [PaymentManagementController::class, 'index'])->name('admin.payments.index');
+
+    // Audit & business management
+    Route::prefix('audit')->name('admin.audit.')->group(function () {
+        Route::get('/', [AuditController::class, 'index'])->name('index');
+        Route::get('/levels/{level}', [AuditController::class, 'level'])->name('level');
+    });
 });
 
 Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
