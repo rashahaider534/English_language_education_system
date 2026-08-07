@@ -22,14 +22,14 @@ class RoleController extends Controller
     
     public function createteacher()
     {
-        return view('admin.teachers.create');
+        return view('admin.teacher.create');
     }
 
     public function storeAdmin(StoreAdmin_TeacherRequset $request)
     {
         $admin = $this->roleservice->storeAdmin(auth()->user(), $request->validated());
         return redirect()
-            ->route('permissions', $admin->id)
+            ->route('admins.permissions', $admin->id)
             ->with('success', 'Admin created successfully');
     }
 
@@ -62,9 +62,9 @@ class RoleController extends Controller
 
     public function assignPermissions(User $user, AssignPermissionRequest $request)
     {
-        $this->roleservice->assignPermissions($user, $request->validated('permissions'));
+        $this->roleservice->assignPermissions($user, $request->validated());
         return redirect()
-            ->route('admin.admins.index')
+            ->route('admins.index')
             ->with('success', 'Permissions assigned successfully');
     }
 }

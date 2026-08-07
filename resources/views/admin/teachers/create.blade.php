@@ -13,39 +13,29 @@
         </div>
     </div>
 
-    @if ($errors->any())
-        <div style="display:flex; align-items:flex-start; gap:9px; margin-bottom:18px; padding:13px 16px; border-radius:12px; background:rgba(148,98,0,0.08); color:#946200; font-size:13px; font-weight:600; max-width:640px;">
-            <ul style="margin:0; padding-inline-start:16px;">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
-    <form method="POST" action="{{ route('teachers.store') }}" style="background:#EFFAFD; border:1.5px solid rgba(0,83,122,0.16); border-radius:22px; padding:26px; max-width:640px; box-shadow:0 18px 44px rgba(0,83,122,0.06);">
+    <div x-data="{ saved: false }">
+    <form method="POST" action="{{ route('admin.teachers.store') }}" @submit.prevent="saved = true" style="background:#EFFAFD; border:1.5px solid rgba(0,83,122,0.16); border-radius:22px; padding:26px; max-width:640px; box-shadow:0 18px 44px rgba(0,83,122,0.06);">
         @csrf
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
             <div>
                 <label style="display:block; font-size:12.5px; font-weight:700; color:#013C58; margin-bottom:6px;">الاسم الأول</label>
-                <input type="text" name="first_name" value="{{ old('first_name') }}" placeholder="مثال: أحمد" style="width:100%; padding:10px 14px; border:1.5px solid rgba(0,83,122,0.14); border-radius:10px; background:#FBFEFF; color:#013C58; font-size:13px; font-family:'Tajawal',sans-serif; outline:none;">
+                <input type="text" name="first_name" placeholder="مثال: أحمد" style="width:100%; padding:10px 14px; border:1.5px solid rgba(0,83,122,0.14); border-radius:10px; background:#FBFEFF; color:#013C58; font-size:13px; font-family:'Tajawal',sans-serif; outline:none;">
             </div>
             <div>
                 <label style="display:block; font-size:12.5px; font-weight:700; color:#013C58; margin-bottom:6px;">الاسم الأخير</label>
-                <input type="text" name="last_name" value="{{ old('last_name') }}" placeholder="مثال: خالد" style="width:100%; padding:10px 14px; border:1.5px solid rgba(0,83,122,0.14); border-radius:10px; background:#FBFEFF; color:#013C58; font-size:13px; font-family:'Tajawal',sans-serif; outline:none;">
+                <input type="text" name="last_name" placeholder="مثال: خالد" style="width:100%; padding:10px 14px; border:1.5px solid rgba(0,83,122,0.14); border-radius:10px; background:#FBFEFF; color:#013C58; font-size:13px; font-family:'Tajawal',sans-serif; outline:none;">
             </div>
         </div>
 
         <div style="margin-bottom:16px;">
             <label style="display:block; font-size:12.5px; font-weight:700; color:#013C58; margin-bottom:6px;">البريد الإلكتروني</label>
-            <input type="email" name="email" value="{{ old('email') }}" placeholder="teacher@example.com" style="width:100%; padding:10px 14px; border:1.5px solid rgba(0,83,122,0.14); border-radius:10px; background:#FBFEFF; color:#013C58; font-size:13px; font-family:'Tajawal',sans-serif; outline:none;">
+            <input type="email" name="email" placeholder="teacher@example.com" style="width:100%; padding:10px 14px; border:1.5px solid rgba(0,83,122,0.14); border-radius:10px; background:#FBFEFF; color:#013C58; font-size:13px; font-family:'Tajawal',sans-serif; outline:none;">
         </div>
 
         <div style="margin-bottom:22px;">
-            <label style="display:block; font-size:12.5px; font-weight:700; color:#013C58; margin-bottom:6px;">كلمة المرور المبدئية</label>
-            <input type="text" name="password" placeholder="8 أحرف على الأقل" style="width:100%; padding:10px 14px; border:1.5px solid rgba(0,83,122,0.14); border-radius:10px; background:#FBFEFF; color:#013C58; font-size:13px; font-family:'Tajawal',sans-serif; outline:none;">
-            <p style="margin:6px 0 0; font-size:11.5px; color:rgba(1,60,88,0.45);">رح تنبعت هالكلمة تلقائيًا للأستاذ عبر إيميل ترحيبي.</p>
+            <label style="display:block; font-size:12.5px; font-weight:700; color:#013C58; margin-bottom:6px;">نبذة (Bio)</label>
+            <textarea name="bio" rows="4" placeholder="نبذة مختصرة عن الأستاذ..." style="width:100%; padding:10px 14px; border:1.5px solid rgba(0,83,122,0.14); border-radius:10px; background:#FBFEFF; color:#013C58; font-size:13px; font-family:'Tajawal',sans-serif; outline:none; resize:vertical;"></textarea>
         </div>
 
         <div style="display:flex; justify-content:flex-end; gap:10px;">
@@ -53,5 +43,10 @@
             <button type="submit" style="display:inline-flex; align-items:center; padding:10px 24px; border-radius:10px; border:none; background:linear-gradient(90deg,#F5A201,#FFBA42); color:#013C58; font-family:'Poppins',sans-serif; font-weight:700; font-size:12.5px; cursor:pointer;">حفظ</button>
         </div>
     </form>
-</div>
+
+    <div x-show="saved" x-cloak x-transition style="display:flex; align-items:center; gap:10px; background:rgba(76,175,120,0.14); color:#2E7D55; border:1px solid rgba(76,175,120,0.3); border-radius:14px; padding:12px 18px; margin-top:16px; max-width:640px; font-size:12.5px; font-weight:600;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><path d="M22 4 12 14.01l-3-3"></path></svg>
+        تم استلام البيانات بالواجهة (ما في ربط بالباك-إند لهلق).
+    </div>
+    </div>
 @endsection
