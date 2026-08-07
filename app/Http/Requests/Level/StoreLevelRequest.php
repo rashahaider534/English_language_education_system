@@ -73,9 +73,42 @@ class StoreLevelRequest extends FormRequest
         if ($this->minimum_score >= $this->maximum_score) {
             $validator->errors()->add(
                 'minimum_score',
-                'Minimum score must be less than maximum score.'
+                'أدنى علامة يجب أن تكون أقل من أعلى علامة.'
             );
         }
     });
 }
+
+    public function attributes(): array
+    {
+        return [
+            'name_en' => 'الاسم بالإنكليزي',
+            'name_ar' => 'الاسم بالعربي',
+            'order' => 'الترتيب',
+            'minimum_score' => 'أدنى علامة',
+            'maximum_score' => 'أعلى علامة',
+            'price' => 'السعر',
+            'estimated_duration' => 'المدة المتوقعة',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name_en.required' => 'الاسم بالإنكليزي مطلوب.',
+            'name_en.regex' => 'الاسم بالإنكليزي يجب أن يحتوي أحرف إنكليزية وأرقام فقط.',
+            'name_en.unique' => 'هذا الاسم بالإنكليزي مستخدم مسبقًا لمستوى آخر.',
+            'name_ar.required' => 'الاسم بالعربي مطلوب.',
+            'name_ar.regex' => 'الاسم بالعربي يجب أن يحتوي أحرف عربية فقط.',
+            'name_ar.unique' => 'هذا الاسم بالعربي مستخدم مسبقًا لمستوى آخر.',
+            'order.required' => 'الترتيب مطلوب.',
+            'order.integer' => 'الترتيب يجب أن يكون رقمًا صحيحًا.',
+            'order.min' => 'الترتيب يجب أن يكون 1 على الأقل.',
+            'order.unique' => 'هذا الترتيب مستخدم مسبقًا من مستوى آخر، الرجاء اختيار رقم ترتيب مختلف.',
+            'minimum_score.required' => 'أدنى علامة مطلوبة.',
+            'maximum_score.required' => 'أعلى علامة مطلوبة.',
+            'price.required' => 'السعر مطلوب.',
+            'estimated_duration.required' => 'المدة المتوقعة مطلوبة.',
+        ];
+    }
 }

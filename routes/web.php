@@ -16,6 +16,11 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\Admin\TopicController;
 use App\Http\Controllers\Admin\PodcastController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\AdminManagementController;
+use App\Http\Controllers\Admin\OfferController;
+use App\Http\Controllers\Admin\PermissionManagementController;
+use App\Http\Controllers\Admin\PaymentManagementController;
+use App\Http\Controllers\Admin\AuditController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -57,6 +62,36 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::post('/admins/{user}/permissions', [RoleController::class, 'assignPermissions'])->name('assignPermissions');
     Route::get('/teachers/create', [RoleController::class, 'createteacher'])->name('teachers.create');
     Route::post('/teachers', [RoleController::class, 'storeTeacher'])->name('teachers.store');
+
+    // Admin management (super-admin only)
+    Route::prefix('management/admins')->name('admin.admins.')->group(function () {
+        Route::get('/', [AdminManagementController::class, 'index'])->name('index');
+        Route::get('/create', [AdminManagementController::class, 'create'])->name('create');
+        Route::post('/', [AdminManagementController::class, 'store'])->name('store');
+        Route::patch('/{admin}/toggle-active', [AdminManagementController::class, 'toggleActive'])->name('toggle-active');
+    });
+
+    // Discounts & offers
+    Route::prefix('offers')->name('admin.offers.')->group(function () {
+        Route::get('/', [OfferController::class, 'index'])->name('index');
+        Route::get('/create', [OfferController::class, 'create'])->name('create');
+        Route::post('/', [OfferController::class, 'store'])->name('store');
+    });
+
+    // Permissions
+    Route::prefix('permissions')->name('admin.permissions.')->group(function () {
+        Route::get('/', [PermissionManagementController::class, 'index'])->name('index');
+        Route::post('/', [PermissionManagementController::class, 'update'])->name('update');
+    });
+
+    // Payments
+    Route::get('/payments', [PaymentManagementController::class, 'index'])->name('admin.payments.index');
+
+    // Audit & business management
+    Route::prefix('audit')->name('admin.audit.')->group(function () {
+        Route::get('/', [AuditController::class, 'index'])->name('index');
+        Route::get('/levels/{level}', [AuditController::class, 'level'])->name('level');
+    });
 });
 
 Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
@@ -185,7 +220,7 @@ Route::middleware(['auth:web'])->group(function () {
         ->post('/tests/{test}', [TestController::class, 'update'])
         ->name('tests.update');
 
-    Route::middleware(['role:admin|super-admin', 'permission:manage_podcast'])
+    Route::middleware(['role:admin|super-admin', 'permission:manage_podcasts'])
         ->group(function () {
             //topic route
             Route::get('/topics', [TopicController::class, 'index'])->name('topics.index');
@@ -197,10 +232,10 @@ Route::middleware(['auth:web'])->group(function () {
             Route::delete('/topics/{topic}/delete', [TopicController::class, 'destroy'])->name('topics.delete');
 
             //podcast route
-            Route::get('/podcasts/{topic}', [PodcastController::class, 'index'])->name('podcasts.index');
-            Route::get('/podcasts/{podcast}', [PodcastController::class, 'show'])->name('podcasts.show');
             Route::get('/podcasts/create', [PodcastController::class, 'create'])->name('podcasts.create');
-            Route::post('/podcasts/{topic}', [PodcastController::class, 'store'])->name('podcasts.store');
+            Route::get('/topics/{topic}/podcasts', [PodcastController::class, 'index'])->name('podcasts.index');
+            Route::post('/topics/{topic}/podcasts', [PodcastController::class, 'store'])->name('podcasts.store');
+            Route::get('/podcasts/{podcast}', [PodcastController::class, 'show'])->name('podcasts.show');
             Route::get('/podcasts/{podcast}/edit', [PodcastController::class, 'edit'])->name('podcasts.edit');
             Route::patch('/podcasts/{podcast}/update', [PodcastController::class, 'update'])->name('podcasts.update');
             Route::delete('/podcasts/{podcast}/delete', [PodcastController::class, 'destroy'])->name('podcasts.delete');

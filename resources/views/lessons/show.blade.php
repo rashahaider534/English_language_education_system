@@ -45,14 +45,14 @@
     $teacherInitial = $teacher ? strtoupper(substr($teacher->first_name ?? $teacher->email, 0, 1)) : '?';
 
     $statusLabels = [
-        'pending' => 'قيد الانتظار', 'in_review' => 'قيد المراجعة', 'request_changes' => 'طلب تعديل',
+        'pending' => 'قيد الانتظار', 'in_review' => 'قيد المراجعة', 'changes_requested' => 'طلب تعديل',
         'published' => 'منشور', 'closed' => 'مغلق', 'archived' => 'مؤرشف',
     ];
     // Same soft palette used on the per-course lessons table
     $statusColors = [
         'pending'         => ['bg' => 'rgba(255,186,66,0.16)', 'fg' => '#8A5A00', 'dot' => '#F5A201'],
         'in_review'       => ['bg' => 'rgba(14,106,150,0.14)', 'fg' => '#0E6A96', 'dot' => '#0E6A96'],
-        'request_changes' => ['bg' => 'rgba(255,138,101,0.13)', 'fg' => '#C2591A', 'dot' => '#FF8A65'],
+        'changes_requested' => ['bg' => 'rgba(255,138,101,0.13)', 'fg' => '#C2591A', 'dot' => '#FF8A65'],
         'published'       => ['bg' => 'rgba(76,175,120,0.16)', 'fg' => '#2E7D55', 'dot' => '#4CAF78'],
         'closed'          => ['bg' => 'rgba(1,60,88,0.07)', 'fg' => 'rgba(1,60,88,0.55)', 'dot' => '#013C58'],
         'archived'        => ['bg' => 'rgba(1,60,88,0.05)', 'fg' => 'rgba(1,60,88,0.4)', 'dot' => 'rgba(1,60,88,0.65)'],
@@ -63,7 +63,7 @@
     $videoUrl = $lessonModel->getFirstMediaUrl('videos');
 @endphp
 <div
-    x-data="{ archiveModalOpen: false, blockModalOpen: false, blockTarget: null }"
+    x-data="{ archiveModalOpen: false, blockModalOpen: false, blockTarget: null, deleteModalOpen: false, deleteTarget: null, deleteError: null, deleting: false }"
     class="-mx-4 -my-6 px-4 py-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
     style="background:#DFF2F9; font-family:'Tajawal',sans-serif; min-height:100vh;" dir="rtl"
 >
@@ -164,7 +164,7 @@
         </div>
 
         @if ($words->isEmpty())
-            <p style="margin:0; font-size:12.5px; color:rgba(1,60,88,0.45); font-weight:600;">ما ضاف الأستاذ كلمات لهذا الدرس بعد</p>
+            <p style="margin:0; font-size:12.5px; color:rgba(1,60,88,0.45); font-weight:600;"> لم يتم اضافة كلمات لهذا الدرس بعد  </p>
         @else
             <div style="display:flex; flex-wrap:wrap; gap:10px;">
                 @foreach ($words as $word)
@@ -213,7 +213,7 @@
                     $authorInitial = $author ? strtoupper(substr($author->first_name ?? $author->email, 0, 1)) : '?';
                     $authorBlocked = $author && $author->studentProfile && ! $author->studentProfile->can_comment;
                 @endphp
-                <div class="show-comment" x-data="{ deleted: false, deleting: false }" x-show="!deleted" x-transition style="padding:14px; border-radius:13px; background:rgba(255,211,91,0.05); border:1.5px solid rgba(255,186,66,0.2); box-shadow:0 0 10px rgba(255,186,66,0.08);">
+                <div id="comment-{{ $comment->id }}" class="show-comment" style="padding:14px; border-radius:13px; background:rgba(255,211,91,0.05); border:1.5px solid rgba(255,186,66,0.2); box-shadow:0 0 10px rgba(255,186,66,0.08);">
                     <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:9px;">
                         <span style="display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:999px; background:rgba(0,83,122,0.06); font-size:10.5px; font-weight:700; color:rgba(1,60,88,0.55); font-family:'Poppins',sans-serif;">
                             {{ $comment->created_at->format('H:i') }} · {{ $comment->created_at->format('Y-m-d') }}
@@ -234,18 +234,7 @@
                                 type="button"
                                 title="حذف التعليق"
                                 class="show-comment-delete"
-                                :disabled="deleting"
-                                @click="
-                                    if (!confirm('حذف هالتعليق؟')) return;
-                                    deleting = true;
-                                    fetch('/comments/{{ $comment->id }}/destroy', {
-                                        method: 'DELETE',
-                                        headers: {
-                                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
-                                            'Accept': 'application/json',
-                                        },
-                                    }).then(res => { if (res.ok) { deleted = true; } else { deleting = false; alert('صار في خطأ، جربي كمان مرة.'); } });
-                                "
+                                @click="deleteTarget = { id: {{ $comment->id }} }; deleteError = null; deleteModalOpen = true;"
                                 style="display:flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:7px; border:none; background:rgba(255,100,100,0.08); color:rgba(200,60,60,0.75); cursor:pointer;">
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="M6 6l12 12"></path></svg>
                             </button>
@@ -332,7 +321,7 @@
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="m4.9 4.9 14.2 14.2"></path></svg>
             </div>
             <h3 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; color:#013C58;">حظر <span x-text="blockTarget?.name"></span> من التعليق؟</h3>
-            <p style="margin:10px 0 0; font-size:13px; color:rgba(1,60,88,0.6); line-height:1.7;">هيتحظر هالطالب من التعليق نهائيًا، ومش رح يقدر يعلق ع أي درس تاني.</p>
+            <p style="margin:10px 0 0; font-size:13px; color:rgba(1,60,88,0.6); line-height:1.7;">سيتم حظر الطالب من التعليقات </p>
             <div style="display:flex; gap:10px; margin-top:22px;">
                 <button type="button" @click="blockModalOpen = false" style="flex:1; padding:11px; border-radius:11px; border:1.5px solid rgba(0,83,122,0.12); background:#EFFAFD; color:#013C58; font-family:'Poppins',sans-serif; font-weight:600; font-size:13px; cursor:pointer;">إلغاء</button>
                 <form :action="'/comments/' + blockTarget?.id + '/block'" method="POST" style="flex:1;">
@@ -340,6 +329,60 @@
                     @method('PATCH')
                     <button type="submit" style="width:100%; padding:11px; border-radius:11px; border:none; background:linear-gradient(90deg,#C1392B,#E05C4E); color:#fff; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; cursor:pointer;">تأكيد الحظر</button>
                 </form>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    {{-- ============ DELETE COMMENT CONFIRM MODAL ============ --}}
+    <div x-show="deleteModalOpen" x-cloak
+         x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+         style="position:fixed; inset:0; z-index:50; background:rgba(1,42,63,0.5); backdrop-filter:blur(4px); overflow-y:auto;"
+         @click="deleteModalOpen = false">
+      <div style="min-height:100%; display:flex; align-items:center; justify-content:center; padding:24px;">
+        <div @click.stop
+             x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+             style="width:100%; max-width:400px; background:#EFFAFD; border-radius:22px; padding:30px 26px; box-shadow:0 44px 100px rgba(1,42,63,0.4); text-align:center;">
+            <div style="width:58px; height:58px; border-radius:16px; background:rgba(200,60,60,0.14); color:#B23A3A; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path></svg>
+            </div>
+            <h3 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; color:#013C58;">حذف هالتعليق؟</h3>
+
+            <template x-if="deleteError">
+                <p style="margin:10px 0 0; font-size:12.5px; color:#B23A3A; background:rgba(200,60,60,0.08); border-radius:10px; padding:10px 12px; line-height:1.7;" x-text="deleteError"></p>
+            </template>
+
+            <div style="display:flex; gap:10px; margin-top:22px;">
+                <button type="button" @click="deleteModalOpen = false" style="flex:1; padding:11px; border-radius:11px; border:1.5px solid rgba(0,83,122,0.12); background:#EFFAFD; color:#013C58; font-family:'Poppins',sans-serif; font-weight:600; font-size:13px; cursor:pointer;">إلغاء</button>
+                <button
+                    type="button"
+                    :disabled="deleting"
+                    @click="
+                        deleting = true; deleteError = null;
+                        fetch('/comments/' + deleteTarget.id + '/destroy', {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                                'Accept': 'application/json',
+                            },
+                        }).then(res => {
+                            deleting = false;
+                            if (res.ok) {
+                                deleteModalOpen = false;
+                                const el = document.getElementById('comment-' + deleteTarget.id);
+                                if (el) el.remove();
+                            } else if (res.status === 403) {
+                                deleteError = 'لاتملك صلاحية حذف هذا التعليق.';
+                            } else {
+                                deleteError = 'يرجى اعادة المحاولة .';
+                            }
+                        }).catch(() => { deleting = false; deleteError = 'صار في خطأ بالاتصال، جربي كمان مرة.'; });
+                    "
+                    style="flex:1; padding:11px; border-radius:11px; border:none; background:linear-gradient(90deg,#C1392B,#E05C4E); color:#fff; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; cursor:pointer; opacity:1;">
+                    <span x-text="deleting ? 'جاري الحذف...' : 'تأكيد الحذف'"></span>
+                </button>
             </div>
         </div>
       </div>

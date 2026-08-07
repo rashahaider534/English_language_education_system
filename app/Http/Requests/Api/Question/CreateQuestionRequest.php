@@ -103,7 +103,7 @@ class CreateQuestionRequest extends FormRequest
                 'string','filled',
 
                 Rule::requiredIf(
-                    in_array($this->questionType(), [QuestionType::MCQ, QuestionType::FILL, QuestionType::PAIR])
+                    in_array($this->questionType(), [QuestionType::MCQ, QuestionType::FILL])
                 ),
 
                 Rule::when(

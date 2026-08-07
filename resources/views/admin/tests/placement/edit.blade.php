@@ -54,7 +54,7 @@
         'id' => $q->id,
         'title_en' => $q->title_question_en,
         'title_ar' => $q->title_question_ar,
-        'type' => $q->type,
+        'type' => $q->type instanceof \BackedEnum ? $q->type->value : $q->type,
         'difficulty' => $q->difficulty,
         'score' => $q->score,
     ]);
@@ -63,7 +63,7 @@
         'id' => $q->id,
         'title_en' => $q->title_question_en,
         'title_ar' => $q->title_question_ar,
-        'type' => $q->type,
+        'type' => $q->type instanceof \BackedEnum ? $q->type->value : $q->type,
         'difficulty' => $q->difficulty,
         'score' => $q->score,
     ])->values();
@@ -88,7 +88,7 @@
     @if ($isPublished)
         <div style="display:flex; align-items:flex-start; gap:10px; background:rgba(255,186,66,0.16); color:#8A5A00; border:1px solid rgba(255,186,66,0.4); border-radius:14px; padding:14px 18px; margin-bottom:20px; font-size:13px; font-weight:600; line-height:1.7;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:1px;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-            <span>هالاختبار منشور حاليًا. الحفظ رح ينشئ نسخة جديدة منه (draft) بدل تعديل النسخة المنشورة مباشرة.</span>
+            <span>هذا الاختبار منشور حاليًا. الحفظ رح ينشئ نسخة جديدة منه (draft) بدل تعديل النسخة المنشورة مباشرة.</span>
         </div>
     @endif
 
@@ -155,7 +155,7 @@
                             </button>
                         </div>
                     </template>
-                    <p x-show="filteredPool.length === 0" x-cloak style="text-align:center; color:rgba(1,60,88,0.4); font-size:12.5px; padding:20px 0;">ما في أسئلة مطابقة</p>
+                    <p x-show="filteredPool.length === 0" x-cloak style="text-align:center; color:rgba(1,60,88,0.4); font-size:12.5px; padding:20px 0;">لا يوجد أسئلة مطابقة</p>
                 </div>
             </div>
 
@@ -163,7 +163,7 @@
             <div class="t-panel" style="background:#EFFAFD; border:1.5px solid rgba(14,106,150,0.35); border-radius:20px; padding:24px; box-shadow:0 10px 26px rgba(0,83,122,0.06);">
                 <h3 style="margin:0 0 6px; font-family:'Poppins',sans-serif; font-weight:800; font-size:14px; color:#013C58;">أسئلة الاختبار المختارة</h3>
                 <p style="margin:0 0 14px; font-size:11.5px; color:rgba(1,60,88,0.5);">
-                    عدد الأسئلة: <span x-text="selected.length" style="font-weight:700;"></span> (لازم إجابتين على الأقل). رتبيهن بالأسهم.
+                    عدد الأسئلة: <span x-text="selected.length" style="font-weight:700;"></span> (يجب  إجابتين على الأقل). الترتيب عبر  الاسهم.
                 </p>
 
                 <div style="display:flex; flex-direction:column; gap:8px;">
@@ -189,7 +189,7 @@
         </div>
 
         <div style="margin-top:22px;">
-            <p x-show="selected.length > 0 && selected.length < 2" x-cloak style="margin:0 0 12px; font-size:12px; color:#C2591A; font-weight:700;">لازم تختاري إجابتين (سؤالين) على الأقل.</p>
+            <p x-show="selected.length > 0 && selected.length < 2" x-cloak style="margin:0 0 12px; font-size:12px; color:#C2591A; font-weight:700;">يجب   إجابتين (سؤالين) على الأقل.</p>
             <button type="submit" class="t-submit-btn" :disabled="selected.length < 2">
                 {{ $isPublished ? 'حفظ كنسخة جديدة' : 'حفظ التعديلات' }}
             </button>

@@ -172,7 +172,7 @@
                 </div>
 
                 <div class="lex-level-card" style="background:#EFFAFD; border-top:4px solid rgba(255,186,66,0.5); border-radius:16px; padding:26px 20px; text-align:center; box-shadow:0 10px 26px rgba(0,83,122,0.06);">
-                    <span style="font-size:13px; font-weight:800; color:#8A5A00;">مستوى بديل مقترح</span>
+                    <span style="font-size:13px; font-weight:800; color:#8A5A00;">المستوى الحالي (الموصى به)</span>
                     <div style="width:64px; height:64px; border-radius:16px; background:rgba(255,211,91,0.16); display:flex; align-items:center; justify-content:center; margin:14px auto;">
                         <span style="font-family:'Poppins',sans-serif; font-weight:800; font-size:22px; color:#8A5A00;">{{ $recommendedLevel->order ?? '—' }}</span>
                     </div>
