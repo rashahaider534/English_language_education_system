@@ -15,7 +15,7 @@ use App\Http\Controllers\Admin\ComplaintController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\Admin\TopicController;
 use App\Http\Controllers\Admin\PodcastController;
-use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\AdminManagementController;
 use App\Http\Controllers\Admin\OfferController;
 use App\Http\Controllers\Admin\PermissionManagementController;
@@ -48,20 +48,17 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth', 'role:super-admin'])->group(function () {
-    //Level Exception route
-    Route::get('/levelexceptions', [LevelExceptionController::class, 'index'])->name('levelException.index');
-    Route::get('/levelexceptions/{levelException}/details', [LevelExceptionController::class, 'show'])->name('levelException.show');
-    Route::patch('/levelexceptions/{levelException}/start', [LevelExceptionController::class, 'startReview'])->name('levelException.review');
-    Route::patch('/levelexceptions/{levelException}/approve', [LevelExceptionController::class, 'approve'])->name('levelException.approve');
-    Route::patch('/levelexceptions/{levelException}/reject', [LevelExceptionController::class, 'reject'])->name('levelException.reject');
-
-    //permission route
-    Route::post('/admins', [RoleController::class, 'storeAdmin'])->name('admins.store');
-    Route::get('/admins/create', [RoleController::class, 'create'])->name('admins.create');
-    Route::get('/admins/{user}/permissions', [RoleController::class, 'choosePermissions'])->name('permissions');
-    Route::post('/admins/{user}/permissions', [RoleController::class, 'assignPermissions'])->name('assignPermissions');
-    Route::get('/teachers/create', [RoleController::class, 'createteacher'])->name('teachers.create');
-    Route::post('/teachers', [RoleController::class, 'storeTeacher'])->name('teachers.store');
+    //permissions route
+    Route::get('/permissions/index', [PermissionController::class, 'index'])->name('admin.permission.index');
+    Route::get('/permission/{user}/showadmin', [PermissionController::class, 'getAdmin'])->name('admin.permission.show');
+    Route::get('/permission/admins/create', [PermissionController::class, 'create'])->name('admins.permission.create');
+    Route::post('/permission/admin', [PermissionController::class, 'storeAdmin'])->name('admins.permission.store');
+    Route::delete('/permission/{user}/delete', [PermissionController::class, 'destroy'])->name('admins.permission.destroy');
+    Route::get('/permission/{user}/admin', [PermissionController::class, 'choosePermissions'])->name('admin.permissions');
+    Route::post('/permission/{user}/assign', [PermissionController::class, 'assignPermissions'])->name('admin.permission.assignPermissions');
+    Route::post('/permission/{user}/revoke', [PermissionController::class, 'revokePermissions'])->name('admin.permission.revokePermissions');
+    Route::get('/permission/teacher/create', [PermissionController::class, 'createteacher'])->name('admin.permission.teacher.create');
+    Route::post('/permission/teacher', [PermissionController::class, 'storeTeacher'])->name('admin.permission.teacher.store');
 
     // Admin management (super-admin only)
     Route::prefix('management/admins')->name('admin.admins.')->group(function () {
@@ -105,12 +102,6 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
     Route::get('/lessons/{lesson}', [LessonController::class, 'show'])->name('lessons.show');
     Route::patch('/lessons/{lesson}/archive', [LessonController::class, 'archive'])->name('lessons.archive');
 
-    //comment route
-    Route::delete('/comments/{comment}/destroy', [CommentController::class, 'admindelete']);
-    Route::patch('/comments/{comment}/block', [CommentController::class, 'block']);
-
-    Route::patch('/comments/{comment}/block',[CommentController::class,'block']);
-
     // Teachers management & monitoring — index/lessons query real data;
     // create/store/toggle-active are UI-only placeholders pending backend work.
     Route::prefix('management/teachers')->name('admin.teachers.')->group(function () {
@@ -133,6 +124,24 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
 });
 
 Route::middleware(['auth:web'])->group(function () {
+    
+    Route::middleware(['role:admin|super-admin', 'permission:manage_comment'])
+        ->group(function () {
+            //comment route
+            Route::delete('/comments/{comment}/destroy', [CommentController::class, 'admindelete']);
+            Route::patch('/comments/{comment}/block', [CommentController::class, 'block']);
+        });
+
+    Route::middleware(['role:admin|super-admin', 'permission:manage_levelexception'])
+        ->group(function () {
+            //Level Exception route
+            Route::get('/levelexceptions', [LevelExceptionController::class, 'index'])->name('levelException.index');
+            Route::get('/levelexceptions/{levelException}/details', [LevelExceptionController::class, 'show'])->name('levelException.show');
+            Route::patch('/levelexceptions/{levelException}/start', [LevelExceptionController::class, 'startReview'])->name('levelException.review');
+            Route::patch('/levelexceptions/{levelException}/approve', [LevelExceptionController::class, 'approve'])->name('levelException.approve');
+            Route::patch('/levelexceptions/{levelException}/reject', [LevelExceptionController::class, 'reject'])->name('levelException.reject');
+        });
+
     Route::middleware(['role:admin|super-admin', 'permission:manage_levels'])
         ->group(function () {
             //level route
