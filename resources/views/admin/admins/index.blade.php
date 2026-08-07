@@ -42,7 +42,7 @@
                     <h1 style="margin:6px 0 0; font-family:'Poppins',sans-serif; font-weight:800; font-size:23px; color:#fff;">الأدمنز</h1>
                 </div>
             </div>
-            <button type="button" @click="createModalOpen = true" class="adm-create-btn" title="تصميم فقط — بانتظار الربط بالباك-إند" style="display:inline-flex; align-items:center; gap:8px; padding:12px 22px; border-radius:12px; border:none; background:linear-gradient(90deg,#F5A201,#FFBA42); color:#013C58; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; cursor:pointer;">
+            <button type="button" @click="createModalOpen = true" class="adm-create-btn" style="display:inline-flex; align-items:center; gap:8px; padding:12px 22px; border-radius:12px; border:none; background:linear-gradient(90deg,#F5A201,#FFBA42); color:#013C58; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; cursor:pointer;">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
                 إضافة أدمن
             </button>
@@ -170,7 +170,7 @@
 
             <div style="text-align:center; margin-bottom:22px;">
                 <h1 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:20px; color:#013C58;">إضافة أدمن جديد</h1>
-                <p style="margin:6px 0 0; font-size:13px; color:rgba(1,60,88,0.5);">تصميم واجهة فقط لحد هلق — الحفظ رح يرجّعك لنفس هالصفحة بدون إنشاء حساب حقيقي.</p>
+                <p style="margin:6px 0 0; font-size:13px; color:rgba(1,60,88,0.5);">سوف يتم حفظ معلومات هذا الحساب وارسال ايميل يتضمن كلمة المرور</p>
             </div>
 
             @if ($errors->any())
@@ -184,7 +184,7 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('admin.admins.store') }}">
+            <form method="POST" action="{{ route('admins.store') }}">
                 @csrf
 
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
@@ -204,8 +204,8 @@
                 </div>
 
                 <div style="margin-bottom:22px;">
-                    <label style="display:block; font-size:12px; font-weight:700; color:#013C58; margin-bottom:6px;">الراتب الشهري</label>
-                    <div class="adm-field-wrap"><input type="number" name="salary" placeholder="مثال: 800"></div>
+                    <label style="display:block; font-size:12px; font-weight:700; color:#013C58; margin-bottom:6px;">كلمة المرور المبدئية</label>
+                    <div class="adm-field-wrap"><input type="text" name="password" placeholder="8 أحرف على الأقل"></div>
                 </div>
 
                 <div style="display:flex; flex-direction:row-reverse; gap:10px; padding-top:18px; border-top:1px solid rgba(0,83,122,0.06);">

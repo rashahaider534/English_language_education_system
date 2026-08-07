@@ -36,7 +36,7 @@ class RoleService
                 'email_verified_at' => now(),
             ]
         );
-        $admin->assignRole('admin');
+        $admin->assignRole(Role::findByName('admin', 'web'));
 
         Mail::to($admin->email)->send(new TeacherCreatedMail($admin, $plainPassword));
         return $admin;
@@ -98,7 +98,11 @@ class RoleService
             ]);
         }
 
-        $admin->syncPermissions($permissions);
+        $permissionModels = Permission::where('guard_name', 'web')
+            ->whereIn('name', $permissions)
+            ->get();
+
+        $admin->syncPermissions($permissionModels);
 
         return $admin;
     }
