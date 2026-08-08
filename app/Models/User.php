@@ -133,7 +133,7 @@ class User extends Authenticatable
     }
     public function podcasts()
     {
-        return $this->belongsToMany(Podcast::class,'user_podcasts')
+        return $this->belongsToMany(Podcast::class, 'user_podcasts')
             ->withPivot('listened_at')
             ->withTimestamps();
     }
@@ -144,6 +144,15 @@ class User extends Authenticatable
     public function createdPodcasts(): HasMany
     {
         return $this->hasMany(Podcast::class, 'created_by');
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(AppNotification::class);
+    }
+    public function firebaseTokens(): HasMany
+    {
+        return $this->hasMany(FirebaseToken::class);
     }
 
     /**

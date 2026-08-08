@@ -10,13 +10,15 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use App\Models\Level;
 use App\Models\User;
 use App\Models\LevelException;
+use App\Services\FirebaseService;
 use Illuminate\Support\Facades\DB;
 
 
 class StudentLevelExceptionService
 {
     public function __construct(
-        private LevelAccessService $levelAccessService
+        private LevelAccessService $levelAccessService,
+        private FirebaseService $firebaseservice
     ) {}
     public function index(User $user, ?string $status = null)
     {
@@ -86,7 +88,17 @@ class StudentLevelExceptionService
                         ->toMediaCollection('attachments');
                 }
             }
+            $admin=User::role('super-admin')->first();
+            $this->firebaseservice->sendToUser($admin,
+            'اختبار Firebase',
+            'هذا أول إشعار تجريبي',
+            [
+                'test_id' => '123',
+            ],
+            'test'
+        );
             return $levelException;
+
         });
     }
     public function update(LevelException $levelException, array $data)

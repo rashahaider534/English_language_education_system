@@ -18,6 +18,7 @@ use App\Http\Controllers\Student\LessonController  as StudentLessonController;
 use App\Http\Controllers\Teacher\WordController as TeacherWordController;
 use App\Http\Controllers\Student\WordController as StudentWordController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\FirebaseTokenController;
 use App\Http\Controllers\Student\LevelExceptionController;
 use App\Http\Controllers\Student\RateController;
 use App\Http\Controllers\PaymentController;
@@ -49,6 +50,10 @@ Route::middleware(['auth:sanctum', 'role:student|teacher'])->group(function () {
     Route::post('/comments/{lesson}',[CommentController::class,'create']);
     Route::post('/comments/{comment}/update',[CommentController::class,'update']);
     Route::delete('/comments/{comment}/delete',[CommentController::class,'delete']);
+
+    //notification
+    Route::middleware('auth:sanctum')->post('/firebase/token',[FirebaseTokenController::class, 'store']
+);
 });
 
 //teacher routes
