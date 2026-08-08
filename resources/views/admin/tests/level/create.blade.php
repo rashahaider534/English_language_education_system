@@ -276,7 +276,7 @@
                 </div>
 
                 <p style="background:rgba(255,186,66,0.16); color:#8A5A00; border-radius:12px; padding:12px 16px; margin-bottom:16px; font-size:12px; font-weight:600; line-height:1.7;">
-                    ملاحظة: هالسؤال رح ينحفظ فعليًا، بس ما رح يصير "مؤهل" لهالمستوى تلقائيًا إلا بعد ما ينربط بدرس فعلي بهالمستوى ويصير معتمد/منشور — فما رح ينضاف مباشرة لقائمة "المختارة".
+                    ملاحظة: سيتم حفظ هذا السؤال فعليًا، لكنه لن يصبح "مؤهلاً" لهذا المستوى تلقائيًا إلا بعد ربطه بدرس فعلي ضمن هذا المستوى وتغيير حالته إلى معتمد أو منشور، لذلك لن يُضاف مباشرة إلى قائمة "الأسئلة المختارة".
                 </p>
 
                 <p x-show="quickAddError" x-cloak x-text="quickAddError" style="background:rgba(255,138,101,0.14); color:#C2591A; border-radius:12px; padding:12px 16px; margin-bottom:16px; font-size:12.5px; font-weight:600;"></p>
