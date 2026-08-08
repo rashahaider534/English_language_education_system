@@ -45,11 +45,14 @@
             </svg>
         </button>
 
-        <button type="button" class="dashboard-icon-button dashboard-topbar-accent dashboard-lang-toggle-compact"
-            x-data="{ lang: (localStorage.getItem('dashboardLang') || 'ar') }"
-            x-init="$watch('lang', value => localStorage.setItem('dashboardLang', value))"
-            @click="lang = (lang === 'ar' ? 'en' : 'ar')" x-text="lang === 'ar' ? 'EN' : 'عربي'">
-        </button>
+        @php
+            $dashboardCurrentLocale = app()->getLocale();
+            $dashboardNextLocale = $dashboardCurrentLocale === 'ar' ? 'en' : 'ar';
+            $dashboardLangLabel = $dashboardCurrentLocale === 'ar' ? 'EN' : 'عربي';
+        @endphp
+        <a href="{{ url('/language/'.$dashboardNextLocale) }}" class="dashboard-icon-button dashboard-topbar-accent dashboard-lang-toggle-compact" title="تبديل اللغة">
+            {{ $dashboardLangLabel }}
+        </a>
 
         <div class="relative" x-data="{ open: false }" @click.outside="open = false">
             <button type="button" class="dashboard-icon-button dashboard-topbar-accent dashboard-notification-button" aria-label="Notifications" @click="open = !open" :aria-expanded="open.toString()">
