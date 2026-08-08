@@ -104,7 +104,6 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
     Route::patch('/lessons/{lesson}/archive', [LessonController::class, 'archive'])->name('lessons.archive');
     Route::get('lessons/{lesson}/tests', [AdminContentReviewController::class, 'showLessonTestVersions'])->name('lessons.tests.show');
 
-    Route::get('tests/{test}' , [TestController::class, 'show'])->name('test.show');
     //comment route
     Route::delete('/comments/{comment}/destroy', [CommentController::class, 'admindelete']);
     Route::patch('/comments/{comment}/block', [CommentController::class, 'block']);
@@ -284,4 +283,9 @@ Route::middleware(['auth:web'])->group(function () {
             Route::post('levels/{level}/publish', [AdminContentReviewController::class, 'publishLevel'])->name('levels.publish');
         });
 });
+
+// Registered last so it doesn't shadow the more specific tests/placement
+// and levels/{level}/tests/... routes above (both match tests/{test}-shaped URIs).
+Route::middleware(['auth', 'role:admin|super-admin'])->get('tests/{test}', [TestController::class, 'show'])->name('test.show');
+
 require __DIR__ . '/auth.php';

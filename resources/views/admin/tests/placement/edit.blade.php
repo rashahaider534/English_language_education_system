@@ -150,6 +150,9 @@
                                 <p style="margin:0; font-size:12.5px; font-weight:700; color:#013C58; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" x-text="q.title_en"></p>
                                 <p style="margin:2px 0 0; font-size:11px; color:rgba(1,60,88,0.5);"><span x-text="q.type"></span> · <span x-text="q.difficulty"></span> · <span x-text="q.score"></span> نقطة</p>
                             </div>
+                            <a :href="'/questions/' + q.id" target="_blank" title="معاينة السؤال" class="t-mini-btn" style="display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:9px; background:rgba(14,106,150,0.1); color:#0E6A96; flex-shrink:0; text-decoration:none;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </a>
                             <button type="button" class="t-mini-btn" @click="addQuestion(q)" style="display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:9px; border:none; background:rgba(0,83,122,0.08); color:#00537A; cursor:pointer; flex-shrink:0;">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
                             </button>
@@ -176,6 +179,9 @@
                             </div>
                             <input type="hidden" :name="'questions['+i+'][id]'" :value="s.id">
                             <input type="hidden" :name="'questions['+i+'][order]'" :value="i+1">
+                            <a :href="'/questions/' + s.id" target="_blank" title="معاينة السؤال" style="display:flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:8px; background:rgba(14,106,150,0.1); color:#0E6A96; flex-shrink:0; text-decoration:none;">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </a>
                             <div style="display:flex; flex-direction:column; gap:2px;">
                                 <button type="button" class="t-arrow-btn" @click="moveUp(i)" :disabled="i === 0">▲</button>
                                 <button type="button" class="t-arrow-btn" @click="moveDown(i)" :disabled="i === selected.length - 1">▼</button>
