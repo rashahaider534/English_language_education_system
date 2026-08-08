@@ -22,6 +22,7 @@ class LessonResource extends JsonResource
             'status' => $this->status,
             'order' => $this->order,
             'xp_points' => $this->xp_points,
+            'review_notes' => $this->when(isset($this->review_notes), $this->review_notes),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,];
     }

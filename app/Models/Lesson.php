@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\ContentStatus;
+use App\Traits\HasContentReviews;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -14,10 +16,12 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Lesson extends Model implements HasMedia
 {
-    use InteractsWithMedia, HasTranslations;
+    use InteractsWithMedia, HasTranslations , HasContentReviews;
     protected $fillable =
         ['title_en','title_ar','course_id','status','order','xp_points'];
-
+    protected $casts = [
+        'status' => ContentStatus::class,
+    ];
     public function comments():HasMany
     {
         return $this->hasMany(Comment::class);
@@ -44,14 +48,23 @@ class Lesson extends Model implements HasMedia
         return $this->hasMany(Word::class);
     }
 
-    public function lessonReview():HasOne
-    {
-        return $this->hasOne(LessonReview::class);
-    }
       public function registerMediaCollections(): void
     {
         $this
             ->addMediaCollection('videos')
             ->singleFile();
+    }
+
+    public function latestReview()
+    {
+        return $this->morphOne(ContentReview::class, 'reviewable')
+            ->latestOfMany('completed_at');
+    }
+    public function activeTest()
+    {
+        return $this->morphOne(Test::class, 'testable')
+            ->whereDoesntHave('nextVersion')
+            ->where('status', '!=', ContentStatus::ARCHIVED)
+            ->latestOfMany();
     }
 }

@@ -17,24 +17,24 @@ class AdminLessonService
         private CommentService $commentService,
         private StudentWordService $studentWordService
     ) {}
-    public function getPendingLessons()
-    {
-                return Lesson::query()->select([
-                    'id',
-                    'title_ar',
-                    'title_en',
-                    'course_id',
-                    'order',
-                    'status',
-                    'created_at',
-                ])
-                    ->with([
-                        'course:id,name_ar,name_en,teacher_id',
-                        'course.teacher:id,first_name,last_name,email',
-                    ])
-                    ->where('status', ContentStatus::PENDING->value)
-                    ->paginate(10);
-            }
+//    public function getPendingLessons()
+//    {
+//                return Lesson::query()->select([
+//                    'id',
+//                    'title_ar',
+//                    'title_en',
+//                    'course_id',
+//                    'order',
+//                    'status',
+//                    'created_at',
+//                ])
+//                    ->with([
+//                        'course:id,name_ar,name_en,teacher_id',
+//                        'course.teacher:id,first_name,last_name,email',
+//                    ])
+//                    ->where('status', ContentStatus::PENDING->value)
+//                    ->paginate(10);
+//            }
 
 
 
@@ -57,7 +57,8 @@ class AdminLessonService
                         COUNT(*) as all_count,
                         SUM(status = 'pending') as pending,
                         SUM(status = 'in_review') as in_review,
-                        SUM(status = 'changes_requested') as request_changes,
+                        SUM(status = 'request_changes') as request_changes,
+                        SUM(status = 'approved') as approved,
                         SUM(status = 'published') as published,
                         SUM(status = 'closed') as closed,
                         SUM(status = 'archived') as archived
@@ -84,7 +85,7 @@ class AdminLessonService
                 'lesson' => 'You are not allowed to archive this lesson.',
             ]);
         }
-        if ($lesson->status !== ContentStatus::PUBLISHED->value) {
+        if ($lesson->status !== ContentStatus::PUBLISHED) {
             throw ValidationException::withMessages([
                 'lesson' => 'Only published lessons can be archived.'
             ]);
@@ -94,11 +95,11 @@ class AdminLessonService
 
         if ($hasStudents) {
             $lesson->update([
-                'status' => ContentStatus::CLOSED->value
+                'status' => ContentStatus::CLOSED
             ]);
         } else {
             $lesson->update([
-                'status' => ContentStatus::ARCHIVED->value
+                'status' => ContentStatus::ARCHIVED
             ]);
         }
         return $lesson;

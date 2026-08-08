@@ -40,6 +40,14 @@ class AdminTestService
 
         return $tests;
     }
+
+    public function testVersions(Lesson $lesson)
+    {
+        return $lesson->tests()
+            ->select('id', 'title_en', 'title_ar', 'status', 'previous_test_id', 'created_at')
+            ->orderByDesc('created_at')
+            ->get();
+    }
     public function storePlacementTest(array $data): Test
     {
         return DB::transaction(function () use ($data) {
@@ -80,7 +88,7 @@ class AdminTestService
 
             $testData = Arr::except($data, ['questions']);
             if ($test->status === ContentStatus::APPROVED) {
-                $testData['status'] = ContentStatus::CHANGES_REQUESTED;
+                $testData['status'] = ContentStatus::DRAFT;
             }
 
             $test->update($testData);
