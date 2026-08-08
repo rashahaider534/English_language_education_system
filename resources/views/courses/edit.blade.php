@@ -61,7 +61,7 @@
         @if ($isLocked)
             <div style="display:flex; align-items:center; gap:9px; background:rgba(1,60,88,0.06); color:#00537A; border-radius:12px; padding:12px 16px; font-size:13px; font-weight:600; margin-bottom:18px;">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10.5" width="16" height="10" rx="2.5"></rect><path d="M7.5 10.5V7a4.5 4.5 0 0 1 9 0v3.5"></path></svg>
-                <span>هالكورس مغلق أو مؤرشف، فما فيك تعدّلي عليه.</span>
+                <span>هذا الكورس  مغلق أو مؤرشف، لايمكن التعديل  عليه.</span>
             </div>
         @elseif ($isPublished)
             <div style="display:flex; align-items:center; gap:9px; background:rgba(255,211,91,0.14); color:#946200; border-radius:12px; padding:12px 16px; font-size:13px; font-weight:600; margin-bottom:18px;">
@@ -105,7 +105,7 @@
         <p style="{{ $section }} margin-top:22px;">الأستاذ</p>
         <div style="{{ $isCoreLocked ? $wrapLocked : $wrapBase }}">
             <select name="teacher_id" style="{{ $input }}" @if($isCoreLocked) disabled @endif>
-                <option value="">اختاري الأستاذ...</option>
+                <option value="">قم باختيار الأستاذ...</option>
                 @foreach ($teachers as $teacher)
                     <option value="{{ $teacher->id }}" @selected(old('teacher_id', $course->teacher_id) == $teacher->id)>{{ $teacher->email }}</option>
                 @endforeach

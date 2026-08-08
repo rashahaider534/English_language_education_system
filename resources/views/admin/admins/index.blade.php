@@ -92,12 +92,12 @@
         <table style="width:100%; border-collapse:collapse; table-layout:fixed;">
             <thead>
                 <tr>
-                    <th style="text-align:right; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 16px; background:rgba(168,232,249,0.22); width:22%;">الاسم</th>
-                    <th style="text-align:right; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:24%;">الإيميل</th>
+                    <th style="text-align:right; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 16px; background:rgba(168,232,249,0.22); width:20%;">الاسم</th>
+                    <th style="text-align:right; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:22%;">الإيميل</th>
                     <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:13%;">تاريخ الانضمام</th>
                     <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:13%;">الراتب</th>
                     <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:12%;">الحالة</th>
-                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:16%;">إجراءات</th>
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:20%;">إجراءات</th>
                 </tr>
             </thead>
             <tbody>
@@ -130,11 +130,17 @@
                         </td>
                         <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); text-align:center;">
                             <div style="display:flex; gap:8px; justify-content:center; align-items:center;">
-                                <form action="{{ route('admin.admins.toggle-active', $admin) }}" method="POST" title="تصميم فقط — بانتظار الربط بالباك-إند">
+                                <a href="{{ route('admin.permission.show', $admin) }}" title="عرض التفاصيل" class="adm-icon-btn" style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; background:rgba(168,232,249,0.22); color:#00537A; text-decoration:none;">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </a>
+                                <a href="{{ route('admin.permissions', $admin) }}" title="تعديل الصلاحيات" class="adm-icon-btn" style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; background:rgba(255,211,91,0.16); color:#8A5A00; text-decoration:none;">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+                                </a>
+                                <form action="{{ route('admins.permission.destroy', $admin) }}" method="POST" onsubmit="return confirm('متأكدة إنك بدك تعطّلي هالحساب؟ الشخص مارح يقدر يسجل دخول بعدها.');">
                                     @csrf
-                                    @method('PATCH')
-                                    <button type="submit" class="adm-toggle" style="background:{{ $admin->is_active ? '#4CAF78' : '#CBD5D9' }}; border-radius:999px; position:relative; display:inline-flex; height:26px; width:44px; align-items:center; border:none; cursor:pointer;">
-                                        <span style="display:block; position:absolute; height:20px; width:20px; border-radius:999px; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,0.25); transform:translateX({{ $admin->is_active ? '-22px' : '-2px' }});"></span>
+                                    @method('DELETE')
+                                    <button type="submit" title="تعطيل الحساب" style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; border:none; background:rgba(255,138,101,0.14); color:#C2591A; cursor:pointer;">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m5.5 5.5 13 13"/></svg>
                                     </button>
                                 </form>
                             </div>
@@ -163,7 +169,7 @@
          style="position:fixed; inset:0; z-index:50; background:rgba(1,42,63,0.5); backdrop-filter:blur(4px); overflow-y:auto;"
          @click="createModalOpen = false">
       <div style="min-height:100%; display:flex; align-items:center; justify-content:center; padding:24px;">
-        <div @click.stop style="position:relative; width:100%; max-width:520px; max-height:88vh; overflow-y:auto; background:#EFFAFD; border-radius:28px; padding:32px 28px 28px; box-shadow:0 50px 110px rgba(1,42,63,0.42); font-family:'Tajawal',sans-serif;" dir="rtl">
+        <div @click.stop style="position:relative; width:100%; max-width:580px; max-height:88vh; overflow-y:auto; background:#EFFAFD; border-radius:28px; padding:32px 28px 28px; box-shadow:0 50px 110px rgba(1,42,63,0.42); font-family:'Tajawal',sans-serif;" dir="rtl">
             <button type="button" @click="createModalOpen = false" style="position:absolute; top:16px; left:16px; width:30px; height:30px; border-radius:50%; border:none; background:rgba(0,83,122,0.06); color:rgba(1,60,88,0.6); display:flex; align-items:center; justify-content:center; cursor:pointer;">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
             </button>
@@ -206,6 +212,30 @@
                 <div style="margin-bottom:22px;">
                     <label style="display:block; font-size:12px; font-weight:700; color:#013C58; margin-bottom:6px;">كلمة المرور المبدئية</label>
                     <div class="adm-field-wrap"><input type="text" name="password" placeholder="8 أحرف على الأقل"></div>
+                </div>
+
+                <div style="margin-bottom:22px;">
+                    <label style="display:block; font-size:12px; font-weight:700; color:#013C58; margin-bottom:10px;">الصلاحيات اختياري _يمكن التعديل عليها لاحقا </label>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                        @foreach ($permissions as $permission)
+                            @php
+                                $permissionLabel = match($permission->name) {
+                                    'manage_levels' => 'إدارة المستويات',
+                                    'manage_courses' => 'إدارة الكورسات',
+                                    'manage_level_tests' => 'إدارة اختبارات تحديد المستوى',
+                                    'manage_placement_tests' => 'إدارة اختبارات القبول',
+                                    'manage_placement_questions' => 'إدارة بنك أسئلة تحديد المستوى',
+                                    'manage_podcasts' => 'إدارة البودكاست والتوبكس',
+                                    'publish_levels' => 'نشر المستويات',
+                                    default => $permission->name,
+                                };
+                            @endphp
+                            <label style="display:flex; align-items:center; gap:8px; padding:10px 12px; border-radius:11px; border:1.5px solid rgba(0,83,122,0.14); background:#FBFEFF; cursor:pointer; font-size:12.5px; font-weight:600; color:#013C58;">
+                                <input type="checkbox" name="permissions[]" value="{{ $permission->name }}" style="width:16px; height:16px; accent-color:#0E6A96;">
+                                {{ $permissionLabel }}
+                            </label>
+                        @endforeach
+                    </div>
                 </div>
 
                 <div style="display:flex; flex-direction:row-reverse; gap:10px; padding-top:18px; border-top:1px solid rgba(0,83,122,0.06);">

@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Spatie\Permission\Models\Permission;
 
 class AdminManagementController extends Controller
 {
@@ -16,6 +17,7 @@ class AdminManagementController extends Controller
         $status = $request->query('status');
 
         $admins = User::role('admin', 'web')
+            ->with('permissions')
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('first_name', 'like', "%{$search}%")
@@ -34,7 +36,9 @@ class AdminManagementController extends Controller
         $activeCount = User::role('admin', 'web')->where('is_active', true)->count();
         $inactiveCount = $totalCount - $activeCount;
 
-        return view('admin.admins.index', compact('admins', 'search', 'status', 'totalCount', 'activeCount', 'inactiveCount'));
+        $permissions = Permission::where('guard_name', 'web')->orderBy('name')->get();
+
+        return view('admin.admins.index', compact('admins', 'search', 'status', 'totalCount', 'activeCount', 'inactiveCount', 'permissions'));
     }
 
     public function create(): View

@@ -45,8 +45,13 @@ class PermissionController extends Controller
     public function storeAdmin(StoreAccountRequset $request)
     {
         $admin = $this->roleservice->storeAdmin(auth()->user(), $request->validated());
+
+        if ($request->filled('permissions')) {
+            $this->roleservice->assignPermissions($admin, $request->input('permissions'));
+        }
+
         return redirect()
-            ->route('admin.permissions', $admin)
+            ->route('admin.admins.index')
             ->with('success', 'Admin created successfully');
     }
 
