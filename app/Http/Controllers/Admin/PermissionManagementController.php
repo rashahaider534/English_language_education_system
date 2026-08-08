@@ -14,7 +14,6 @@ class PermissionManagementController extends Controller
     public function index(): View
     {
         $admins = User::role('admin', 'web')->orderBy('first_name')->get();
-        $teachers = User::role('teacher', 'api')->orderBy('first_name')->get();
         $permissions = Permission::where('guard_name', 'web')->orderBy('name')->get();
 
         $permissionLabels = [
@@ -27,14 +26,13 @@ class PermissionManagementController extends Controller
             'publish_levels' => 'نشر المستويات',
         ];
 
-        return view('admin.permissions.index', compact('admins', 'teachers', 'permissions', 'permissionLabels'));
+        return view('admin.permissions.index', compact('admins', 'permissions', 'permissionLabels'));
     }
 
     public function update(Request $request): RedirectResponse
     {
         $grants = $request->input('grants', []);
-        $userIds = User::role('admin', 'web')->pluck('id')
-            ->merge(User::role('teacher', 'api')->pluck('id'));
+        $userIds = User::role('admin', 'web')->pluck('id');
 
         foreach ($userIds as $userId) {
             $names = $grants[$userId] ?? [];
