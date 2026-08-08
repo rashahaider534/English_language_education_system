@@ -18,12 +18,12 @@
 
 @section('content')
 @php
-    $statusLabels = ['pending' => 'قيد الانتظار', 'in_review' => 'قيد المراجعة', 'request_changes' => 'طلب تعديل'];
+    $statusLabels = ['pending' => 'قيد الانتظار', 'in_review' => 'قيد المراجعة', 'changes_requested' => 'طلب تعديل'];
     // Same soft palette used on the per-course lessons table
     $statusColors = [
         'pending'         => ['bg' => 'rgba(255,186,66,0.16)', 'fg' => '#8A5A00', 'dot' => '#F5A201'],
         'in_review'       => ['bg' => 'rgba(14,106,150,0.14)', 'fg' => '#0E6A96', 'dot' => '#0E6A96'],
-        'request_changes' => ['bg' => 'rgba(255,138,101,0.13)', 'fg' => '#C2591A', 'dot' => '#FF8A65'],
+        'changes_requested' => ['bg' => 'rgba(255,138,101,0.13)', 'fg' => '#C2591A', 'dot' => '#FF8A65'],
     ];
 @endphp
 <div class="-mx-4 -my-6 px-4 py-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8" style="background:#DFF2F9; font-family:'Tajawal',sans-serif; min-height:100vh;" dir="rtl">

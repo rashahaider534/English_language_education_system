@@ -42,14 +42,14 @@
 @section('content')
 @php
     $statusLabels = [
-        'pending' => 'قيد الانتظار', 'in_review' => 'قيد المراجعة', 'request_changes' => 'طلب تعديل',
+        'pending' => 'قيد الانتظار', 'in_review' => 'قيد المراجعة', 'changes_requested' => 'طلب تعديل',
         'published' => 'منشور', 'closed' => 'مغلق', 'archived' => 'مؤرشف',
     ];
     // Soft, muted palette — each status has its own distinct hue, always visible (not only on hover/active)
     $statusColors = [
         'pending'         => ['bg' => 'rgba(255,186,66,0.16)', 'fg' => '#8A5A00', 'dot' => '#F5A201', 'tabFg' => '#013C58'],
         'in_review'       => ['bg' => 'rgba(14,106,150,0.14)', 'fg' => '#0E6A96', 'dot' => '#0E6A96', 'tabFg' => '#fff'],
-        'request_changes' => ['bg' => 'rgba(255,138,101,0.13)', 'fg' => '#C2591A', 'dot' => '#FF8A65', 'tabFg' => '#fff'],
+        'changes_requested' => ['bg' => 'rgba(255,138,101,0.13)', 'fg' => '#C2591A', 'dot' => '#FF8A65', 'tabFg' => '#fff'],
         'published'       => ['bg' => 'rgba(76,175,120,0.16)', 'fg' => '#2E7D55', 'dot' => '#4CAF78', 'tabFg' => '#fff'],
         'closed'          => ['bg' => 'rgba(1,60,88,0.12)', 'fg' => '#013C58', 'dot' => '#013C58', 'tabFg' => '#fff'],
         'archived'        => ['bg' => 'rgba(1,60,88,0.05)', 'fg' => 'rgba(1,60,88,0.4)', 'dot' => 'rgba(1,60,88,0.65)', 'tabFg' => '#fff'],
@@ -71,6 +71,13 @@
         <div style="display:flex; align-items:center; gap:10px; background:rgba(168,232,249,0.18); color:#00537A; border:1px solid rgba(0,83,122,0.14); border-radius:14px; padding:14px 18px; margin-bottom:20px; font-size:13.5px; font-weight:600;">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><path d="M22 4 12 14.01l-3-3"></path></svg>
             {{ session('success') }}
+        </div>
+    @endif
+
+    @if ($errors->has('lesson'))
+        <div style="display:flex; align-items:center; gap:10px; background:rgba(255,138,101,0.14); color:#C2591A; border:1px solid rgba(255,138,101,0.3); border-radius:14px; padding:14px 18px; margin-bottom:20px; font-size:13.5px; font-weight:600;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg>
+            {{ $errors->first('lesson') }}
         </div>
     @endif
 
@@ -158,7 +165,7 @@
                 ['status' => null, 'label' => 'الكل', 'bg' => 'rgba(1,60,88,0.06)', 'fg' => 'rgba(1,60,88,0.6)', 'activeBg' => '#013C58', 'activeFg' => '#fff'],
                 ['status' => 'pending', 'label' => 'قيد الانتظار', 'bg' => $statusColors['pending']['bg'], 'fg' => $statusColors['pending']['fg'], 'activeBg' => $statusColors['pending']['dot'], 'activeFg' => $statusColors['pending']['tabFg']],
                 ['status' => 'in_review', 'label' => 'قيد المراجعة', 'bg' => $statusColors['in_review']['bg'], 'fg' => $statusColors['in_review']['fg'], 'activeBg' => $statusColors['in_review']['dot'], 'activeFg' => $statusColors['in_review']['tabFg']],
-                ['status' => 'request_changes', 'label' => 'طلب تعديل', 'bg' => $statusColors['request_changes']['bg'], 'fg' => $statusColors['request_changes']['fg'], 'activeBg' => $statusColors['request_changes']['dot'], 'activeFg' => $statusColors['request_changes']['tabFg']],
+                ['status' => 'changes_requested', 'label' => 'طلب تعديل', 'bg' => $statusColors['changes_requested']['bg'], 'fg' => $statusColors['changes_requested']['fg'], 'activeBg' => $statusColors['changes_requested']['dot'], 'activeFg' => $statusColors['changes_requested']['tabFg']],
                 ['status' => 'published', 'label' => 'منشورة', 'bg' => $statusColors['published']['bg'], 'fg' => $statusColors['published']['fg'], 'activeBg' => $statusColors['published']['dot'], 'activeFg' => $statusColors['published']['tabFg']],
                 ['status' => 'closed', 'label' => 'مغلقة', 'bg' => $statusColors['closed']['bg'], 'fg' => $statusColors['closed']['fg'], 'activeBg' => $statusColors['closed']['dot'], 'activeFg' => $statusColors['closed']['tabFg']],
                 ['status' => 'archived', 'label' => 'مؤرشفة', 'bg' => $statusColors['archived']['bg'], 'fg' => $statusColors['archived']['fg'], 'activeBg' => $statusColors['archived']['dot'], 'activeFg' => $statusColors['archived']['tabFg']],
@@ -202,7 +209,9 @@
                 @forelse ($lessons as $lesson)
                     @php
                         $sc = $statusColors[$lesson->status] ?? $statusColors['pending'];
-                        $canArchive = $lesson->status === 'published';
+                        $isPublished = $lesson->status === 'published';
+                        $canArchivePermission = auth()->user()->hasRole('super-admin', 'web') || auth()->user()->can('archive lesson');
+                        $canArchive = $isPublished && $canArchivePermission;
                         $hasStudents = $lesson->users()->exists();
                     @endphp
                     <tr class="lesson-row">
@@ -239,7 +248,7 @@
                                     type="button"
                                     class="lesson-icon-btn"
                                     @if($canArchive) @click="archiveModalOpen = true; archiveId = {{ $lesson->id }}; archiveName = '{{ addslashes($lesson->title_ar) }}';" @else disabled @endif
-                                    title="{{ !$canArchive ? 'الأرشفة متاحة بس للدروس المنشورة' : ($hasStudents ? 'أرشفة (رح يصير مغلق)' : 'أرشفة') }}"
+                                    title="{{ !$isPublished ? 'الأرشفة متاحة بس للدروس المنشورة' : (!$canArchivePermission ? 'ما عندك صلاحية أرشفة الدروس' : ($hasStudents ? 'أرشفة (رح يصير مغلق)' : 'أرشفة')) }}"
                                     style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; border:none; background:rgba(230,126,34,0.14); color:#C1650A; cursor:{{ $canArchive ? 'pointer' : 'not-allowed' }}; opacity:{{ $canArchive ? 1 : 0.35 }};"
                                 >
                                     <svg width="15.5" height="15.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l1.5-3h15L21 7"></path><path d="M4.5 7h15v12a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1V7Z"></path><path d="M9 12h6"></path></svg>
@@ -255,8 +264,8 @@
                                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
                                 </div>
                                 <div style="text-align:center;">
-                                    <p style="margin:0; font-size:14.5px; font-weight:700; color:#013C58;">ما في دروس بهالفلتر</p>
-                                    <p style="margin:5px 0 0; font-size:12.5px; color:rgba(1,60,88,0.45);">جرّبي تبدّلي التصنيف من فوق، أو ضيفي درس جديد للكورس</p>
+                                    <p style="margin:0; font-size:14.5px; font-weight:700; color:#013C58;"> لايوجد دروس بهذا القسم    </p>
+                                    <p style="margin:5px 0 0; font-size:12.5px; color:rgba(1,60,88,0.45);">      </p>
                                 </div>
                             </div>
                         </td>

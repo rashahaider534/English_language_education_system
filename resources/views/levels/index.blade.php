@@ -18,6 +18,11 @@
         border-color: rgba(0,83,122,0.06);
         background: rgba(0,83,122,0.04);
     }
+    .course-field-wrap input:focus, .course-field-wrap select:focus,
+    .course-field-wrap input:focus-visible, .course-field-wrap select:focus-visible {
+        outline: none !important;
+        box-shadow: none !important;
+    }
     .modal-scroll::-webkit-scrollbar { width: 8px; }
     .modal-scroll::-webkit-scrollbar-track { background: transparent; }
     .modal-scroll::-webkit-scrollbar-thumb { background: rgba(1,60,88,0.14); border-radius: 999px; }
@@ -62,7 +67,7 @@
         },
     }"
     class="-mx-4 -my-6 px-4 py-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
-    style="background:#DFF2F9; font-family:'Tajawal',sans-serif;"
+    style="background:#DFF2F9; font-family:'Tajawal',sans-serif; min-height:100vh;"
     dir="rtl"
 >
     {{-- success flash --}}
@@ -70,6 +75,14 @@
         <div style="display:flex; align-items:center; gap:10px; background:rgba(168,232,249,0.18); color:#00537A; border:1px solid rgba(0,83,122,0.14); border-radius:14px; padding:14px 18px; margin-bottom:20px; font-size:13.5px; font-weight:600;">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><path d="M22 4 12 14.01l-3-3"></path></svg>
             {{ session('success') }}
+        </div>
+    @endif
+
+    {{-- generic error flash (e.g. archive rejected by the backend for a reason the UI doesn't already explain) --}}
+    @if ($errors->has('level'))
+        <div style="display:flex; align-items:center; gap:10px; background:rgba(255,138,101,0.14); color:#C2591A; border:1px solid rgba(255,138,101,0.3); border-radius:14px; padding:14px 18px; margin-bottom:20px; font-size:13.5px; font-weight:600;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg>
+            {{ $errors->first('level') }}
         </div>
     @endif
 
@@ -155,7 +168,7 @@
             <div style="display:flex; align-items:center; gap:9px; background:rgba(255,211,91,0.12); border:1.5px solid #FFBA42; border-radius:11px; padding:0 14px; min-width:220px; box-shadow:0 0 0 4px rgba(255,186,66,0.16);">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                      style="color:#F5A201; flex-shrink:0;"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
-                <input x-model="search" placeholder="ابحثي باسم المستوى..." style="flex:1; background:transparent; border:none; outline:none; box-shadow:none; padding:10px 4px; font-size:13.5px; color:#013C58; font-family:'Tajawal',sans-serif;">
+                <input x-model="search" placeholder="ابحث باسم المستوى..." style="flex:1; background:transparent; border:none; outline:none; box-shadow:none; padding:10px 4px; font-size:13.5px; color:#013C58; font-family:'Tajawal',sans-serif;">
             </div>
         </div>
 
@@ -194,11 +207,16 @@
                     $statusLabels = ['pending' => 'قيد الانتظار', 'published' => 'منشور', 'closed' => 'مغلق', 'archived' => 'مؤرشف'];
                     $avatarPalette = ['#00537A', '#0E6A96', '#146B93', '#1C7BA6', '#F5A201', '#C97F00'];
                 @endphp
+                @php
+                    $isSuperAdmin = auth()->user()->hasRole('super-admin', 'web');
+                @endphp
                 @forelse ($levels as $i => $level)
                     @php
                         $sc = $statusColors[$level->status] ?? $statusColors['pending'];
                         $dimmed = in_array($level->status, ['closed', 'archived']);
-                        $canArchive = !$dimmed;
+                        $isOwner = $isSuperAdmin || $level->created_by === auth()->id();
+                        $canArchive = !$dimmed && $isOwner;
+                        $canEdit = !$dimmed && $isOwner;
                         $hasInProgress = $level->userLevels()->where('status', 'in_progress')->exists();
                         $avatarColor = $avatarPalette[$i % count($avatarPalette)];
                     @endphp
@@ -267,8 +285,8 @@
                                         <svg width="15.5" height="15.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"></rect><path d="M8 2v4M16 2v4M3 10h18"></path></svg>
                                     </a>
                                 @endcan
-                                <button type="button" title="تعديل"
-                                   @click="openEdit({{ Illuminate\Support\Js::from([
+                                <button type="button" title="{{ $canEdit ? 'تعديل' : 'ما فيك تعدّلي هالمستوى لأنه مش من إنشائك' }}"
+                                   @if($canEdit) @click="openEdit({{ Illuminate\Support\Js::from([
                                         'id' => $level->id,
                                         'name_en' => $level->name_en,
                                         'name_ar' => $level->name_ar,
@@ -278,15 +296,15 @@
                                         'price' => $level->price,
                                         'estimated_duration' => $level->estimated_duration,
                                         'status' => $level->status,
-                                   ]) }})"
-                                   style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; border:none; background:rgba(0,83,122,0.07); color:#00537A; cursor:pointer;">
+                                   ]) }})" @else disabled @endif
+                                   style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; border:none; background:rgba(0,83,122,0.07); color:#00537A; cursor:{{ $canEdit ? 'pointer' : 'not-allowed' }}; opacity:{{ $canEdit ? 1 : 0.35 }};">
                                     <svg width="15.5" height="15.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
                                 </button>
                                 <button
                                     type="button"
-                                    @click="openArchive({{ $level->id }}, '{{ addslashes($level->name_ar) }}', {{ $hasInProgress ? 'true' : 'false' }})"
+                                    @if($canArchive) @click="openArchive({{ $level->id }}, '{{ addslashes($level->name_ar) }}', {{ $hasInProgress ? 'true' : 'false' }})" @endif
                                     @if(!$canArchive) disabled @endif
-                                    title="{{ !$canArchive ? 'هالمستوى مغلق أو مؤرشف من قبل' : ($hasInProgress ? 'أرشفة (رح يصير مغلق)' : 'أرشفة') }}"
+                                    title="{{ !$isOwner ? 'ما فيك تؤرشفي هالمستوى لأنه مش من إنشائك' : ($dimmed ? 'هالمستوى مغلق أو مؤرشف من قبل' : ($hasInProgress ? 'أرشفة (رح يصير مغلق)' : 'أرشفة')) }}"
                                     style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; border:none; background:rgba(245,162,1,0.1); color:#C97F00; cursor:{{ $canArchive ? 'pointer' : 'not-allowed' }}; opacity:{{ $canArchive ? 1 : 0.35 }};"
                                 >
                                     <svg width="15.5" height="15.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l1.5-3h15L21 7"></path><path d="M4.5 7h15v12a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1V7Z"></path><path d="M9 12h6"></path></svg>
@@ -323,8 +341,8 @@
             </div>
             <h3 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; color:#013C58;">أرشفة مستوى "<span x-text="archiveTargetName"></span>"؟</h3>
             <p style="margin:10px 0 0; font-size:13px; color:rgba(1,60,88,0.6); line-height:1.7;">
-                <span x-show="archiveTargetLocked">في طلاب عم يدرسو هلق هالمستوى، فبيصير "مغلق" (مش أرشيف كامل) لحتى يخلّصو. ما رح ينقبل طلاب جدد فيه.</span>
-                <span x-show="!archiveTargetLocked">هيصير هالمستوى مؤرشف بشكل كامل، ومش رح يظهر للطلاب الجدد. تقدري ترجعيه لاحقاً.</span>
+                <span x-show="archiveTargetLocked">      يوجد طلاب تقوم بدراسة هذا المستوى لذلك ستتحول حالة هذا المستوى الى مغلق </span>
+                <span x-show="!archiveTargetLocked"></span>
             </p>
             <div style="display:flex; gap:10px; margin-top:22px;">
                 <button type="button" @click="archiveModalOpen = false" style="flex:1; padding:11px; border-radius:11px; border:1.5px solid rgba(0,83,122,0.12); background:#EFFAFD; color:#013C58; font-family:'Poppins',sans-serif; font-weight:600; font-size:13px; cursor:pointer;">إلغاء</button>
@@ -353,7 +371,7 @@
 
             <div style="text-align:center; margin-bottom:22px;">
                 <h1 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:20px; color:#013C58;">إضافة مستوى جديد</h1>
-                <p style="margin:6px 0 0; font-size:13px; color:rgba(1,60,88,0.5);">عبّي التفاصيل لإنشاء مستوى تعلّم جديد</p>
+                <p style="margin:6px 0 0; font-size:13px; color:rgba(1,60,88,0.5);">     </p>
             </div>
 
             @if ($errors->any() && old('form_type') === 'levels-create')

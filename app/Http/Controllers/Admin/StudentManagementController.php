@@ -42,17 +42,14 @@ class StudentManagementController extends Controller
             $student->current_level = optional($student->userLevels->first())->level;
         }
 
-        $levels = Level::orderBy('order')->get();
+        $levels = Level::withCount('users')->orderBy('order')->get();
 
         $totalCount = User::role('student')->count();
 
-        // بيانات placeholder لإحصائية توزع المستويات (الاستعلام الحقيقي بسيط وجاهز لاحقًا:
-        // Level::withCount('users')->get()) — بس هلق بيانات تصميم فقط، متل باقي الصفحة.
-        $levelDistribution = $levels->map(function ($level, $index) {
-            $sample = [14, 9, 5, 2];
+        $levelDistribution = $levels->map(function ($level) {
             return [
                 'label' => $level->name_ar ?? $level->name_en,
-                'count' => $sample[$index] ?? random_int(1, 10),
+                'count' => $level->users_count,
             ];
         });
         $levelDistributionMax = max(1, $levelDistribution->max('count') ?? 1);

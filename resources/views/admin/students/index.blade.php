@@ -13,6 +13,13 @@
     .std-bar { transition: height 0.5s cubic-bezier(0.16,1,0.3,1); }
     .std-ban-btn { transition: transform 0.15s ease, box-shadow 0.15s ease; }
     .std-ban-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(194,89,26,0.22); }
+
+    .std-select-panel::-webkit-scrollbar { width: 7px; }
+    .std-select-panel::-webkit-scrollbar-track { background: transparent; }
+    .std-select-panel::-webkit-scrollbar-thumb { background: rgba(0,83,122,0.18); border-radius: 999px; }
+    .std-select-panel::-webkit-scrollbar-thumb:hover { background: rgba(0,83,122,0.32); }
+    .std-select-panel { scrollbar-width: thin; scrollbar-color: rgba(0,83,122,0.22) transparent; }
+    .std-select-option:hover { background: rgba(168,232,249,0.18); }
 </style>
 @endpush
 
@@ -52,21 +59,22 @@
         </div>
     </div>
 
-    {{-- ============ LEVEL DISTRIBUTION (placeholder) ============ --}}
-    <div class="std-chart dashboard-card" style="background:#EFFAFD; border:1.5px solid rgba(0,83,122,0.16); border-radius:22px; padding:22px 26px; margin-bottom:22px;">
-        <div style="display:flex; align-items:center; justify-content:between; gap:8px; margin-bottom:18px; flex-wrap:wrap;">
-            <div>
-                <h3 style="margin:0; font-family:'Poppins',sans-serif; font-weight:700; font-size:15px; color:#013C58;">توزع الطلاب حسب المستوى</h3>
-                <p style="margin:4px 0 0; font-size:12px; color:rgba(1,60,88,0.5);">بيانات تصميم توضيحية (placeholder) — الاستعلام الحقيقي جاهز للربط لاحقًا.</p>
-            </div>
-            <span class="dashboard-badge dashboard-badge--warning" style="margin-inline-start:auto;">تصميم فقط</span>
-        </div>
-        <div style="display:flex; align-items:flex-end; gap:22px; height:150px; padding:0 6px;">
-            @forelse ($levelDistribution as $item)
-                <div style="display:flex; flex-direction:column; align-items:center; gap:8px; flex:1;">
-                    <span style="font-family:'Poppins',sans-serif; font-weight:700; font-size:12.5px; color:#013C58;">{{ $item['count'] }}</span>
-                    <div class="std-bar" style="width:100%; max-width:52px; border-radius:12px 12px 4px 4px; background:linear-gradient(180deg,#0E6A96,#013C58); height:{{ max(6, ($item['count'] / $levelDistributionMax) * 110) }}px;"></div>
-                    <span style="font-size:11.5px; color:rgba(1,60,88,0.6); font-weight:600; text-align:center;">{{ $item['label'] }}</span>
+    {{-- ============ LEVEL DISTRIBUTION ============ --}}
+    <div class="std-chart" style="margin-bottom:22px;">
+        <h3 style="margin:0 0 14px; font-family:'Poppins',sans-serif; font-weight:700; font-size:15px; color:#013C58;">توزع الطلاب حسب المستوى</h3>
+        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:14px;">
+            @php
+                $avatarPalette = ['#00537A', '#0E6A96', '#146B93', '#1C7BA6', '#F5A201', '#C97F00'];
+            @endphp
+            @forelse ($levelDistribution as $i => $item)
+                @php $avatarColor = $avatarPalette[$i % count($avatarPalette)]; @endphp
+                <div class="dash-stat" style="background:#EFFAFD; border:1.5px solid rgba(0,83,122,0.16); border-radius:18px; padding:18px; box-shadow:0 10px 26px rgba(0,83,122,0.06);">
+                    <div style="display:flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:12px; background:{{ $avatarColor }}; color:#fff; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; margin-bottom:12px;">{{ strtoupper(substr($item['label'], 0, 2)) }}</div>
+                    <p style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:24px; color:#013C58;">{{ $item['count'] }}</p>
+                    <p style="margin:4px 0 0; font-size:12.5px; color:rgba(1,60,88,0.55); font-weight:600;">{{ $item['label'] }}</p>
+                    <div style="margin-top:10px; height:6px; border-radius:999px; background:rgba(0,83,122,0.08); overflow:hidden;">
+                        <div class="std-bar" style="height:100%; width:{{ round(($item['count'] / $levelDistributionMax) * 100) }}%; background:{{ $avatarColor }}; border-radius:999px;"></div>
+                    </div>
                 </div>
             @empty
                 <p style="color:rgba(1,60,88,0.45); font-size:13px;">ما في مستويات معرّفة بعد.</p>
@@ -78,12 +86,24 @@
     <form method="GET" action="{{ route('admin.students.index') }}" class="std-filters" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:22px; background:#EFFAFD; border:1.5px solid rgba(0,83,122,0.16); border-radius:16px; padding:14px 18px;">
         <input type="text" name="search" value="{{ $search }}" placeholder="ابحث بالاسم أو الإيميل..." style="flex:1; min-width:180px; padding:9px 14px; border:1.5px solid rgba(0,83,122,0.14); border-radius:10px; background:#FBFEFF; color:#013C58; font-size:13px; font-family:'Tajawal',sans-serif; outline:none;">
 
-        <select name="level" style="padding:9px 14px; border:1.5px solid rgba(0,83,122,0.14); border-radius:10px; background:#FBFEFF; color:#013C58; font-size:12.5px; font-family:'Tajawal',sans-serif; outline:none;">
-            <option value="">كل المستويات</option>
-            @foreach ($levels as $level)
-                <option value="{{ $level->id }}" @selected((string) $levelId === (string) $level->id)>{{ $level->name_ar ?? $level->name_en }}</option>
-            @endforeach
-        </select>
+        @php
+            $selectedLevel = $levels->first(fn ($l) => (string) $levelId === (string) $l->id);
+        @endphp
+        <div x-data="{ open: false }" @click.outside="open = false" style="position:relative;">
+            <button type="button" @click="open = !open"
+                style="display:flex; align-items:center; gap:8px; padding:9px 14px; border:1.5px solid rgba(0,83,122,0.14); border-radius:10px; background:#FBFEFF; color:#013C58; font-size:12.5px; font-family:'Tajawal',sans-serif; cursor:pointer; min-width:160px; justify-content:space-between;">
+                <span>{{ $selectedLevel ? ($selectedLevel->name_ar ?? $selectedLevel->name_en) : 'كل المستويات' }}</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.5; flex-shrink:0;"><path d="m6 9 6 6 6-6"></path></svg>
+            </button>
+            <div x-show="open" x-transition x-cloak
+                 class="std-select-panel"
+                 style="position:absolute; top:calc(100% + 6px); right:0; min-width:180px; max-height:220px; overflow-y:auto; background:#fff; border:1.5px solid rgba(0,83,122,0.14); border-radius:12px; box-shadow:0 16px 36px rgba(1,60,88,0.16); z-index:20; padding:6px;">
+                <button type="submit" name="level" value="" class="std-select-option" style="display:block; width:100%; text-align:right; padding:9px 12px; border:none; background:transparent; border-radius:8px; font-size:12.5px; font-family:'Tajawal',sans-serif; color:#013C58; cursor:pointer;">كل المستويات</button>
+                @foreach ($levels as $level)
+                    <button type="submit" name="level" value="{{ $level->id }}" class="std-select-option" style="display:block; width:100%; text-align:right; padding:9px 12px; border:none; background:transparent; border-radius:8px; font-size:12.5px; font-family:'Tajawal',sans-serif; color:#013C58; cursor:pointer;">{{ $level->name_ar ?? $level->name_en }}</button>
+                @endforeach
+            </div>
+        </div>
 
         <button type="submit" style="display:inline-flex; align-items:center; gap:6px; padding:9px 18px; border-radius:10px; border:none; background:#013C58; color:#fff; font-family:'Poppins',sans-serif; font-weight:600; font-size:12.5px; cursor:pointer;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
@@ -161,9 +181,5 @@
             </div>
         @endif
     </div>
-
-    <p style="margin:16px 2px 0; font-size:12px; color:rgba(1,60,88,0.45); font-weight:600;">
-        ملاحظة: زر "حظر" وعمود "الحالة" هون تصميم واجهة فقط — ما في نظام حظر حسابات حقيقي بالتطبيق بعد. رسم توزع المستويات فوق بيانات توضيحية أيضًا. باقي بيانات الجدول (الاسم، الإيميل، المستوى الحالي، تاريخ الانضمام) حقيقية من قاعدة البيانات.
-    </p>
 </div>
 @endsection

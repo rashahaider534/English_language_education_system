@@ -35,10 +35,10 @@ class PodcastController extends Controller
 
     public function store(Topic $topic, StorePodcastRequest $request)
     {
-        $this->authorize('create', auth()->user());
+        $this->authorize('create', Podcast::class);
         $this->adminPodcastService->create($request->user(), $topic, $request->validated());
         return redirect()
-            ->route('admin.podcasts.index', $topic)
+            ->route('podcasts.index', $topic)
             ->with('success', 'Podcast created successfully');
     }
 
@@ -52,7 +52,7 @@ class PodcastController extends Controller
         $this->authorize('update', $podcast);
         $podcast = $this->adminPodcastService->update($podcast, $request->validated());
         return redirect()
-            ->route('admin.podcasts.show', $podcast)
+            ->route('podcasts.show', $podcast)
             ->with('success', 'Podcast updated successfully');
     }
 
@@ -61,7 +61,7 @@ class PodcastController extends Controller
         $this->authorize('delete', $podcast);
         $this->adminPodcastService->delete($podcast);
         return redirect()
-            ->route('admin.podcasts.index', $podcast->topic)
+            ->route('podcasts.index', $podcast->topic)
             ->with('success', 'Podcast deleted successfully');
     }
 }

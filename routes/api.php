@@ -174,4 +174,3 @@ Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
 //    [AdminTestController::class, 'filterLevelTestQuestions']
 //);
 
-Route::get('lessons/{lesson}/tests', [AdminContentReviewController::class, 'showLessonTestVersions'])->name('lessons.tests.show');

@@ -95,7 +95,7 @@
         {{-- ============ DIFFICULTY COUNTS ============ --}}
         <div class="t-panel" style="background:#EFFAFD; border:1.5px solid rgba(14,106,150,0.35); border-radius:20px; padding:26px; margin-bottom:22px; box-shadow:0 10px 26px rgba(0,83,122,0.06);">
             <h3 style="margin:0 0 6px; font-family:'Poppins',sans-serif; font-weight:800; font-size:14px; color:#013C58;">توزيع الأسئلة حسب الصعوبة</h3>
-            <p style="margin:0 0 18px; font-size:11.5px; color:rgba(1,60,88,0.5);">حطي 0 إذا ما بدك أسئلة من هالصعوبة. الأعداد أدناه هي الأسئلة المتوفرة حاليًا بكورسات هالمستوى.</p>
+            <p style="margin:0 0 18px; font-size:11.5px; color:rgba(1,60,88,0.5);"> .</p>
 
             <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:16px;">
                 @foreach (['EASY', 'MEDIUM', 'HARD'] as $diff)
@@ -111,7 +111,7 @@
                 @endforeach
             </div>
 
-            <p x-show="totalCount === 0" x-cloak style="margin:16px 0 0; font-size:12px; color:#C2591A; font-weight:700;">لازم تختاري سؤال واحد على الأقل بمجموع الصعوبات التلاتة.</p>
+            <p x-show="totalCount === 0" x-cloak style="margin:16px 0 0; font-size:12px; color:#C2591A; font-weight:700;"> .</p>
         </div>
 
         <button type="submit" class="t-submit-btn" :disabled="totalCount === 0">

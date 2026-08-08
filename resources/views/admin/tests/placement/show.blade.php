@@ -89,18 +89,19 @@
         <h3 style="margin:0 0 18px; font-family:'Poppins',sans-serif; font-weight:800; font-size:14px; color:#013C58;">أسئلة الاختبار (بالترتيب)</h3>
         <div style="display:flex; flex-direction:column; gap:10px;">
             @forelse ($orderedQuestions as $q)
+                @php $qType = $q->type instanceof \BackedEnum ? $q->type->value : $q->type; @endphp
                 <a href="{{ route('questions.show', $q) }}" class="t-q-row" style="display:flex; align-items:center; gap:14px; padding:13px 16px; border-radius:13px; background:rgba(0,83,122,0.03); text-decoration:none;">
                     <span style="display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:9px; background:#00537A; color:#fff; font-family:'Poppins',sans-serif; font-weight:700; font-size:12.5px; flex-shrink:0;">{{ $q->pivot->order }}</span>
                     <div style="flex:1; min-width:0;">
                         <p style="margin:0; font-size:13.5px; font-weight:700; color:#013C58; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $q->title_question_en }}</p>
                         <p style="margin:2px 0 0; font-size:12px; color:rgba(1,60,88,0.55);">{{ $q->title_question_ar }}</p>
                     </div>
-                    <span style="display:inline-flex; padding:5px 11px; border-radius:999px; background:rgba(14,106,150,0.12); color:#0E6A96; font-size:11px; font-weight:700; flex-shrink:0;">{{ $typeLabels[$q->type] ?? $q->type }}</span>
+                    <span style="display:inline-flex; padding:5px 11px; border-radius:999px; background:rgba(14,106,150,0.12); color:#0E6A96; font-size:11px; font-weight:700; flex-shrink:0;">{{ $typeLabels[$qType] ?? $qType }}</span>
                     <span style="display:inline-flex; padding:5px 11px; border-radius:999px; background:rgba(255,186,66,0.16); color:#8A5A00; font-size:11px; font-weight:700; flex-shrink:0;">{{ $difficultyLabels[$q->difficulty] ?? $q->difficulty }}</span>
                     <span style="font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; color:rgba(1,60,88,0.7); flex-shrink:0;">{{ $q->score }} نقطة</span>
                 </a>
             @empty
-                <p style="text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:13px; padding:30px 0;">ما في أسئلة بهالاختبار</p>
+                <p style="text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:13px; padding:30px 0;">لايوجد اسئلة داخل هذا الاختبار </p>
             @endforelse
         </div>
     </div>

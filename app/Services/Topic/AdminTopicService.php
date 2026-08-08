@@ -13,6 +13,7 @@ class AdminTopicService
     public function index()
     {
         $topics = Topic::with(['creator', 'media'])
+            ->withCount('podcasts')
             ->get();
         return $topics;
     }

@@ -24,7 +24,7 @@ class Level extends Model
     ];
     public function users()
     {
-        return $this->belongsToMany(User::class)
+        return $this->belongsToMany(User::class, 'user_levels')
             ->using(UserLevel::class)
             ->withPivot(
                 'status',

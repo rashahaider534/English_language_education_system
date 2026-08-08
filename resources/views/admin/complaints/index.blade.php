@@ -28,11 +28,6 @@
         </div>
     </div>
 
-    <div style="display:flex; align-items:center; gap:10px; background:rgba(168,232,249,0.18); color:#00537A; border:1px solid rgba(0,83,122,0.14); border-radius:14px; padding:14px 18px; margin-bottom:22px; font-size:13px; font-weight:600;">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4M12 8h.01"></path></svg>
-        هاي الصفحة عرض فقط لحد هلق (بدون حذف أو رد أو تغيير حالة) — لما ينعمل لها باك-إند لاحقًا ممكن تتوسع لتشمل حالة الشكوى وتصنيفها وأولويتها.
-    </div>
-
     {{-- ============ COMPLAINTS LIST ============ --}}
     <div style="display:flex; flex-direction:column; gap:14px;">
         @forelse ($complaints as $complaint)
@@ -41,17 +36,27 @@
                 $senderName = $sender ? (trim(($sender->first_name ?? '').' '.($sender->last_name ?? '')) ?: $sender->email) : 'مستخدم محذوف';
                 $initials = $sender ? strtoupper(substr($sender->first_name ?? $sender->email, 0, 1).substr($sender->last_name ?? '', 0, 1)) : '?';
             @endphp
-            <div class="cmp-card" style="background:#EFFAFD; border:1.5px solid rgba(0,83,122,0.16); border-radius:18px; padding:18px 22px; display:flex; gap:16px; align-items:flex-start;">
-                <div style="display:flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:13px; background:{{ $sender ? '#00537A' : 'rgba(1,60,88,0.2)' }}; color:#fff; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; flex-shrink:0;">{{ $initials }}</div>
+            <div class="cmp-card" style="position:relative; overflow:hidden; background:#FFF9F6; border:1.5px solid rgba(255,138,101,0.32); border-radius:18px; padding:18px 22px 18px 26px; display:flex; gap:16px; align-items:flex-start; box-shadow:0 10px 24px rgba(229,72,77,0.06);">
+                <div style="position:absolute; top:0; bottom:0; left:0; width:5px; background:linear-gradient(180deg,#FF8A65,#C2591A);"></div>
+
+                <div style="position:relative; display:flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:13px; background:rgba(255,138,101,0.16); color:#C2591A; flex-shrink:0;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                </div>
                 <div style="flex:1; min-width:0;">
-                    <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:8px;">
-                        <p style="margin:0; font-family:'Poppins',sans-serif; font-weight:700; font-size:13.5px; color:#013C58;">{{ $senderName }}</p>
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:9px;">
+                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                            <span style="display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:999px; background:rgba(255,138,101,0.16); color:#C2591A; font-size:10.5px; font-weight:800; letter-spacing:0.3px;">شكوى</span>
+                            <p style="margin:0; display:flex; align-items:center; gap:7px; font-family:'Poppins',sans-serif; font-weight:700; font-size:13.5px; color:#013C58;">
+                                <span style="display:flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:7px; background:#C2591A; color:#fff; font-family:'Poppins',sans-serif; font-weight:700; font-size:9.5px; flex-shrink:0;">{{ $initials }}</span>
+                                {{ $senderName }}
+                            </p>
+                        </div>
                         <span style="display:inline-flex; align-items:center; gap:4px; font-size:11px; color:rgba(1,60,88,0.5); font-weight:600;">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
                             {{ $complaint->created_at?->diffForHumans() }}
                         </span>
                     </div>
-                    <p style="margin:0; font-size:13.5px; color:rgba(1,60,88,0.75); line-height:1.7;">{{ $complaint->text }}</p>
+                    <p style="margin:0; font-size:13.5px; color:rgba(1,60,88,0.75); line-height:1.7; background:rgba(255,255,255,0.6); border-radius:10px; padding:10px 12px;">{{ $complaint->text }}</p>
                 </div>
             </div>
         @empty

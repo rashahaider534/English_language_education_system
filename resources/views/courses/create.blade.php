@@ -24,6 +24,8 @@
         </div>
     @endif
 
+
+
     <form method="POST" action="{{ route('courses.store', $level) }}" enctype="multipart/form-data"
           style="background:#fff; border:1px solid rgba(0,83,122,0.08); border-radius:22px; padding:28px 26px; box-shadow:0 18px 44px rgba(0,83,122,0.06);">
         @csrf

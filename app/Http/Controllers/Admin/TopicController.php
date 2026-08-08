@@ -30,7 +30,7 @@ class TopicController extends Controller
         // $this->authorize('create', auth()->user());
         $this->adminTopicService->create($request->user(), $request->validated());
         return redirect()
-            ->route('admin.topics.index')
+            ->route('topics.index')
             ->with('success', 'Topic created successfully');
     }
 
@@ -44,7 +44,7 @@ class TopicController extends Controller
         // $this->authorize('update', $topic);
         $updatedTopic = $this->adminTopicService->update($topic, $request->validated());
         return redirect()
-            ->route('admin.topics.index')
+            ->route('topics.index')
             ->with('success', 'Topic updated successfully');
     }
 
@@ -53,7 +53,7 @@ class TopicController extends Controller
         // $this->authorize('delete', $topic);
         $this->adminTopicService->delete($topic);
         return redirect()
-            ->route('admin.topics.index')
+            ->route('topics.index')
             ->with('success', 'Topic deleted successfully');
     }
 
@@ -62,7 +62,7 @@ class TopicController extends Controller
         // $this->authorize('publish', $topic);
         $this->adminTopicService->publish($topic);
         return redirect()
-            ->route('admin.topics.index')
+            ->route('topics.index')
             ->with('success', 'Topic published successfully');
     }
 }

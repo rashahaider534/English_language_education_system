@@ -12,11 +12,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles, HasApiTokens;
+    use HasFactory, Notifiable, HasRoles, HasApiTokens, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -55,7 +56,7 @@ class User extends Authenticatable
     }
     public function levels()
     {
-        return $this->belongsToMany(Level::class)
+        return $this->belongsToMany(Level::class, 'user_levels')
             ->using(UserLevel::class)
             ->withPivot(
                 'status',

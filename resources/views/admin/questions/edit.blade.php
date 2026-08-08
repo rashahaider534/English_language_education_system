@@ -8,6 +8,15 @@
     .q-field-wrap { border:1.5px solid rgba(0,83,122,0.14); border-radius:11px; background:#FBFEFF; transition:border-color 0.15s ease; }
     .q-field-wrap:focus-within { border-color:#0E6A96; }
     .q-field-wrap input, .q-field-wrap textarea, .q-field-wrap select { width:100%; background:transparent; border:none; outline:none; padding:11px 13px; font-size:13px; color:#013C58; font-family:'Tajawal',sans-serif; }
+    .q-field-wrap input[type="file"] { padding:7px; font-size:12.5px; color:rgba(1,60,88,0.55); }
+    .q-field-wrap input[type="file"]::file-selector-button {
+        margin-inline-end:10px; padding:8px 16px; border:none; border-radius:8px;
+        background:linear-gradient(90deg,#0E6A96,#146B93); color:#fff; font-family:'Tajawal',sans-serif;
+        font-weight:700; font-size:12.5px; cursor:pointer; transition:transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .q-field-wrap input[type="file"]::file-selector-button:hover {
+        transform:translateY(-1px); box-shadow:0 6px 14px rgba(14,106,150,0.28);
+    }
 
     .q-answer-row { transition: background 0.15s ease; }
     .q-answer-row:hover { background: rgba(168,232,249,0.08); }
@@ -22,6 +31,7 @@
 
 @section('content')
 @php
+    $questionType = $question->type instanceof \BackedEnum ? $question->type->value : $question->type;
     $typeLabels = ['MCQ' => 'اختيار من متعدد', 'FILL' => 'ملء فراغ', 'ARRANGE' => 'ترتيب كلمات', 'PAIR' => 'توصيل'];
     $relation = $question->getAnswersRelationName();
     $existingAnswers = $question->{$relation};
@@ -31,16 +41,16 @@
     $isClosed = $question->isUsedInClosedTests();
     $willVersion = $isPublished || $isArchived || $isClosed;
 
-    $initMcq = $question->type === 'MCQ'
+    $initMcq = $questionType === 'MCQ'
         ? $existingAnswers->map(fn($a) => ['text_answer' => $a->text_answer, 'is_correct' => (bool) $a->is_correct])->values()
         : collect();
-    $initFill = $question->type === 'FILL'
+    $initFill = $questionType === 'FILL'
         ? $existingAnswers->sortBy('blank_order')->map(fn($a) => ['text_answer' => $a->text_answer, 'blank_order' => $a->blank_order])->values()
         : collect();
-    $initArrange = $question->type === 'ARRANGE'
+    $initArrange = $questionType === 'ARRANGE'
         ? $existingAnswers->sortBy('order')->map(fn($a) => ['text_answer' => $a->text_answer])->values()
         : collect();
-    $initPair = $question->type === 'PAIR'
+    $initPair = $questionType === 'PAIR'
         ? $existingAnswers->map(fn($a) => ['left_text' => $a->left_text, 'right_text' => $a->right_text])->values()
         : collect();
 
@@ -48,7 +58,7 @@
     $audioUrl = $question->getFirstMediaUrl('audio');
 @endphp
 <div
-    x-data="questionEditForm(@js($question->type), @js($initMcq), @js($initFill), @js($initArrange), @js($initPair), @js($question->text_question ?? ''), @js($question->difficulty))"
+    x-data="questionEditForm(@js($questionType), @js($initMcq), @js($initFill), @js($initArrange), @js($initPair), @js($question->text_question ?? ''), @js($question->difficulty))"
     class="-mx-4 -my-6 px-4 py-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
     style="background:#DFF2F9; font-family:'Tajawal',sans-serif; min-height:100vh;" dir="rtl"
 >
@@ -62,10 +72,10 @@
     <div style="background:linear-gradient(135deg,#013C58 0%, #00537A 60%, #0E6A96 130%); border-radius:22px; padding:26px 32px; margin-bottom:22px; box-shadow:0 20px 44px rgba(1,60,88,0.2);">
         <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
             <span style="display:inline-flex; padding:5px 12px; border-radius:999px; background:rgba(255,255,255,0.12); color:#FFD35B; font-size:11px; font-weight:700; border:1px solid rgba(255,255,255,0.18);">#{{ $question->id }}</span>
-            <span style="display:inline-flex; padding:5px 12px; border-radius:999px; background:rgba(255,255,255,0.12); color:#A8E8F9; font-size:11px; font-weight:700; border:1px solid rgba(255,255,255,0.18);">{{ $typeLabels[$question->type] ?? $question->type }}</span>
+            <span style="display:inline-flex; padding:5px 12px; border-radius:999px; background:rgba(255,255,255,0.12); color:#A8E8F9; font-size:11px; font-weight:700; border:1px solid rgba(255,255,255,0.18);">{{ $typeLabels[$questionType] ?? $questionType }}</span>
         </div>
         <h1 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:22px; color:#fff;">تعديل السؤال</h1>
-        <p style="margin:6px 0 0; font-size:13px; color:rgba(168,232,249,0.8);">نوع السؤال ثابت وما بينتغير بعد الإنشاء.</p>
+        <p style="margin:6px 0 0; font-size:13px; color:rgba(168,232,249,0.8);"></p>
     </div>
 
     @if ($willVersion)
@@ -128,7 +138,7 @@
                         <img src="{{ $imageUrl }}" alt="" style="max-width:100%; max-height:120px; border-radius:10px; margin-bottom:8px; border:1px solid rgba(0,83,122,0.12);">
                     @endif
                     <div class="q-field-wrap"><input type="file" name="image" accept=".jpg,.jpeg,.png"></div>
-                    <p style="margin:6px 0 0; font-size:10.5px; color:rgba(1,60,88,0.4);">اتركيه فاضي للاحتفاظ بالصورة الحالية.</p>
+                    <p style="margin:6px 0 0; font-size:10.5px; color:rgba(1,60,88,0.4);"></p>
                 </div>
                 <div>
                     <label style="display:block; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.55); margin-bottom:6px;">صوت (اختياري)</label>
@@ -136,13 +146,13 @@
                         <audio controls src="{{ $audioUrl }}" style="width:100%; margin-bottom:8px;"></audio>
                     @endif
                     <div class="q-field-wrap"><input type="file" name="audio" accept=".mp3,.wav,.ogg"></div>
-                    <p style="margin:6px 0 0; font-size:10.5px; color:rgba(1,60,88,0.4);">اتركيه فاضي للاحتفاظ بالصوت الحالي.</p>
+                    <p style="margin:6px 0 0; font-size:10.5px; color:rgba(1,60,88,0.4);"></p>
                 </div>
             </div>
         </div>
 
         {{-- ============ MCQ ============ --}}
-        @if ($question->type === 'MCQ')
+        @if ($questionType === 'MCQ')
         <div class="q-panel" style="background:#EFFAFD; border:1.5px solid rgba(14,106,150,0.35); border-radius:20px; padding:26px; margin-bottom:22px; box-shadow:0 10px 26px rgba(0,83,122,0.06);">
             <h3 style="margin:0 0 6px; font-family:'Poppins',sans-serif; font-weight:800; font-size:14px; color:#013C58;">إجابات اختيار من متعدد</h3>
             <p style="margin:0 0 16px; font-size:11.5px; color:rgba(1,60,88,0.5);">إجابة واحدة بس صح، وعلى الأقل إجابتين.</p>
@@ -161,10 +171,10 @@
         @endif
 
         {{-- ============ FILL ============ --}}
-        @if ($question->type === 'FILL')
+        @if ($questionType === 'FILL')
         <div class="q-panel" style="background:#EFFAFD; border:1.5px solid rgba(14,106,150,0.35); border-radius:20px; padding:26px; margin-bottom:22px; box-shadow:0 10px 26px rgba(0,83,122,0.06);">
             <h3 style="margin:0 0 6px; font-family:'Poppins',sans-serif; font-weight:800; font-size:14px; color:#013C58;">نص السؤال والفراغات</h3>
-            <p style="margin:0 0 16px; font-size:11.5px; color:rgba(1,60,88,0.5);">اكتبي نص السؤال، وحطي المؤشر مكان الفراغ واكبسي "إضافة فراغ" — رح يتحط الرقم تلقائي.</p>
+            <p style="margin:0 0 16px; font-size:11.5px; color:rgba(1,60,88,0.5);">اكتب  نص السؤال و  اضغط على "إضافة فراغ" —    .</p>
             <div class="q-field-wrap" style="margin-bottom:10px;">
                 <textarea x-model="fillText" name="text_question" rows="3" required></textarea>
             </div>
@@ -183,10 +193,10 @@
         @endif
 
         {{-- ============ ARRANGE ============ --}}
-        @if ($question->type === 'ARRANGE')
+        @if ($questionType === 'ARRANGE')
         <div class="q-panel" style="background:#EFFAFD; border:1.5px solid rgba(14,106,150,0.35); border-radius:20px; padding:26px; margin-bottom:22px; box-shadow:0 10px 26px rgba(0,83,122,0.06);">
             <h3 style="margin:0 0 6px; font-family:'Poppins',sans-serif; font-weight:800; font-size:14px; color:#013C58;">ترتيب الكلمات الصحيح</h3>
-            <p style="margin:0 0 16px; font-size:11.5px; color:rgba(1,60,88,0.5);">رتبي الكلمات بالترتيب الصح (من فوق لتحت)، الرقم بينحط تلقائي.</p>
+            <p style="margin:0 0 16px; font-size:11.5px; color:rgba(1,60,88,0.5);">قم بترتيب الكلمات بالشكل الصحيح من الاعلى للاسفل </p>
             <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:16px;">
                 <template x-for="(a, i) in arrangeAnswers" :key="i">
                     <div class="q-answer-row" style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:11px; background:rgba(0,83,122,0.03);">
@@ -203,7 +213,7 @@
         @endif
 
         {{-- ============ PAIR ============ --}}
-        @if ($question->type === 'PAIR')
+        @if ($questionType === 'PAIR')
         <div class="q-panel" style="background:#EFFAFD; border:1.5px solid rgba(14,106,150,0.35); border-radius:20px; padding:26px; margin-bottom:22px; box-shadow:0 10px 26px rgba(0,83,122,0.06);">
             <h3 style="margin:0 0 6px; font-family:'Poppins',sans-serif; font-weight:800; font-size:14px; color:#013C58;">أزواج التوصيل</h3>
             <p style="margin:0 0 16px; font-size:11.5px; color:rgba(1,60,88,0.5);">كل صف: كلمة عربي وترجمتها الإنكليزية.</p>
