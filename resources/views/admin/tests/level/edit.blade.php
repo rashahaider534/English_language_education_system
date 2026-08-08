@@ -90,19 +90,19 @@
     ])->values();
 @endphp
 <div
-    x-data="placementTestForm(@js($poolForJs), @js($selectedInit))"
+    x-data="levelTestForm(@js($poolForJs), @js($selectedInit))"
     class="-mx-4 -my-6 px-4 py-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
     style="background:#DFF2F9; font-family:'Tajawal',sans-serif; min-height:100vh;" dir="rtl"
 >
     <div style="margin-bottom:18px;">
-        <a href="{{ route('tests.placement.placement.show', $test) }}" style="display:inline-flex; align-items:center; gap:6px; color:#00537A; font-size:13px; font-weight:600; text-decoration:none;">
+        <a href="{{ route('tests.level.levelTest.show', ['level' => $level, 'test' => $test]) }}" style="display:inline-flex; align-items:center; gap:6px; color:#00537A; font-size:13px; font-weight:600; text-decoration:none;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 19-7-7 7-7"></path></svg>
             العودة لعرض الاختبار
         </a>
     </div>
 
     <div style="background:linear-gradient(135deg,#013C58 0%, #00537A 60%, #0E6A96 130%); border-radius:22px; padding:26px 32px; margin-bottom:22px; box-shadow:0 20px 44px rgba(1,60,88,0.2);">
-        <h1 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:22px; color:#fff;">تعديل اختبار تحديد المستوى</h1>
+        <h1 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:22px; color:#fff;">تعديل اختبار مستوى: {{ $level->name_ar }}</h1>
         <p style="margin:6px 0 0; font-size:13px; color:rgba(168,232,249,0.8);">#{{ $test->id }} — {{ $test->title_en }}</p>
     </div>
 
@@ -124,10 +124,10 @@
     <form action="{{ route('tests.update', $test) }}" method="POST" @submit="beforeSubmit">
         @csrf
 
-        {{-- ============ TITLE FIELDS ============ --}}
+        {{-- ============ TITLE + PASSING SCORE ============ --}}
         <div class="t-panel" style="background:#EFFAFD; border:1.5px solid rgba(0,83,122,0.16); border-radius:20px; padding:26px; margin-bottom:22px; box-shadow:0 10px 26px rgba(0,83,122,0.06);">
             <h3 style="margin:0 0 18px; font-family:'Poppins',sans-serif; font-weight:800; font-size:14px; color:#013C58;">معلومات الاختبار</h3>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
                 <div>
                     <label style="display:block; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.55); margin-bottom:6px;">عنوان الاختبار (إنكليزي)</label>
                     <div class="t-field-wrap"><input type="text" name="title_en" value="{{ old('title_en', $test->title_en) }}" required></div>
@@ -137,13 +137,17 @@
                     <div class="t-field-wrap"><input type="text" name="title_ar" value="{{ old('title_ar', $test->title_ar) }}" required></div>
                 </div>
             </div>
+            <div style="max-width:260px;">
+                <label style="display:block; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.55); margin-bottom:6px;">درجة النجاح (10-100)</label>
+                <div class="t-field-wrap"><input type="number" name="passing_score" min="10" max="100" value="{{ old('passing_score', $test->passing_score) }}" required></div>
+            </div>
         </div>
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:start;">
             {{-- ============ QUESTION POOL ============ --}}
             <div class="t-panel" style="background:#EFFAFD; border:1.5px solid rgba(0,83,122,0.16); border-radius:20px; padding:24px; box-shadow:0 10px 26px rgba(0,83,122,0.06);">
                 <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
-                    <h3 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:14px; color:#013C58;">بنك أسئلة تحديد المستوى</h3>
+                    <h3 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:14px; color:#013C58;">الأسئلة المؤهلة لهالمستوى</h3>
                     <button type="button" @click="openQuickAdd()" style="display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:10px; border:none; background:rgba(0,83,122,0.08); color:#00537A; font-family:'Poppins',sans-serif; font-weight:700; font-size:11.5px; cursor:pointer;">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
                         سؤال جديد
@@ -193,7 +197,7 @@
             <div class="t-panel" style="background:#EFFAFD; border:1.5px solid rgba(14,106,150,0.35); border-radius:20px; padding:24px; box-shadow:0 10px 26px rgba(0,83,122,0.06);">
                 <h3 style="margin:0 0 6px; font-family:'Poppins',sans-serif; font-weight:800; font-size:14px; color:#013C58;">أسئلة الاختبار المختارة</h3>
                 <p style="margin:0 0 14px; font-size:11.5px; color:rgba(1,60,88,0.5);">
-                    عدد الأسئلة: <span x-text="selected.length" style="font-weight:700;"></span> (يجب  إجابتين على الأقل). الترتيب عبر  الاسهم.
+                    عدد الأسئلة: <span x-text="selected.length" style="font-weight:700;"></span> (يجب إجابتين على الأقل). الترتيب عبر الأسهم.
                 </p>
 
                 <div style="display:flex; flex-direction:column; gap:8px;">
@@ -222,7 +226,7 @@
         </div>
 
         <div style="margin-top:22px;">
-            <p x-show="selected.length > 0 && selected.length < 2" x-cloak style="margin:0 0 12px; font-size:12px; color:#C2591A; font-weight:700;">يجب   إجابتين (سؤالين) على الأقل.</p>
+            <p x-show="selected.length > 0 && selected.length < 2" x-cloak style="margin:0 0 12px; font-size:12px; color:#C2591A; font-weight:700;">يجب إجابتين (سؤالين) على الأقل.</p>
             <button type="submit" class="t-submit-btn" :disabled="selected.length < 2">
                 {{ $isPublished ? 'حفظ كنسخة جديدة' : 'حفظ التعديلات' }}
             </button>
@@ -279,10 +283,14 @@
     <div x-show="quickAddModalOpen" x-cloak class="modal-scroll" style="position:fixed; inset:0; z-index:60; background:rgba(1,42,63,0.5); backdrop-filter:blur(4px); overflow-y:auto;" @click="quickAddModalOpen = false">
         <div style="min-height:100%; display:flex; align-items:center; justify-content:center; padding:24px;">
             <div @click.stop style="width:100%; max-width:640px; max-height:88vh; overflow-y:auto; background:#EFFAFD; border-radius:22px; padding:28px;" dir="rtl">
-                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
                     <h3 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:16px; color:#013C58;">سؤال جديد</h3>
                     <button type="button" @click="quickAddModalOpen = false" style="width:28px; height:28px; border-radius:50%; border:none; background:rgba(0,83,122,0.06); color:rgba(1,60,88,0.6); cursor:pointer;">×</button>
                 </div>
+
+                <p style="background:rgba(255,186,66,0.16); color:#8A5A00; border-radius:12px; padding:12px 16px; margin-bottom:16px; font-size:12px; font-weight:600; line-height:1.7;">
+                    ملاحظة: هالسؤال رح ينحفظ فعليًا، بس ما رح يصير "مؤهل" لهالمستوى تلقائيًا إلا بعد ما ينربط بدرس فعلي بهالمستوى ويصير معتمد/منشور — فما رح ينضاف مباشرة لقائمة "المختارة".
+                </p>
 
                 <p x-show="quickAddError" x-cloak x-text="quickAddError" style="background:rgba(255,138,101,0.14); color:#C2591A; border-radius:12px; padding:12px 16px; margin-bottom:16px; font-size:12.5px; font-weight:600;"></p>
 
@@ -290,7 +298,7 @@
                     @csrf
                     @include('admin.questions._quick-form-fields')
                     <button type="submit" class="q-submit-btn" :disabled="quickAddSaving" style="display:inline-flex; align-items:center; gap:8px; padding:12px 26px; border-radius:12px; border:none; background:linear-gradient(90deg,#F5A201,#FFBA42); color:#013C58; font-family:'Poppins',sans-serif; font-weight:700; font-size:13.5px;">
-                        <span x-text="quickAddSaving ? 'جاري الحفظ...' : 'حفظ وإضافة للاختبار'"></span>
+                        <span x-text="quickAddSaving ? 'جاري الحفظ...' : 'حفظ السؤال'"></span>
                     </button>
                 </form>
             </div>
@@ -299,7 +307,7 @@
 </div>
 
 <script>
-function placementTestForm(pool, initSelected) {
+function levelTestForm(pool, initSelected) {
     const mcqDefault = [{ text_answer: '', is_correct: false }, { text_answer: '', is_correct: false }];
     const arrangeDefault = [{ text_answer: '' }, { text_answer: '' }];
     const pairDefault = [{ left_text: '', right_text: '' }, { left_text: '', right_text: '' }];
@@ -315,7 +323,6 @@ function placementTestForm(pool, initSelected) {
         previewLoading: false,
         previewData: null,
 
-        // ---- quick-add-question modal state (mirrors questionForm() on the full create page) ----
         quickAddModalOpen: false,
         quickAddSaving: false,
         quickAddError: null,
@@ -422,8 +429,6 @@ function placementTestForm(pool, initSelected) {
                 return r.json();
             })
             .then(newQuestion => {
-                this.pool.push(newQuestion);
-                this.selected.push(newQuestion);
                 this.quickAddSaving = false;
                 this.quickAddModalOpen = false;
             })

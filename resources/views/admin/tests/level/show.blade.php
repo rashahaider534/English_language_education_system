@@ -73,6 +73,12 @@
                     <p style="margin:0; font-size:10px; font-weight:700; letter-spacing:0.6px; text-transform:uppercase; color:rgba(168,232,249,0.7);">عدد الأسئلة</p>
                     <p style="margin:2px 0 0; font-family:'Poppins',sans-serif; font-weight:800; font-size:20px; color:#fff;">{{ $orderedQuestions->count() }}</p>
                 </div>
+                @unless (in_array($statusVal, ['archived', 'closed']))
+                    <a href="{{ route('tests.level.levelTest.edit', ['level' => $level, 'test' => $test]) }}" style="display:inline-flex; align-items:center; gap:8px; padding:12px 20px; border-radius:12px; background:linear-gradient(90deg,#F5A201,#FFBA42); color:#013C58; text-decoration:none; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; flex-shrink:0;">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"></path></svg>
+                        تعديل
+                    </a>
+                @endunless
             </div>
         </div>
     </div>

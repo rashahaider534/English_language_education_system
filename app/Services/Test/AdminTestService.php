@@ -67,6 +67,18 @@ class AdminTestService
         });
     }
 
+    public function storeLevelTest(Level $level, array $data): Test
+    {
+        return DB::transaction(function () use ($level, $data) {
+            $this->checkQuestionsAvailableForLevel($level->id, collect($data['questions'])->pluck('id'));
+
+            $data['testable_type'] = 'level';
+            $data['testable_id'] = $level->id;
+
+            return $this->testService->createTest($data);
+        });
+    }
+
 
     public function update(Test $test, array $data)
     {

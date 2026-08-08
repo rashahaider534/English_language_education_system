@@ -229,8 +229,9 @@ Route::middleware(['auth:web'])->group(function () {
             )->name('questions.index');
             Route::get('/', [TestController::class, 'indexLevelTests'])->name('levelTest.index');
             Route::get('/create', [TestController::class, 'createLevelTest'])->name('levelTest.create');
-            Route::post('/', [TestController::class, 'generateLevelTest'])->name('levelTest.generate');
+            Route::post('/', [TestController::class, 'storeLevelTest'])->name('levelTest.store');
             Route::get('/{test}', [TestController::class, 'showLevelTest'])->name('levelTest.show');
+            Route::get('/{test}/edit', [TestController::class, 'editLevelTest'])->name('levelTest.edit');
         });
 
     Route::middleware(['role:admin|super-admin', 'permission:manage_placement_tests|manage_level_tests'])
