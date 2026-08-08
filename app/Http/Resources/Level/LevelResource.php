@@ -27,6 +27,16 @@ class LevelResource extends JsonResource
             'creator' => $this->whenLoaded('creator')
                 ? new UserResource($this->creator)
                 : null,
+            'test_id' => auth()->user()->hasRole('student')
+                ? $this->tests
+                    ->firstWhere('status', 'published')
+                    ?->id
+                : null,
+
+            'test_ids' => auth()->user()->hasRole('teacher')
+                ? $this->tests->pluck('id')
+                : null,
+
         ];
     }
 }

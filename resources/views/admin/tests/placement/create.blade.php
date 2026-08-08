@@ -50,7 +50,7 @@
         'id' => $q->id,
         'title_en' => $q->title_question_en,
         'title_ar' => $q->title_question_ar,
-        'type' => $q->type,
+        'type' => $q->type instanceof \BackedEnum ? $q->type->value : $q->type,
         'difficulty' => $q->difficulty,
         'score' => $q->score,
     ])->values();
@@ -69,7 +69,7 @@
 
     <div style="background:linear-gradient(135deg,#013C58 0%, #00537A 60%, #0E6A96 130%); border-radius:22px; padding:26px 32px; margin-bottom:22px; box-shadow:0 20px 44px rgba(1,60,88,0.2);">
         <h1 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:22px; color:#fff;">اختبار تحديد مستوى جديد</h1>
-        <p style="margin:6px 0 0; font-size:13px; color:rgba(168,232,249,0.8);">اختاري عنوان الاختبار، وضيفي أسئلة من بنك أسئلة تحديد المستوى ورتبيهن.</p>
+        <p style="margin:6px 0 0; font-size:13px; color:rgba(168,232,249,0.8);">قم باختيار  عنوان الاختبار، واضافة أسئلة من بنك أسئلة تحديد المستوى ولاتنسى ترتيب الاسئلة .</p>
     </div>
 
     @if ($errors->any())
@@ -135,7 +135,7 @@
                             </button>
                         </div>
                     </template>
-                    <p x-show="filteredPool.length === 0" x-cloak style="text-align:center; color:rgba(1,60,88,0.4); font-size:12.5px; padding:20px 0;">ما في أسئلة مطابقة</p>
+                    <p x-show="filteredPool.length === 0" x-cloak style="text-align:center; color:rgba(1,60,88,0.4); font-size:12.5px; padding:20px 0;">لا يوجد أسئلة مطابقة</p>
                 </div>
             </div>
 
@@ -143,7 +143,7 @@
             <div class="t-panel" style="background:#EFFAFD; border:1.5px solid rgba(14,106,150,0.35); border-radius:20px; padding:24px; box-shadow:0 10px 26px rgba(0,83,122,0.06);">
                 <h3 style="margin:0 0 6px; font-family:'Poppins',sans-serif; font-weight:800; font-size:14px; color:#013C58;">أسئلة الاختبار المختارة</h3>
                 <p style="margin:0 0 14px; font-size:11.5px; color:rgba(1,60,88,0.5);">
-                    عدد الأسئلة: <span x-text="selected.length" style="font-weight:700;"></span> (لازم إجمالي إجابتين على الأقل). رتبيهن بالأسهم.
+                    عدد الأسئلة: <span x-text="selected.length" style="font-weight:700;"></span> .
                 </p>
 
                 <div style="display:flex; flex-direction:column; gap:8px;">
@@ -163,13 +163,13 @@
                             <button type="button" @click="selected.splice(i,1)" style="width:28px; height:28px; border-radius:8px; border:none; background:rgba(229,72,77,0.1); color:#C2591A; cursor:pointer; flex-shrink:0;">×</button>
                         </div>
                     </template>
-                    <p x-show="selected.length === 0" x-cloak style="text-align:center; color:rgba(1,60,88,0.4); font-size:12.5px; padding:24px 0;">لسا ما ضفتي أي سؤال</p>
+                    <p x-show="selected.length === 0" x-cloak style="text-align:center; color:rgba(1,60,88,0.4); font-size:12.5px; padding:24px 0;"> لم يتم اضافة أي سؤال</p>
                 </div>
             </div>
         </div>
 
         <div style="margin-top:22px;">
-            <p x-show="selected.length > 0 && selected.length < 2" x-cloak style="margin:0 0 12px; font-size:12px; color:#C2591A; font-weight:700;">لازم تختاري إجابتين (سؤالين) على الأقل.</p>
+            <p x-show="selected.length > 0 && selected.length < 2" x-cloak style="margin:0 0 12px; font-size:12px; color:#C2591A; font-weight:700;">يجب   إجابتين (سؤالين) على الأقل.</p>
             <button type="submit" class="t-submit-btn" :disabled="selected.length < 2">
                 حفظ الاختبار
             </button>

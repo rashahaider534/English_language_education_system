@@ -6,8 +6,8 @@ use App\Services\CommentService;
 use App\Models\Lesson;
 use App\Models\Comment;
 use App\Http\Resources\CommentResource;
-use App\Http\Requests\StoreCommentRequest;
-use App\Http\Requests\UpdateCommentRequest;
+use App\Http\Requests\Comment\StoreCommentRequest;
+use App\Http\Requests\Comment\UpdateCommentRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -52,9 +52,9 @@ class CommentController extends Controller
     {
         $this->authorize('delete', $comment);
         $this->service->delete($comment);
-        return redirect()
-            ->back()
-            ->with('success', 'Comment deleted successfully.');
+        return response()->json([
+            'message' => 'Comment deleted successfully.'
+        ]);
     }
 
     public function block(Comment $comment)

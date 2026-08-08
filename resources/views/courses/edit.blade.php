@@ -66,7 +66,7 @@
         @elseif ($isPublished)
             <div style="display:flex; align-items:center; gap:9px; background:rgba(255,211,91,0.14); color:#946200; border-radius:12px; padding:12px 16px; font-size:13px; font-weight:600; margin-bottom:18px;">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg>
-                <span>هالكورس منشور، فبس فيك تعدّلي الاسم/المدة/الصورة.</span>
+                <span>  هذا الكورس منشور يمكن تعديل فقط الاسم,المدة,الصورة</span>
             </div>
         @endif
 

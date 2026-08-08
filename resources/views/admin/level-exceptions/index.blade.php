@@ -176,7 +176,7 @@
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"></rect><path d="M9 11l3 3 5-5"></path></svg>
                 </div>
                 <div style="text-align:center;">
-                    <p style="margin:0; font-size:14.5px; font-weight:700; color:#013C58;">لا توجد طلبات بهذا الفلتر</p>
+                    <p style="margin:0; font-size:14.5px; font-weight:700; color:#013C58;">لا يوجد طلبات بهذا القسم</p>
                 </div>
             </div>
         @endforelse

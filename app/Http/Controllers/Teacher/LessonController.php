@@ -27,6 +27,7 @@ class LessonController extends Controller
         $lessons = $this->service->index($course);
         return LessonResource::collection($lessons);
     }
+    
     public function show(Lesson $lesson)
     {
         $data = $this->service->show($lesson);
@@ -54,6 +55,7 @@ class LessonController extends Controller
         $lesson = $this->service->update($lesson, $request->validated());
         return new LessonResource($lesson);
     }
+
     public function delete(Lesson $lesson)
     {
         return $this->service->delete($lesson);

@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class UserLevel extends Model
+class UserLevel extends Pivot
 {
     protected $table = 'user_levels';
     protected $fillable = [ 'level_id' , 'user_id' , 'status' , 'enrolled_at' , 'completed_at'];

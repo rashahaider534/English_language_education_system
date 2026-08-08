@@ -13,7 +13,7 @@ use Illuminate\Validation\ValidationException;
 class authService
 {
 
-    public function register(array $data):array
+    public function register(array $data): array
     {
         if (User::where('email', $data['email'])->exists()) {
             throw ValidationException::withMessages([
@@ -31,14 +31,14 @@ class authService
 
 
 
-        $this->sendOtp($user , OtpType::REGISTER);
+        $this->sendOtp($user, OtpType::REGISTER);
 
         return [
             'message' => 'OTP sent successfully'
         ];
     }
 
-    private function sendOtp(User $user , OtpType $type):void
+    private function sendOtp(User $user, OtpType $type): void
     {
         $otp = (string)random_int(100000, 999999);
         Cache::put(
@@ -50,7 +50,7 @@ class authService
         SendOtpEmailJob::dispatch($user->email, $otp);
     }
 
-    public function verifyOtp(array $data , OtpType $type):array
+    public function verifyOtp(array $data, OtpType $type): array
     {
 
         $email = $data['email'];
@@ -91,7 +91,7 @@ class authService
         };
     }
 
-    private function handleRegisterVerification(User $user):array
+    private function handleRegisterVerification(User $user): array
     {
         if ($user->email_verified_at) {
             throw ValidationException::withMessages([
@@ -115,7 +115,7 @@ class authService
         ];
     }
 
-    private function handleForgotPasswordVerification(User $user):array
+    private function handleForgotPasswordVerification(User $user): array
     {
         if (!$user->email_verified_at) {
             throw ValidationException::withMessages([
@@ -128,7 +128,7 @@ class authService
             'message' => 'Otp Verified successfully',
         ];
     }
-    public function resendOtp(string $email,OtpType $type):array
+    public function resendOtp(string $email, OtpType $type): array
     {
         $user = User::where('email', $email)->first();
 
@@ -153,24 +153,21 @@ class authService
         Cache::forget("otp:{$type->value}:$email");
         Cache::forget("otp_attempts:{$type->value}:$email");
 
-        $this->sendOtp($user , $type);
+        $this->sendOtp($user, $type);
 
         return [
             'message' => 'OTP resent successfully'
         ];
-
     }
-    public function login(array $data):array
+    public function login(array $data): array
     {
         $user = User::where('email', $data['email'])->first();
-        if(!$user)
-        {
+        if (!$user) {
             throw ValidationException::withMessages([
                 'email' => ['Invalid credentials']
             ]);
         }
-        if(!Hash::check($data['password'], $user->password))
-        {
+        if (!Hash::check($data['password'], $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['Invalid credentials']
             ]);
@@ -181,7 +178,7 @@ class authService
             ]);
         }
 
-       $token =  $user->createToken('auth-token')->plainTextToken;
+        $token =  $user->createToken('auth-token')->plainTextToken;
         return [
             'message' => 'Login successfully',
             'token' => $token,
@@ -198,7 +195,7 @@ class authService
         ];
     }
 
-    public function forgotPassword(string $email):array
+    public function forgotPassword(string $email): array
     {
         $type = OtpType::FORGOT_PASSWORD;
         $user = User::where('email', $email)->first();
