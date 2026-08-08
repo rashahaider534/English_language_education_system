@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\web\ContentReview\RequestChangesRequest;
 use App\Models\ContentReview;
+use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Level;
 use App\Models\Test;
@@ -152,11 +153,21 @@ class AdminContentReviewController extends Controller
      */
     public function showLessonTestVersions(Lesson $lesson): View
     {
-        $testVersions = $this->adminTestService->testVersions($lesson);
+        $testVersions = $this->adminTestService->LessontestVersions($lesson);
 
         return view('admin.lesson-show', [
             'testVersions' => $testVersions,
         ]);
+    }
+    public function showCourseTestVersions(Course $course)
+    //: View
+    {
+        $testVersions = $this->adminTestService->CoursetestVersions($course);
+
+//        return view('admin.course-show', [
+//            'testVersions' => $testVersions,
+//        ]);
+        return response()->json($testVersions);
     }
 
     /**

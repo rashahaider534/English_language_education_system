@@ -18,6 +18,8 @@ class ContentReview extends Model
         'status',
         'claimed_at',
         'completed_at',
+        'reviewable_id',
+        'reviewable_type',
     ];
 
     protected $casts = [
