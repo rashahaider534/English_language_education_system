@@ -7,12 +7,15 @@ use App\Models\Lesson;
 use App\Models\User;
 use Illuminate\Validation\ValidationException;
 use App\Services\CommentService;
+use App\Services\FirebaseService;
 
 class StudentLessonService
 {
     public function __construct(
-        private CommentService $commentService
+        private CommentService $commentService,
+        private FirebaseService $firebaseService
     ) {}
+
 
     private function getAllowedOrder(Course $course, User $user)
     {
@@ -54,6 +57,17 @@ class StudentLessonService
                 ]
             ]);
         }
+
+        $this->firebaseService->sendToUser(
+            $user,
+            'New Lesson Available',
+            "A new lesson is now available: {$lesson->title_en}",
+            [
+                'lesson_id' => $lesson->id,
+                'course_id' => $course->id,
+            ],
+            'lesson-opened'
+        );
     }
 
     private function getProgressCourse(Course $course, User $user)

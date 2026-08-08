@@ -26,7 +26,7 @@ class CourseController extends Controller
         $teachers = $this->service->getTeachers();
         return view('courses.index', compact('courses', 'statistics', 'level', 'teachers'));
     }
-    
+
     public function create(Level $level)
     {
         $teachers = $this->service->getTeachers();

@@ -3,6 +3,7 @@
 namespace App\Services\Podcast;
 
 use App\Enums\TopicStatus;
+use App\Jobs\SendNotificationJob;
 use App\Models\Podcast;
 use App\Models\Topic;
 use Illuminate\Support\Facades\DB;
@@ -43,6 +44,24 @@ class AdminPodcastService
                     ->toMediaCollection('podcast_video');
             }
             $podcast->refresh();
+
+            if ($topic->status === TopicStatus::PUBLISHED) {
+
+                $students = User::role('student')
+                    ->pluck('id')
+                    ->toArray();
+
+                SendNotificationJob::dispatch(
+                    $students,
+                    'New Podcast Available',
+                    "A new podcast has been added to the topic: {$topic->name_en}.",
+                    [
+                        'podcast_id' => $podcast->id,
+                        'topic_id' => $topic->id,
+                    ],
+                    'podcast-created'
+                );
+            }
             return $podcast->load(['topic', 'creator', 'media']);
         });
     }

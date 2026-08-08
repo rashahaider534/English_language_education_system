@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\OfferController;
 use App\Http\Controllers\Admin\PermissionManagementController;
 use App\Http\Controllers\Admin\PaymentManagementController;
 use App\Http\Controllers\Admin\AuditController;
+use App\Http\Controllers\FirebaseTokenController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -48,6 +49,14 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth', 'role:super-admin'])->group(function () {
+
+    //Level Exception route
+    Route::get('/levelexceptions', [LevelExceptionController::class, 'index'])->name('levelException.index');
+    Route::get('/levelexceptions/{levelException}/details', [LevelExceptionController::class, 'show'])->name('levelException.show');
+    Route::patch('/levelexceptions/{levelException}/start', [LevelExceptionController::class, 'startReview'])->name('levelException.review');
+    Route::patch('/levelexceptions/{levelException}/approve', [LevelExceptionController::class, 'approve'])->name('levelException.approve');
+    Route::patch('/levelexceptions/{levelException}/reject', [LevelExceptionController::class, 'reject'])->name('levelException.reject');
+    
     //permissions route
     Route::get('/permissions/index', [PermissionController::class, 'index'])->name('admin.permission.index');
     Route::get('/permission/{user}/showadmin', [PermissionController::class, 'getAdmin'])->name('admin.permission.show');
@@ -92,6 +101,9 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
+    //notification
+    Route::middleware('auth:sanctum')->post('/firebase/token', [FirebaseTokenController::class, 'store']);
+
     //level route
     Route::get('/levels', [LevelController::class, 'index'])->name('levels.index');
     //course route
@@ -124,22 +136,12 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
 });
 
 Route::middleware(['auth:web'])->group(function () {
-    
+
     Route::middleware(['role:admin|super-admin', 'permission:manage_comment'])
         ->group(function () {
             //comment route
             Route::delete('/comments/{comment}/destroy', [CommentController::class, 'admindelete']);
             Route::patch('/comments/{comment}/block', [CommentController::class, 'block']);
-        });
-
-    Route::middleware(['role:admin|super-admin', 'permission:manage_levelexception'])
-        ->group(function () {
-            //Level Exception route
-            Route::get('/levelexceptions', [LevelExceptionController::class, 'index'])->name('levelException.index');
-            Route::get('/levelexceptions/{levelException}/details', [LevelExceptionController::class, 'show'])->name('levelException.show');
-            Route::patch('/levelexceptions/{levelException}/start', [LevelExceptionController::class, 'startReview'])->name('levelException.review');
-            Route::patch('/levelexceptions/{levelException}/approve', [LevelExceptionController::class, 'approve'])->name('levelException.approve');
-            Route::patch('/levelexceptions/{levelException}/reject', [LevelExceptionController::class, 'reject'])->name('levelException.reject');
         });
 
     Route::middleware(['role:admin|super-admin', 'permission:manage_levels'])

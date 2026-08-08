@@ -5,11 +5,15 @@ namespace App\Services\Level_Exception;
 use App\Enums\LevelExceptionStatus;
 use App\Models\LevelException;
 use App\Models\User;
+use App\Services\FirebaseService;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\DB;
 
 class AdminLevelExceptionService
 {
+      public function __construct(
+        private FirebaseService $firebaseService
+    ) {}
 
     public function index(?string $status = null)
     {
@@ -49,8 +53,7 @@ class AdminLevelExceptionService
                 'executed_by' => $user->id,
             ]);
 
-             return $levelException;
-
+            return $levelException;
         });
     }
 
@@ -67,6 +70,20 @@ class AdminLevelExceptionService
             'executed_at' => now(),
             'review_note' => $data['review_note']
         ]);
+
+        $student = User::find($levelException->user_id);
+        if ($student) {
+            $this->firebaseService->sendToUser(
+                $student,
+                'Level Exception Approved',
+                'Your request to access the level has been approved.',
+                [
+                    'level_exception_id' => $levelException->id,
+                ],
+                'level-exception-approved'
+            );
+        }
+
         return $levelException;
     }
 
@@ -83,6 +100,19 @@ class AdminLevelExceptionService
             'executed_at' => now(),
             'review_note' => $data['review_note']
         ]);
+
+        $student = User::find($levelException->user_id);
+        if ($student) {
+            $this->firebaseService->sendToUser(
+                $student,
+                'Level Exception reject',
+                 'Your request to access the level: ' . $levelException->requestedLevel->name_en . ' has been rejected.',
+                [
+                    'level_exception_id' => $levelException->id,
+                ],
+                'level-exception-reject'
+            );
+        }
         return $levelException;
     }
 }

@@ -5,9 +5,15 @@ namespace App\Services\Course;
 use App\Models\User;
 use App\Models\Level;
 use App\Models\Course;
+use App\Services\FirebaseService;
 
 class StudentCourseService
 {
+
+    public function __construct(
+        protected FirebaseService $firebaseService
+    ) {}
+
     private function getAllowedOrder(Level $level, User $user)
     {
         $lastCompletedCourseOrder = $user->StudentCourses()
@@ -47,6 +53,16 @@ class StudentCourseService
                 ]
             ]);
         }
+
+        $this->firebaseService->sendToUser(
+            $user,
+            'New Course Available',
+            "A new course is now available: {$course->name_en}",
+            [
+                'course_id' => $course->id,
+            ],
+            'course-opened'
+        );
     }
 
     private function getProgressLevel(Level $level, User $user)

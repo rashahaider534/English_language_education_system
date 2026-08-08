@@ -5,10 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use App\Models\User;
+use Illuminate\Support\Str;
 class AppNotification extends Model
 {
-     protected $fillable = [
-       'user_id',
+    protected $table = 'notifications';
+    protected $fillable = [
+        'id',
+        'user_id',
         'title',
         'body',
         'data',
@@ -17,7 +20,7 @@ class AppNotification extends Model
         'read_at'
     ];
 
-        protected $casts = [
+    protected $casts = [
         'data' => 'array',
         'read' => 'boolean',
         'read_at' => 'datetime'
@@ -28,12 +31,5 @@ class AppNotification extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function markAsRead()
-    {
-        $this->update([
-            'read' => true,
-            'read_at' => now()
-        ]);
-    }
 
 }

@@ -3,7 +3,7 @@
 namespace App\Services\Course;
 
 use App\Http\Requests\Course\StoreCourseRequest;
-
+use App\Jobs\SendNotificationJob;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -54,7 +54,7 @@ class AdminCourseService
 
     public  function create(array $data, Level $level)
     {
-        return DB::transaction(function () use ($data, $level) {
+        $course= DB::transaction(function () use ($data, $level) {
             $user = auth()->user();
             if (
                 !$user->hasRole('super-admin') &&
@@ -88,6 +88,22 @@ class AdminCourseService
             Cache::tags(['courses'])->flush();
             return $course;
         });
+
+        $teacher = User::find($course->teacher_id);
+        if ($teacher) {
+            SendNotificationJob::dispatch(
+                [$teacher->id],
+                'New Course Assigned',
+                "You have been assigned to teach the course: {$course->name_en}",
+                [
+                    'course_id' => $course->id,
+                ],
+                'course-assigned'
+            );
+
+        }
+
+        return $course;
     }
 
     public function update(Course $course, array $data)
@@ -154,7 +170,6 @@ class AdminCourseService
         return DB::transaction(function () use ($course) {
 
             $hasInProgressStudents = $course->usercourses()->exists();
-
             if ($course->status === 'pending' && !$course->lessons()->exists()) {
 
                 $course->delete();

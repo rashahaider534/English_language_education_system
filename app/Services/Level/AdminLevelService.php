@@ -3,6 +3,7 @@
 namespace App\Services\Level;
 
 use App\Http\Requests\Level\LevelRequest;
+use App\Jobs\SendNotificationJob;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\ValidationException;
@@ -73,6 +74,19 @@ class AdminLevelService
                 'estimated_duration' => $data['estimated_duration'],
                 'created_by' => auth()->id(),
             ]);
+
+            $studentIds=User::role('student')
+            ->pluck('id')
+            ->toArray();
+            SendNotificationJob::dispatch(
+                $studentIds,
+                'New Level ',
+                'added New Level in app',
+                [
+                    'level_id'=>$level->id
+                ],
+                'new_level'
+            );
             Cache::tags(['levels'])->flush();
             return $level;
         });
