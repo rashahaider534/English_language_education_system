@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminContentReviewController;
 use App\Http\Controllers\Admin\QuestionController;
 use App\Http\Controllers\Admin\TestController;
 use App\Http\Controllers\DashboardTemplateController;
@@ -58,9 +59,8 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::patch('/levelexceptions/{levelException}/reject', [LevelExceptionController::class, 'reject'])->name('levelException.reject');
     
     //permissions route
-    Route::get('/permissions/index', [PermissionController::class, 'index'])->name('admin.permission.index');
     Route::get('/permission/{user}/showadmin', [PermissionController::class, 'getAdmin'])->name('admin.permission.show');
-    Route::get('/permission/admins/create', [PermissionController::class, 'create'])->name('admins.permission.create');
+    Route::get('/permission/admins/create', [PermissionController::class, 'createadmin'])->name('admins.permission.create');
     Route::post('/permission/admin', [PermissionController::class, 'storeAdmin'])->name('admins.permission.store');
     Route::delete('/permission/{user}/delete', [PermissionController::class, 'destroy'])->name('admins.permission.destroy');
     Route::get('/permission/{user}/admin', [PermissionController::class, 'choosePermissions'])->name('admin.permissions');
@@ -108,11 +108,19 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
     Route::get('/levels', [LevelController::class, 'index'])->name('levels.index');
     //course route
     Route::get('/courses/{level}', [CourseController::class, 'index'])->name('courses.index');
+    Route::get('courses/{course}/tests' , [AdminContentReviewController::class,'showCourseTestVersions'])->name('courses.tests');
     //lesson route
     Route::get('/courses/{course}/lessons/{status?}', [LessonController::class, 'index'])->name('lessons.index');
     Route::get('/lessons/pending', [LessonController::class, 'pending'])->name('lessons.pending');
     Route::get('/lessons/{lesson}', [LessonController::class, 'show'])->name('lessons.show');
     Route::patch('/lessons/{lesson}/archive', [LessonController::class, 'archive'])->name('lessons.archive');
+    Route::get('lessons/{lesson}/tests', [AdminContentReviewController::class, 'showLessonTestVersions'])->name('lessons.tests.show');
+
+    //comment route
+    Route::delete('/comments/{comment}/destroy', [CommentController::class, 'admindelete']);
+    Route::patch('/comments/{comment}/block', [CommentController::class, 'block']);
+
+    Route::patch('/comments/{comment}/block',[CommentController::class,'block']);
 
     // Teachers management & monitoring — index/lessons query real data;
     // create/store/toggle-active are UI-only placeholders pending backend work.
@@ -223,8 +231,9 @@ Route::middleware(['auth:web'])->group(function () {
             )->name('questions.index');
             Route::get('/', [TestController::class, 'indexLevelTests'])->name('levelTest.index');
             Route::get('/create', [TestController::class, 'createLevelTest'])->name('levelTest.create');
-            Route::post('/', [TestController::class, 'generateLevelTest'])->name('levelTest.generate');
+            Route::post('/', [TestController::class, 'storeLevelTest'])->name('levelTest.store');
             Route::get('/{test}', [TestController::class, 'showLevelTest'])->name('levelTest.show');
+            Route::get('/{test}/edit', [TestController::class, 'editLevelTest'])->name('levelTest.edit');
         });
 
     Route::middleware(['role:admin|super-admin', 'permission:manage_placement_tests|manage_level_tests'])
@@ -251,5 +260,35 @@ Route::middleware(['auth:web'])->group(function () {
             Route::patch('/podcasts/{podcast}/update', [PodcastController::class, 'update'])->name('podcasts.update');
             Route::delete('/podcasts/{podcast}/delete', [PodcastController::class, 'destroy'])->name('podcasts.delete');
         });
+
+    Route::middleware(['role:admin'])
+        ->prefix('admin/content-review')
+        ->name('admin.content-review.')
+        ->group(function () {
+            Route::get('pending-queue', [AdminContentReviewController::class, 'pendingQueue'])->name('pending-queue');
+            Route::get('my-sessions', [AdminContentReviewController::class, 'mySessions'])->name('my-sessions');
+
+            Route::post('lessons/{lesson}/claim', [AdminContentReviewController::class, 'claimLesson'])->name('lessons.claim');
+            Route::post('tests/{test}/claim', [AdminContentReviewController::class, 'claimTest'])->name('tests.claim');
+
+            Route::post('reviews/{review}/approve', [AdminContentReviewController::class, 'approve'])->name('reviews.approve');
+            Route::post('reviews/{review}/request-changes', [AdminContentReviewController::class, 'requestChanges'])->name('reviews.request-changes');
+            Route::post('reviews/{review}/release', [AdminContentReviewController::class, 'release'])->name('reviews.release');
+
+            Route::post('tests/{test}/approve-directly', [AdminContentReviewController::class, 'approveDirectly'])->name('tests.approve-directly');
+            Route::post('tests/{test}/publish', [AdminContentReviewController::class, 'publishTest'])->name('tests.publish');
+
+            Route::post('lessons/{lesson}/revert', [AdminContentReviewController::class, 'revertApprovedLesson'])->name('lessons.revert');
+
+            Route::get('lessons/{lesson}/history', [AdminContentReviewController::class, 'lessonHistory'])->name('lessons.history');
+            Route::get('tests/{test}/history', [AdminContentReviewController::class, 'testHistory'])->name('tests.history');
+
+            Route::post('levels/{level}/publish', [AdminContentReviewController::class, 'publishLevel'])->name('levels.publish');
+        });
 });
+
+// Registered last so it doesn't shadow the more specific tests/placement
+// and levels/{level}/tests/... routes above (both match tests/{test}-shaped URIs).
+Route::middleware(['auth', 'role:admin|super-admin'])->get('tests/{test}', [TestController::class, 'show'])->name('test.show');
+
 require __DIR__ . '/auth.php';

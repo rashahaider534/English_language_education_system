@@ -90,7 +90,7 @@
         <div>
             <h1 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:23px; color:var(--navy-900);">مرحبًا بك: {{ $dashboardUser['name'] }}</h1>
             <span style="display:block; width:74px; height:4px; margin-top:10px; border-radius:999px; background:linear-gradient(90deg, var(--yellow-300), var(--blue-500));"></span>
-            <p style="margin:10px 0 0; font-size:13px; color:var(--muted); font-weight:600;">نظرة عامة على النظام</p>
+            <p style="margin:10px 0 0; font-size:13px; color:var(--muted); font-weight:600;">لمحة عامة على النظام</p>
         </div>
         <span class="sa-date-pill">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--orange-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"></rect><path d="M3 10h18"></path><path d="M8 2v4M16 2v4"></path></svg>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Question\FilterQuestionRequest;
+use App\Http\Requests\Web\Test\CreateLevelTestRequest;
 use App\Http\Requests\Web\Test\CreatePlacementTestRequest;
 use App\Http\Requests\Web\Test\GenerateLevelTestRequest;
 use App\Http\Requests\Web\Test\UpdateTestRequest;
@@ -26,15 +27,15 @@ class TestController extends Controller
         $this->adminTestService = $adminTestService;
 
     }
-//    public function show(Test $test):View
-//    {
-//        $test = $this->testService->show($test);
-//        $isEligible = $this->testService->isTestStillEligible($test);
-//        return view('admin.tests.placement.show', [
-//            'test' => $test,
-//            'isEligible' => $isEligible,
-//        ]);
-//    }
+    public function show(Test $test):View
+    {
+        $test = $this->testService->show($test);
+        $isEligible = $this->testService->isTestStillEligible($test);
+        return view('admin.tests.show', [
+            'test' => $test,
+            'isEligible' => $isEligible,
+        ]);
+    }
 
     public function showLevelTest(Level $level, Test $test): View
     {
@@ -106,16 +107,37 @@ class TestController extends Controller
     public function createLevelTest(Level $level): View
     {
         $eligibleIds = $this->adminTestService->getEligibleQuestionIdsForLevel($level->id);
-        $availableByDifficulty = Question::whereIn('id', $eligibleIds)
-            ->selectRaw('difficulty, count(*) as total')
-            ->groupBy('difficulty')
-            ->pluck('total', 'difficulty');
+        $questions = Question::whereIn('id', $eligibleIds)->get();
 
         return view('admin.tests.level.create', [
             'level' => $level,
-            'availableByDifficulty' => $availableByDifficulty,
+            'questions' => $questions,
         ]);
     }
+
+    public function storeLevelTest(CreateLevelTestRequest $request, Level $level): RedirectResponse
+    {
+        $data = $request->validated();
+        $test = $this->adminTestService->storeLevelTest($level, $data);
+
+        return redirect()
+            ->route('tests.level.levelTest.show', ['level' => $level, 'test' => $test])
+            ->with('success', 'تم إنشاء اختبار المستوى بنجاح');
+    }
+
+    public function editLevelTest(Level $level, Test $test): View
+    {
+        $test->load('questions');
+        $eligibleIds = $this->adminTestService->getEligibleQuestionIdsForLevel($level->id);
+        $questions = Question::whereIn('id', $eligibleIds)->get();
+
+        return view('admin.tests.level.edit', [
+            'level' => $level,
+            'test' => $test,
+            'questions' => $questions,
+        ]);
+    }
+
     public function generateLevelTest(GenerateLevelTestRequest $request, Level $level): RedirectResponse
     {
         $data = $request->validated();

@@ -5,10 +5,6 @@
     @keyframes permFadeUp { from { opacity:0; transform:translateY(10px);} to { opacity:1; transform:translateY(0);} }
     .perm-hero, .perm-panel { animation: permFadeUp 0.4s ease both; }
 
-    .perm-tabs { display:inline-flex; gap:6px; margin-bottom:20px; background:#EFFAFD; border:1.5px solid rgba(0,83,122,0.16); border-radius:16px; padding:6px; }
-    .perm-tab { display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; flex-shrink:0; padding:10px 24px; border-radius:11px; border:none; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; cursor:pointer; background:transparent; color:rgba(1,60,88,0.55); transition:background 0.15s ease, color 0.15s ease; }
-    .perm-tab.is-active { background:#013C58; color:#fff; }
-
     .perm-checkbox { appearance:none; width:20px; height:20px; border-radius:6px; border:1.5px solid rgba(0,83,122,0.25); background:#fff; cursor:pointer; position:relative; transition:background 0.15s ease, border-color 0.15s ease; }
     .perm-checkbox:checked { background:#0E6A96; border-color:#0E6A96; }
     .perm-checkbox:checked::after { content:''; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:13px; font-weight:800; content:'✓'; }
@@ -18,12 +14,19 @@
 @endpush
 
 @section('content')
-<div x-data="{ tab: 'admins' }" class="-mx-4 -my-6 px-4 py-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8" style="background:#DFF2F9; font-family:'Tajawal',sans-serif; min-height:100vh;" dir="rtl">
+<div class="-mx-4 -my-6 px-4 py-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8" style="background:#DFF2F9; font-family:'Tajawal',sans-serif; min-height:100vh;" dir="rtl">
 
     @if (session('info'))
         <div style="display:flex; align-items:center; gap:10px; background:rgba(168,232,249,0.18); color:#00537A; border:1px solid rgba(0,83,122,0.14); border-radius:14px; padding:14px 18px; margin-bottom:20px; font-size:13.5px; font-weight:600;">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg>
             {{ session('info') }}
+        </div>
+    @endif
+
+    @if (session('success'))
+        <div style="display:flex; align-items:center; gap:10px; background:rgba(76,175,120,0.14); color:#2E7D55; border:1px solid rgba(76,175,120,0.3); border-radius:14px; padding:14px 18px; margin-bottom:20px; font-size:13.5px; font-weight:600;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><path d="M22 4 12 14.01l-3-3"></path></svg>
+            {{ session('success') }}
         </div>
     @endif
 
@@ -42,14 +45,8 @@
         </div>
     </div>
 
-    {{-- ============ TABS ============ --}}
-    <div class="perm-tabs">
-        <button type="button" @click="tab = 'admins'" class="perm-tab" :class="tab === 'admins' ? 'is-active' : ''">الأدمنز</button>
-        <button type="button" @click="tab = 'teachers'" class="perm-tab" :class="tab === 'teachers' ? 'is-active' : ''">الأساتذة</button>
-    </div>
-
     {{-- ============ ADMINS PERMISSION MATRIX ============ --}}
-    <div x-show="tab === 'admins'" x-cloak class="perm-panel">
+    <div class="perm-panel">
         <form method="POST" action="{{ route('admin.permissions.update') }}">
             @csrf
             <div style="background:#EFFAFD; border:1.5px solid rgba(0,83,122,0.16); border-radius:22px; overflow-x:auto; box-shadow:0 18px 44px rgba(0,83,122,0.06);">
@@ -95,60 +92,6 @@
                 </button>
             </div>
         </form>
-        <p style="margin:14px 2px 0; font-size:12px; color:rgba(1,60,88,0.45); font-weight:600;">
-           
-        </p>
-    </div>
-
-    {{-- ============ TEACHERS PERMISSION MATRIX ============ --}}
-    <div x-show="tab === 'teachers'" x-cloak class="perm-panel">
-        <form method="POST" action="{{ route('admin.permissions.update') }}">
-            @csrf
-            <div style="background:#EFFAFD; border:1.5px solid rgba(0,83,122,0.16); border-radius:22px; overflow-x:auto; box-shadow:0 18px 44px rgba(0,83,122,0.06);">
-                <table style="width:100%; border-collapse:collapse; min-width:720px;">
-                    <thead>
-                        <tr>
-                            <th style="text-align:right; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 16px; background:rgba(168,232,249,0.22); position:sticky; right:0;">الأستاذ</th>
-                            @foreach ($permissions as $permission)
-                                <th style="text-align:center; font-size:10.5px; font-weight:700; color:rgba(1,60,88,0.45); padding:13px 10px; background:rgba(168,232,249,0.22); min-width:110px;">{{ $permissionLabels[$permission->name] ?? $permission->name }}</th>
-                            @endforeach
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($teachers as $teacher)
-                            @php
-                                $teacherName = trim($teacher->first_name.' '.$teacher->last_name) ?: $teacher->email;
-                                $initials = strtoupper(substr($teacher->first_name ?? $teacher->email, 0, 1).substr($teacher->last_name ?? '', 0, 1));
-                            @endphp
-                            <tr class="perm-row" style="transition:background 0.15s ease;">
-                                <td style="padding:12px 16px; border-bottom:1px solid rgba(0,83,122,0.05); background:#EFFAFD; position:sticky; right:0;">
-                                    <div style="display:flex; align-items:center; gap:9px;">
-                                        <div style="display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:9px; background:#0E6A96; color:#fff; font-family:'Poppins',sans-serif; font-weight:700; font-size:11px; flex-shrink:0;">{{ $initials }}</div>
-                                        <span style="font-size:13px; font-weight:700; color:#013C58; white-space:nowrap;">{{ $teacherName }}</span>
-                                    </div>
-                                </td>
-                                @foreach ($permissions as $permission)
-                                    <td style="padding:12px 10px; border-bottom:1px solid rgba(0,83,122,0.05); text-align:center;">
-                                        <input type="checkbox" class="perm-checkbox" name="grants[{{ $teacher->id }}][]" value="{{ $permission->name }}" @checked($teacher->hasPermissionTo($permission->name, 'web'))>
-                                    </td>
-                                @endforeach
-                            </tr>
-                        @empty
-                            <tr><td colspan="{{ $permissions->count() + 1 }}" style="padding:40px; text-align:center; color:rgba(1,60,88,0.45); font-weight:600;">ما في أساتذة</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
-            <div style="display:flex; justify-content:flex-end; margin-top:18px;">
-                <button type="submit" style="display:inline-flex; align-items:center; gap:8px; padding:12px 26px; border-radius:12px; border:none; background:linear-gradient(90deg,#F5A201,#FFBA42); color:#013C58; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; cursor:pointer;">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
-                    حفظ الصلاحيات
-                </button>
-            </div>
-        </form>
-        <p style="margin:14px 2px 0; font-size:12px; color:rgba(1,60,88,0.45); font-weight:600;">
-        </p>
     </div>
 </div>
 @endsection

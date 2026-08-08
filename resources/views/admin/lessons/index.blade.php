@@ -43,13 +43,14 @@
 @php
     $statusLabels = [
         'pending' => 'قيد الانتظار', 'in_review' => 'قيد المراجعة', 'changes_requested' => 'طلب تعديل',
-        'published' => 'منشور', 'closed' => 'مغلق', 'archived' => 'مؤرشف',
+        'approved' => 'معتمد', 'published' => 'منشور', 'closed' => 'مغلق', 'archived' => 'مؤرشف',
     ];
     // Soft, muted palette — each status has its own distinct hue, always visible (not only on hover/active)
     $statusColors = [
         'pending'         => ['bg' => 'rgba(255,186,66,0.16)', 'fg' => '#8A5A00', 'dot' => '#F5A201', 'tabFg' => '#013C58'],
         'in_review'       => ['bg' => 'rgba(14,106,150,0.14)', 'fg' => '#0E6A96', 'dot' => '#0E6A96', 'tabFg' => '#fff'],
         'changes_requested' => ['bg' => 'rgba(255,138,101,0.13)', 'fg' => '#C2591A', 'dot' => '#FF8A65', 'tabFg' => '#fff'],
+        'approved'        => ['bg' => 'rgba(46,182,172,0.15)', 'fg' => '#1E7A72', 'dot' => '#2EB6AC', 'tabFg' => '#fff'],
         'published'       => ['bg' => 'rgba(76,175,120,0.16)', 'fg' => '#2E7D55', 'dot' => '#4CAF78', 'tabFg' => '#fff'],
         'closed'          => ['bg' => 'rgba(1,60,88,0.12)', 'fg' => '#013C58', 'dot' => '#013C58', 'tabFg' => '#fff'],
         'archived'        => ['bg' => 'rgba(1,60,88,0.05)', 'fg' => 'rgba(1,60,88,0.4)', 'dot' => 'rgba(1,60,88,0.65)', 'tabFg' => '#fff'],
@@ -147,6 +148,15 @@
             </div>
             <div class="lessons-stat" style="{{ $statCard }}">
                 <div style="{{ $iconWrapBase }} color:#FFD35B;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg>
+                </div>
+                <div>
+                    <p style="margin:0; font-size:11.5px; font-weight:600; color:rgba(255,236,176,0.85);">معتمدة</p>
+                    <p style="margin:2px 0 0; font-family:'Poppins',sans-serif; font-weight:800; font-size:20px; color:#fff;">{{ $statistics->approved ?? 0 }}</p>
+                </div>
+            </div>
+            <div class="lessons-stat" style="{{ $statCard }}">
+                <div style="{{ $iconWrapBase }} color:#FFD35B;">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><path d="M22 4 12 14.01l-3-3"></path></svg>
                 </div>
                 <div>
@@ -166,6 +176,7 @@
                 ['status' => 'pending', 'label' => 'قيد الانتظار', 'bg' => $statusColors['pending']['bg'], 'fg' => $statusColors['pending']['fg'], 'activeBg' => $statusColors['pending']['dot'], 'activeFg' => $statusColors['pending']['tabFg']],
                 ['status' => 'in_review', 'label' => 'قيد المراجعة', 'bg' => $statusColors['in_review']['bg'], 'fg' => $statusColors['in_review']['fg'], 'activeBg' => $statusColors['in_review']['dot'], 'activeFg' => $statusColors['in_review']['tabFg']],
                 ['status' => 'changes_requested', 'label' => 'طلب تعديل', 'bg' => $statusColors['changes_requested']['bg'], 'fg' => $statusColors['changes_requested']['fg'], 'activeBg' => $statusColors['changes_requested']['dot'], 'activeFg' => $statusColors['changes_requested']['tabFg']],
+                ['status' => 'approved', 'label' => 'معتمدة', 'bg' => $statusColors['approved']['bg'], 'fg' => $statusColors['approved']['fg'], 'activeBg' => $statusColors['approved']['dot'], 'activeFg' => $statusColors['approved']['tabFg']],
                 ['status' => 'published', 'label' => 'منشورة', 'bg' => $statusColors['published']['bg'], 'fg' => $statusColors['published']['fg'], 'activeBg' => $statusColors['published']['dot'], 'activeFg' => $statusColors['published']['tabFg']],
                 ['status' => 'closed', 'label' => 'مغلقة', 'bg' => $statusColors['closed']['bg'], 'fg' => $statusColors['closed']['fg'], 'activeBg' => $statusColors['closed']['dot'], 'activeFg' => $statusColors['closed']['tabFg']],
                 ['status' => 'archived', 'label' => 'مؤرشفة', 'bg' => $statusColors['archived']['bg'], 'fg' => $statusColors['archived']['fg'], 'activeBg' => $statusColors['archived']['dot'], 'activeFg' => $statusColors['archived']['tabFg']],
@@ -208,8 +219,9 @@
                    x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
                 @forelse ($lessons as $lesson)
                     @php
-                        $sc = $statusColors[$lesson->status] ?? $statusColors['pending'];
-                        $isPublished = $lesson->status === 'published';
+                        $lessonStatusValue = $lesson->status instanceof \App\Enums\ContentStatus ? $lesson->status->value : $lesson->status;
+                        $sc = $statusColors[$lessonStatusValue] ?? $statusColors['pending'];
+                        $isPublished = $lessonStatusValue === 'published';
                         $canArchivePermission = auth()->user()->hasRole('super-admin', 'web') || auth()->user()->can('archive lesson');
                         $canArchive = $isPublished && $canArchivePermission;
                         $hasStudents = $lesson->users()->exists();
@@ -235,7 +247,7 @@
                         <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); vertical-align:middle; text-align:center;">
                             <span style="display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:999px; background:{{ $sc['bg'] }}; color:{{ $sc['fg'] }}; font-size:11.5px; font-weight:700;">
                                 <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:{{ $sc['dot'] }};"></span>
-                                {{ $statusLabels[$lesson->status] ?? $lesson->status }}
+                                {{ $statusLabels[$lessonStatusValue] ?? $lessonStatusValue }}
                             </span>
                         </td>
                         <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); vertical-align:middle; text-align:center;">

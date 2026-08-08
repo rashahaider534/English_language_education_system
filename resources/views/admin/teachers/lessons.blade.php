@@ -62,7 +62,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" style="padding:60px 20px; text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:14px;">ما في دروس مرتبطة بهالأستاذ</td>
+                        <td colspan="4" style="padding:60px 20px; text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:14px;">لايوجد دروس مرتبطة بهذا الاستاذ </td>
                     </tr>
                 @endforelse
             </tbody>

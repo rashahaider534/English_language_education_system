@@ -16,16 +16,6 @@ class PermissionController extends Controller
         private PermissionService $roleservice
     ) {}
 
-    public function index()
-    {
-        $data = $this->roleservice->index(auth()->user());
-
-        return view('admin.permission.index', [
-            'admins' => $data['admins'],
-            'teachers' => $data['teachers'],
-        ]);
-    }
-
     public function getAdmin(User $user)
     {
         $admin = $this->roleservice->getAdmin($user);
@@ -39,15 +29,20 @@ class PermissionController extends Controller
 
     public function createteacher()
     {
-        return view('admin.teacher.create');
+        return view('admin.teachers.create');
     }
 
     public function storeAdmin(StoreAccountRequset $request)
     {
         $admin = $this->roleservice->storeAdmin(auth()->user(), $request->validated());
+
+        if ($request->filled('permissions')) {
+            $this->roleservice->assignPermissions($admin, $request->input('permissions'));
+        }
+
         return redirect()
-            ->route('admin.permissions', $admin)
-            ->with('success', 'Admin created successfully');
+            ->route('admin.admins.index')
+            ->with('success', 'تم إنشاء حساب الأدمن بنجاح');
     }
 
     public function storeTeacher(StoreAccountRequset $request)
@@ -55,8 +50,8 @@ class PermissionController extends Controller
         $this->roleservice->storeTeacher(auth()->user(), $request->validated());
 
         return redirect()
-            ->route('admin.permission.index')
-            ->with('success', 'Teacher created successfully');
+            ->route('admin.teachers.index')
+            ->with('success', 'تم إنشاء حساب الأستاذ بنجاح');
     }
 
     public function destroy(User $user)
@@ -64,28 +59,28 @@ class PermissionController extends Controller
         $this->roleservice->delete($user);
         return redirect()
             ->back()
-            ->with('success', 'User deleted successfully');
+            ->with('success', 'تم تعطيل الحساب بنجاح');
     }
 
-    public function choosePermissions()
+    public function choosePermissions(User $user)
     {
         $permissions = $this->roleservice->permissions();
-        return view('admin.permissions.assign',compact('permissions'));
+        return view('admin.permissions.assign', compact('permissions', 'user'));
     }
 
     public function assignPermissions(User $user, AssignPermissionRequest $request)
     {
-        $this->roleservice->assignPermissions($user, $request->validated());
+        $this->roleservice->assignPermissions($user, $request->validated('permissions'));
         return redirect()
-            ->route('admin.permission.index')
-            ->with('success', 'Permissions assigned successfully');
+            ->route('admin.admins.index')
+            ->with('success', 'تم حفظ صلاحيات الأدمن بنجاح');
     }
 
     public function revokePermissions(User $user, RevokePermissionRequset $request)
     {
-        $this->roleservice->revokePermissions($user, $request->validated());
+        $this->roleservice->revokePermissions($user, $request->validated('permissions'));
         return redirect()
-            ->route('admin.permission.index')
-            ->with('success', 'Permissions revoked successfully');
+            ->route('admin.admins.index')
+            ->with('success', 'تم سحب الصلاحية بنجاح');
     }
 }

@@ -26,7 +26,7 @@
 @endpush
 
 @section('content')
-<div x-data="{ createModalOpen: {{ $errors->any() ? 'true' : 'false' }} }" class="-mx-4 -my-6 px-4 py-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8" style="background:#DFF2F9; font-family:'Tajawal',sans-serif; min-height:100vh;" dir="rtl">
+<div x-data="{ createModalOpen: {{ $errors->any() ? 'true' : 'false' }}, deactivateModalOpen: false, deactivateTargetId: null, deactivateTargetName: '' }" class="-mx-4 -my-6 px-4 py-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8" style="background:#DFF2F9; font-family:'Tajawal',sans-serif; min-height:100vh;" dir="rtl">
 
     {{-- ============ HERO ============ --}}
     <div class="adm-hero" style="position:relative; overflow:hidden; background:linear-gradient(135deg,#013C58 0%, #00537A 60%, #0E6A96 130%); border-radius:26px; padding:26px 32px 24px; margin-bottom:22px; box-shadow:0 24px 55px rgba(1,60,88,0.22);">
@@ -42,7 +42,7 @@
                     <h1 style="margin:6px 0 0; font-family:'Poppins',sans-serif; font-weight:800; font-size:23px; color:#fff;">الأدمنز</h1>
                 </div>
             </div>
-            <button type="button" @click="createModalOpen = true" class="adm-create-btn" title="تصميم فقط — بانتظار الربط بالباك-إند" style="display:inline-flex; align-items:center; gap:8px; padding:12px 22px; border-radius:12px; border:none; background:linear-gradient(90deg,#F5A201,#FFBA42); color:#013C58; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; cursor:pointer;">
+            <button type="button" @click="createModalOpen = true" class="adm-create-btn" style="display:inline-flex; align-items:center; gap:8px; padding:12px 22px; border-radius:12px; border:none; background:linear-gradient(90deg,#F5A201,#FFBA42); color:#013C58; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; cursor:pointer;">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
                 إضافة أدمن
             </button>
@@ -68,6 +68,13 @@
         </div>
     </div>
 
+    @if (session('success'))
+        <div style="display:flex; align-items:center; gap:10px; background:rgba(76,175,120,0.14); color:#2E7D55; border:1px solid rgba(76,175,120,0.3); border-radius:14px; padding:14px 18px; margin-bottom:20px; font-size:13.5px; font-weight:600;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><path d="M22 4 12 14.01l-3-3"></path></svg>
+            {{ session('success') }}
+        </div>
+    @endif
+
     {{-- ============ FILTERS ============ --}}
     <form method="GET" action="{{ route('admin.admins.index') }}" class="adm-filters" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:22px; background:#EFFAFD; border:1.5px solid rgba(0,83,122,0.16); border-radius:16px; padding:14px 18px;">
         <input type="text" name="search" value="{{ $search }}" placeholder="ابحث بالاسم أو الإيميل..." style="flex:1; min-width:180px; padding:9px 14px; border:1.5px solid rgba(0,83,122,0.14); border-radius:10px; background:#FBFEFF; color:#013C58; font-size:13px; font-family:'Tajawal',sans-serif; outline:none;">
@@ -92,12 +99,13 @@
         <table style="width:100%; border-collapse:collapse; table-layout:fixed;">
             <thead>
                 <tr>
-                    <th style="text-align:right; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 16px; background:rgba(168,232,249,0.22); width:22%;">الاسم</th>
-                    <th style="text-align:right; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:24%;">الإيميل</th>
-                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:13%;">تاريخ الانضمام</th>
-                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:13%;">الراتب</th>
-                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:12%;">الحالة</th>
-                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:16%;">إجراءات</th>
+                    <th style="text-align:right; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 16px; background:rgba(168,232,249,0.22); width:15%;">الاسم</th>
+                    <th style="text-align:right; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:16%;">الإيميل</th>
+                    <th style="text-align:right; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:19%;">الصلاحيات</th>
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:10%;">تاريخ الانضمام</th>
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:9%;">الراتب</th>
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:9%;">الحالة</th>
+                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:22%;">إجراءات</th>
                 </tr>
             </thead>
             <tbody>
@@ -114,6 +122,13 @@
                             </div>
                         </td>
                         <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); font-size:12.5px; color:rgba(1,60,88,0.65); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $admin->email }}</td>
+                        <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05);">
+                            @forelse ($admin->permissions as $permission)
+                                <span style="display:inline-flex; margin:2px; padding:4px 10px; border-radius:999px; background:rgba(14,106,150,0.1); color:#0E6A96; font-size:10.5px; font-weight:700; white-space:nowrap;">{{ $permission->name }}</span>
+                            @empty
+                                <span style="font-size:11.5px; color:rgba(1,60,88,0.4);">ما في صلاحيات</span>
+                            @endforelse
+                        </td>
                         <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); text-align:center; font-size:12.5px; color:rgba(1,60,88,0.65);">{{ $admin->created_at?->format('Y-m-d') }}</td>
                         <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); text-align:center;">
                             <span title="عمود الراتب تصميم فقط — بانتظار الربط بالباك-إند" style="display:inline-flex; align-items:center; gap:4px; font-family:'Poppins',sans-serif; font-weight:700; font-size:12.5px; color:rgba(1,60,88,0.4);">
@@ -130,19 +145,21 @@
                         </td>
                         <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); text-align:center;">
                             <div style="display:flex; gap:8px; justify-content:center; align-items:center;">
-                                <form action="{{ route('admin.admins.toggle-active', $admin) }}" method="POST" title="تصميم فقط — بانتظار الربط بالباك-إند">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" class="adm-toggle" style="background:{{ $admin->is_active ? '#4CAF78' : '#CBD5D9' }}; border-radius:999px; position:relative; display:inline-flex; height:26px; width:44px; align-items:center; border:none; cursor:pointer;">
-                                        <span style="display:block; position:absolute; height:20px; width:20px; border-radius:999px; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,0.25); transform:translateX({{ $admin->is_active ? '-22px' : '-2px' }});"></span>
-                                    </button>
-                                </form>
+                                <a href="{{ route('admin.permission.show', $admin) }}" title="عرض التفاصيل" class="adm-icon-btn" style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; background:rgba(168,232,249,0.22); color:#00537A; text-decoration:none;">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </a>
+                                <a href="{{ route('admin.permissions', $admin) }}" title="تعديل الصلاحيات" class="adm-icon-btn" style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; background:rgba(255,211,91,0.16); color:#8A5A00; text-decoration:none;">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+                                </a>
+                                <button type="button" @click="deactivateTargetId = {{ $admin->id }}; deactivateTargetName = {{ Illuminate\Support\Js::from($adminName) }}; deactivateModalOpen = true;" title="تعطيل الحساب" style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; border:none; background:rgba(255,138,101,0.14); color:#C2591A; cursor:pointer;">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m5.5 5.5 13 13"/></svg>
+                                </button>
                             </div>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" style="padding:60px 20px; text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:14px;">ما في أدمنز بهالفلتر</td>
+                        <td colspan="7" style="padding:60px 20px; text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:14px;">لايوجد ادمن بهذا القسم</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -163,14 +180,14 @@
          style="position:fixed; inset:0; z-index:50; background:rgba(1,42,63,0.5); backdrop-filter:blur(4px); overflow-y:auto;"
          @click="createModalOpen = false">
       <div style="min-height:100%; display:flex; align-items:center; justify-content:center; padding:24px;">
-        <div @click.stop style="position:relative; width:100%; max-width:520px; max-height:88vh; overflow-y:auto; background:#EFFAFD; border-radius:28px; padding:32px 28px 28px; box-shadow:0 50px 110px rgba(1,42,63,0.42); font-family:'Tajawal',sans-serif;" dir="rtl">
+        <div @click.stop style="position:relative; width:100%; max-width:580px; max-height:88vh; overflow-y:auto; background:#EFFAFD; border-radius:28px; padding:32px 28px 28px; box-shadow:0 50px 110px rgba(1,42,63,0.42); font-family:'Tajawal',sans-serif;" dir="rtl">
             <button type="button" @click="createModalOpen = false" style="position:absolute; top:16px; left:16px; width:30px; height:30px; border-radius:50%; border:none; background:rgba(0,83,122,0.06); color:rgba(1,60,88,0.6); display:flex; align-items:center; justify-content:center; cursor:pointer;">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
             </button>
 
             <div style="text-align:center; margin-bottom:22px;">
                 <h1 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:20px; color:#013C58;">إضافة أدمن جديد</h1>
-                <p style="margin:6px 0 0; font-size:13px; color:rgba(1,60,88,0.5);">تصميم واجهة فقط لحد هلق — الحفظ رح يرجّعك لنفس هالصفحة بدون إنشاء حساب حقيقي.</p>
+                <p style="margin:6px 0 0; font-size:13px; color:rgba(1,60,88,0.5);">سوف يتم حفظ معلومات هذا الحساب وارسال ايميل يتضمن كلمة المرور</p>
             </div>
 
             @if ($errors->any())
@@ -184,7 +201,7 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('admin.admins.store') }}">
+            <form method="POST" action="{{ route('admins.permission.store') }}">
                 @csrf
 
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
@@ -204,8 +221,32 @@
                 </div>
 
                 <div style="margin-bottom:22px;">
-                    <label style="display:block; font-size:12px; font-weight:700; color:#013C58; margin-bottom:6px;">الراتب الشهري</label>
-                    <div class="adm-field-wrap"><input type="number" name="salary" placeholder="مثال: 800"></div>
+                    <label style="display:block; font-size:12px; font-weight:700; color:#013C58; margin-bottom:6px;">كلمة المرور المبدئية</label>
+                    <div class="adm-field-wrap"><input type="text" name="password" placeholder="8 أحرف على الأقل"></div>
+                </div>
+
+                <div style="margin-bottom:22px;">
+                    <label style="display:block; font-size:12px; font-weight:700; color:#013C58; margin-bottom:10px;">الصلاحيات اختياري _يمكن التعديل عليها لاحقا </label>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                        @foreach ($permissions as $permission)
+                            @php
+                                $permissionLabel = match($permission->name) {
+                                    'manage_levels' => 'إدارة المستويات',
+                                    'manage_courses' => 'إدارة الكورسات',
+                                    'manage_level_tests' => 'إدارة اختبارات تحديد المستوى',
+                                    'manage_placement_tests' => 'إدارة اختبارات القبول',
+                                    'manage_placement_questions' => 'إدارة بنك أسئلة تحديد المستوى',
+                                    'manage_podcasts' => 'إدارة البودكاست والتوبكس',
+                                    'publish_levels' => 'نشر المستويات',
+                                    default => $permission->name,
+                                };
+                            @endphp
+                            <label style="display:flex; align-items:center; gap:8px; padding:10px 12px; border-radius:11px; border:1.5px solid rgba(0,83,122,0.14); background:#FBFEFF; cursor:pointer; font-size:12.5px; font-weight:600; color:#013C58;">
+                                <input type="checkbox" name="permissions[]" value="{{ $permission->name }}" style="width:16px; height:16px; accent-color:#0E6A96;">
+                                {{ $permissionLabel }}
+                            </label>
+                        @endforeach
+                    </div>
                 </div>
 
                 <div style="display:flex; flex-direction:row-reverse; gap:10px; padding-top:18px; border-top:1px solid rgba(0,83,122,0.06);">
@@ -216,6 +257,33 @@
                     <button type="button" @click="createModalOpen = false" style="padding:12px 20px; border:none; background:transparent; color:rgba(1,60,88,0.5); font-family:'Poppins',sans-serif; font-weight:600; font-size:13.5px; cursor:pointer;">إلغاء</button>
                 </div>
             </form>
+        </div>
+      </div>
+    </div>
+
+    {{-- ============ DEACTIVATE CONFIRM MODAL ============ --}}
+    <div
+        x-show="deactivateModalOpen"
+        x-cloak
+        style="position:fixed; inset:0; z-index:50; background:rgba(1,42,63,0.5); backdrop-filter:blur(4px); overflow-y:auto;"
+        @click="deactivateModalOpen = false"
+    >
+      <div style="min-height:100%; display:flex; align-items:center; justify-content:center; padding:24px;">
+        <div @click.stop style="width:100%; max-width:400px; background:#EFFAFD; border-radius:22px; padding:30px 26px; box-shadow:0 44px 100px rgba(1,42,63,0.4); text-align:center;">
+            <div style="width:58px; height:58px; border-radius:16px; background:rgba(255,138,101,0.14); color:#C2591A; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m5.5 5.5 13 13"/></svg>
+            </div>
+            <h3 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; color:#013C58;">تعطيل حساب "<span x-text="deactivateTargetName"></span>"؟</h3>
+            <p style="margin:10px 0 0; font-size:13px; color:rgba(1,60,88,0.6); line-height:1.7;">
+            </p>
+            <div style="display:flex; gap:10px; margin-top:22px;">
+                <button type="button" @click="deactivateModalOpen = false" style="flex:1; padding:11px; border-radius:11px; border:1.5px solid rgba(0,83,122,0.12); background:#EFFAFD; color:#013C58; font-family:'Poppins',sans-serif; font-weight:600; font-size:13px; cursor:pointer;">إلغاء</button>
+                <form :action="'/permission/' + deactivateTargetId + '/delete'" method="POST" style="flex:1;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" style="width:100%; padding:11px; border-radius:11px; border:none; background:linear-gradient(90deg,#F5A201,#FFBA42); color:#013C58; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; cursor:pointer;">تأكيد</button>
+                </form>
+            </div>
         </div>
       </div>
     </div>

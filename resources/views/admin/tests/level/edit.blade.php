@@ -67,7 +67,20 @@
     $typeColors = ['MCQ' => '#0E6A96', 'FILL' => '#8A5A00', 'ARRANGE' => '#2E7D55', 'PAIR' => '#C2591A'];
     $difficultyLabels = ['EASY' => 'سهل', 'MEDIUM' => 'متوسط', 'HARD' => 'صعب'];
     $difficultyColors = ['EASY' => '#2E7D55', 'MEDIUM' => '#8A5A00', 'HARD' => '#C2591A'];
-    $questionsForJs = $questions->map(fn($q) => [
+
+    $statusVal = $test->status?->value ?? $test->status;
+    $isPublished = $statusVal === 'published';
+
+    $selectedInit = $test->questions->sortBy(fn($q) => $q->pivot->order)->values()->map(fn($q) => [
+        'id' => $q->id,
+        'title_en' => $q->title_question_en,
+        'title_ar' => $q->title_question_ar,
+        'type' => $q->type instanceof \BackedEnum ? $q->type->value : $q->type,
+        'difficulty' => $q->difficulty,
+        'score' => $q->score,
+    ]);
+
+    $poolForJs = $questions->map(fn($q) => [
         'id' => $q->id,
         'title_en' => $q->title_question_en,
         'title_ar' => $q->title_question_ar,
@@ -77,21 +90,28 @@
     ])->values();
 @endphp
 <div
-    x-data="levelTestForm(@js($questionsForJs))"
+    x-data="levelTestForm(@js($poolForJs), @js($selectedInit))"
     class="-mx-4 -my-6 px-4 py-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
     style="background:#DFF2F9; font-family:'Tajawal',sans-serif; min-height:100vh;" dir="rtl"
 >
     <div style="margin-bottom:18px;">
-        <a href="{{ route('tests.level.levelTest.index', $level) }}" style="display:inline-flex; align-items:center; gap:6px; color:#00537A; font-size:13px; font-weight:600; text-decoration:none;">
+        <a href="{{ route('tests.level.levelTest.show', ['level' => $level, 'test' => $test]) }}" style="display:inline-flex; align-items:center; gap:6px; color:#00537A; font-size:13px; font-weight:600; text-decoration:none;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 19-7-7 7-7"></path></svg>
-            العودة لاختبارات المستوى
+            العودة لعرض الاختبار
         </a>
     </div>
 
     <div style="background:linear-gradient(135deg,#013C58 0%, #00537A 60%, #0E6A96 130%); border-radius:22px; padding:26px 32px; margin-bottom:22px; box-shadow:0 20px 44px rgba(1,60,88,0.2);">
-        <h1 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:22px; color:#fff;">اختبار مستوى جديد: {{ $level->name_ar }}</h1>
-        <p style="margin:6px 0 0; font-size:13px; color:rgba(168,232,249,0.8);">قم باختيار عنوان الاختبار، وإضافة أسئلة من الأسئلة المؤهلة لهالمستوى، ولا تنسَ ترتيب الأسئلة.</p>
+        <h1 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:22px; color:#fff;">تعديل اختبار مستوى: {{ $level->name_ar }}</h1>
+        <p style="margin:6px 0 0; font-size:13px; color:rgba(168,232,249,0.8);">#{{ $test->id }} — {{ $test->title_en }}</p>
     </div>
+
+    @if ($isPublished)
+        <div style="display:flex; align-items:flex-start; gap:10px; background:rgba(255,186,66,0.16); color:#8A5A00; border:1px solid rgba(255,186,66,0.4); border-radius:14px; padding:14px 18px; margin-bottom:20px; font-size:13px; font-weight:600; line-height:1.7;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:1px;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            <span>هذا الاختبار منشور حاليًا. الحفظ رح ينشئ نسخة جديدة منه (draft) بدل تعديل النسخة المنشورة مباشرة.</span>
+        </div>
+    @endif
 
     @if ($errors->any())
         <div style="background:rgba(255,138,101,0.14); color:#C2591A; border:1px solid rgba(255,138,101,0.3); border-radius:14px; padding:14px 18px; margin-bottom:20px; font-size:13px; font-weight:600;">
@@ -101,14 +121,7 @@
         </div>
     @endif
 
-    @if ($questions->isEmpty())
-        <div style="display:flex; align-items:flex-start; gap:10px; background:rgba(255,138,101,0.14); color:#C2591A; border:1px solid rgba(255,138,101,0.3); border-radius:14px; padding:14px 18px; margin-bottom:20px; font-size:13px; font-weight:600; line-height:1.7;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:1px;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-            <span>لايوجد أسئلة مؤهلة لهذا المستوى </span>
-        </div>
-    @endif
-
-    <form action="{{ route('tests.level.levelTest.store', $level) }}" method="POST" @submit="beforeSubmit">
+    <form action="{{ route('tests.update', $test) }}" method="POST" @submit="beforeSubmit">
         @csrf
 
         {{-- ============ TITLE + PASSING SCORE ============ --}}
@@ -117,16 +130,16 @@
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
                 <div>
                     <label style="display:block; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.55); margin-bottom:6px;">عنوان الاختبار (إنكليزي)</label>
-                    <div class="t-field-wrap"><input type="text" name="title_en" value="{{ old('title_en') }}" placeholder="e.g. Level 1 Final Test" autocomplete="off" required></div>
+                    <div class="t-field-wrap"><input type="text" name="title_en" value="{{ old('title_en', $test->title_en) }}" required></div>
                 </div>
                 <div>
                     <label style="display:block; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.55); margin-bottom:6px;">عنوان الاختبار (عربي)</label>
-                    <div class="t-field-wrap"><input type="text" name="title_ar" value="{{ old('title_ar') }}" placeholder="مثال: اختبار نهاية المستوى الأول" autocomplete="off" required></div>
+                    <div class="t-field-wrap"><input type="text" name="title_ar" value="{{ old('title_ar', $test->title_ar) }}" required></div>
                 </div>
             </div>
             <div style="max-width:260px;">
                 <label style="display:block; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.55); margin-bottom:6px;">درجة النجاح (10-100)</label>
-                <div class="t-field-wrap"><input type="number" name="passing_score" min="10" max="100" value="{{ old('passing_score', 60) }}" required></div>
+                <div class="t-field-wrap"><input type="number" name="passing_score" min="10" max="100" value="{{ old('passing_score', $test->passing_score) }}" required></div>
             </div>
         </div>
 
@@ -215,7 +228,7 @@
         <div style="margin-top:22px;">
             <p x-show="selected.length > 0 && selected.length < 2" x-cloak style="margin:0 0 12px; font-size:12px; color:#C2591A; font-weight:700;">يجب إجابتين (سؤالين) على الأقل.</p>
             <button type="submit" class="t-submit-btn" :disabled="selected.length < 2">
-                إنشاء الاختبار
+                {{ $isPublished ? 'حفظ كنسخة جديدة' : 'حفظ التعديلات' }}
             </button>
         </div>
     </form>
@@ -294,14 +307,14 @@
 </div>
 
 <script>
-function levelTestForm(pool) {
+function levelTestForm(pool, initSelected) {
     const mcqDefault = [{ text_answer: '', is_correct: false }, { text_answer: '', is_correct: false }];
     const arrangeDefault = [{ text_answer: '' }, { text_answer: '' }];
     const pairDefault = [{ left_text: '', right_text: '' }, { left_text: '', right_text: '' }];
 
     return {
         pool: pool,
-        selected: [],
+        selected: initSelected,
         search: '',
         filterType: '',
         filterDifficulty: '',
@@ -416,8 +429,6 @@ function levelTestForm(pool) {
                 return r.json();
             })
             .then(newQuestion => {
-                // Not eligible for this level test yet (needs a real lesson link first),
-                // so it's just noted — not pushed into pool/selected.
                 this.quickAddSaving = false;
                 this.quickAddModalOpen = false;
             })

@@ -46,6 +46,7 @@ class AdminCourseService
                     COUNT(*) as all_count,
                     SUM(status = 'pending') as pending,
                     SUM(status = 'closed') as closed,
+                    SUM(status = 'approved') as approved,
                     SUM(status = 'published') as published,
                     SUM(status = 'archived') as archived")->first();
                 }

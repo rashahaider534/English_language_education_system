@@ -67,10 +67,6 @@
                 </div>
             </div>
             <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                <a href="{{ route('tests.level.questions.index', $level) }}" class="t-secondary-btn" style="display:inline-flex; align-items:center; gap:8px; padding:12px 20px; border-radius:12px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:#fff; text-decoration:none; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                    الأسئلة المؤهلة
-                </a>
                 <a href="{{ route('tests.level.levelTest.create', $level) }}" class="t-create-btn" style="display:inline-flex; align-items:center; gap:8px; padding:12px 22px; border-radius:12px; background:linear-gradient(90deg,#F5A201,#FFBA42); color:#013C58; text-decoration:none; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px;">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
                     اختبار جديد
@@ -123,12 +119,18 @@
                                 <a href="{{ route('tests.level.levelTest.show', ['level' => $level, 'test' => $test]) }}" title="عرض" class="t-icon-btn" style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; background:rgba(168,232,249,0.22); color:#00537A; text-decoration:none;">
                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                                 </a>
+                                @unless (in_array($statusVal, ['archived', 'closed']))
+                                    <a href="{{ route('tests.level.levelTest.edit', ['level' => $level, 'test' => $test]) }}" title="تعديل" class="t-icon-btn" style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; background:rgba(255,211,91,0.22); color:#8A5A00; text-decoration:none;">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"></path></svg>
+                                    </a>
+                                @endunless
                             </div>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" style="padding:60px 20px; text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:14px;">ما في اختبارات لهالمستوى لسا</td>
+                        <td colspan="5" style="padding:60px 20px; text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:14px;">لا يوجد اختبارلهذا المستوى 
+</td>
                     </tr>
                 @endforelse
             </tbody>

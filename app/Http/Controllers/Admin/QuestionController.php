@@ -25,20 +25,51 @@ class QuestionController extends Controller
         $this->adminTestService = $adminTestService;
     }
 
-    public function show(Question $question): View
+    public function show(Question $question): View|\Illuminate\Http\JsonResponse
     {
-        $questions = $this->questionService->show($question);
+        $question = $this->questionService->show($question);
+
+        if (request()->wantsJson()) {
+            $relation = $question->getAnswersRelationName();
+
+            return response()->json([
+                'id' => $question->id,
+                'title_en' => $question->title_question_en,
+                'title_ar' => $question->title_question_ar,
+                'type' => $question->type instanceof \BackedEnum ? $question->type->value : $question->type,
+                'difficulty' => $question->difficulty,
+                'score' => $question->score,
+                'text_question' => $question->text_question,
+                'image_url' => $question->getFirstMediaUrl('image') ?: null,
+                'audio_url' => $question->getFirstMediaUrl('audio') ?: null,
+                'answers' => $question->{$relation}->values(),
+            ]);
+        }
+
+        $questions = $question;
         return view('admin.questions.show', compact('questions'));
     }
 
     public function createPlacementQuestion(): View
     { return view('admin.questions.placement.create'); }
 
-    public function store(CreateQuestionRequest $request): RedirectResponse
+    public function store(CreateQuestionRequest $request): RedirectResponse|\Illuminate\Http\JsonResponse
     {
         $data = $request->validated();
-        $this->questionService->store($data);
-        return redirect() ->route('questions.placement.index') ->with('success', 'Question created successfully.');
+        $question = $this->questionService->store($data);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'id' => $question->id,
+                'title_en' => $question->title_question_en,
+                'title_ar' => $question->title_question_ar,
+                'type' => $question->type instanceof \BackedEnum ? $question->type->value : $question->type,
+                'difficulty' => $question->difficulty,
+                'score' => $question->score,
+            ]);
+        }
+
+        return redirect() ->route('questions.placement.index') ->with('success', 'تم إنشاء السؤال بنجاح.');
     }
 
     public function edit(Question $question): View

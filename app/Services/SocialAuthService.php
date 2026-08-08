@@ -47,6 +47,7 @@ class SocialAuthService
                     'email_verified_at' => now(),
                 ]);
                 $user->assignRole('student');
+                $user->studentProfile()->create();
             } elseif (is_null($user->google_id) || $user->google_id !== $googleUser->getId()) {
                 $user->update(['google_id' => $googleUser->getId()]);
             }

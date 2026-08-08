@@ -5,7 +5,7 @@ namespace App\Services\Test;
  use App\Http\Resources\Test\TeacherTestResource;
  use App\Models\Course;
  use App\Models\Lesson;
- use App\Models\LessonReview;
+ use App\Models\ContentReview;
  use App\Models\PlacementTest;
  use App\Models\Question;
  use App\Models\Test;
@@ -23,6 +23,22 @@ namespace App\Services\Test;
          return $this->adminTestServiceInstance ??= app(AdminTestService::class);
      }
 
+//     public function index()
+//     {
+//         $teacherId = auth()->id();
+//
+//         $courseIds = Course::where('teacher_id', $teacherId)->pluck('id');
+//         $lessonIds = Lesson::whereIn('course_id', $courseIds)->pluck('id');
+//
+//         $tests = Test::where(function ($query) use ($courseIds, $lessonIds) {
+//             $query->where('testable_type', 'course')->whereIn('testable_id', $courseIds);
+//         })->orWhere(function ($query) use ($lessonIds) {
+//             $query->where('testable_type', 'lesson')->whereIn('testable_id', $lessonIds);
+//         })->get();
+//
+//         return $tests;
+//
+//     }
      public function index()
      {
          $teacherId = auth()->id();
@@ -32,12 +48,24 @@ namespace App\Services\Test;
 
          $tests = Test::where(function ($query) use ($courseIds, $lessonIds) {
              $query->where('testable_type', 'course')->whereIn('testable_id', $courseIds);
-         })->orWhere(function ($query) use ($lessonIds) {
-             $query->where('testable_type', 'lesson')->whereIn('testable_id', $lessonIds);
-         })->get();
+         })
+             ->orWhere(function ($query) use ($lessonIds) {
+                 $query->where('testable_type', 'lesson')->whereIn('testable_id', $lessonIds);
+             })
+             ->with(['testable', 'latestReview.notes'])
+             ->get();
+
+         $tests->transform(function ($test) {
+             $test->review_notes = $test->status === ContentStatus::CHANGES_REQUESTED
+                 ? $test->latestReview?->notes
+                 : collect();
+
+             unset($test->latestReview);
+
+             return $test;
+         });
 
          return $tests;
-
      }
 
      public function show(Test $test)
@@ -163,6 +191,9 @@ namespace App\Services\Test;
                  {
                      $testData['status'] = ContentStatus::CHANGES_REQUESTED;
                  }
+                 if ($test->status === ContentStatus::PENDING) {
+                     $testData['status'] = ContentStatus::DRAFT;
+                 }
                  $test->update($testData);
                  $syncData = collect($data['questions'])
                      ->mapWithKeys(fn ($q) => [$q['id'] => ['order' => $q['order']]])
@@ -183,7 +214,7 @@ namespace App\Services\Test;
             return $result;
         });
      }
-     private function revalidateDependentTests(array $removedQuestionIds , bool $calledFromPublish): void
+     public function revalidateDependentTests(array $removedQuestionIds , bool $calledFromPublish): void
      {logger('revalidateDependentTests', ['removedQuestionIds' => $removedQuestionIds]);
 
          $statuses = [
@@ -235,6 +266,14 @@ namespace App\Services\Test;
 //          );
                  break;
              case ContentStatus::PENDING:
+                 $dependentTest->update([
+                     'status' => ContentStatus::DRAFT,
+                 ]);
+                 //                 $this->notify(
+//                     $dependentTest->owner_id,
+//                     "Test '{$dependentTest->title_en}' was returned for draft because a question it depends on was removed from a lesson test."
+//                 );
+                 break;
              case ContentStatus::APPROVED:
                  $dependentTest->update([
                      'status' => ContentStatus::CHANGES_REQUESTED,
@@ -317,138 +356,30 @@ namespace App\Services\Test;
              ? $this->checkQuestionsAvailableForCourse($test->testable_id, $questionIds, throwOnFailure: false)
              : $this->adminTestService()->checkQuestionsAvailableForLevel($test->testable_id, $questionIds, throwOnFailure: false);
      }
-     public function publishTest(Test $test):void
-     {
-         DB::transaction(function () use ($test) {
-             $test->update(['status' => ContentStatus::PUBLISHED]);
-
-             if ($test->previous_test_id) {
-                 $oldQuestionIds = Test::find($test->previous_test_id)->questions()->pluck('questions.id')->all();
-                 $newQuestionIds = $test->questions()->pluck('questions.id')->all();
-                 $removedQuestionIds = array_values(array_diff($oldQuestionIds, $newQuestionIds));
-
-                 $this->archivePreviousVersion($test->previous_test_id);
-
-                 if ($test->testable_type === 'lesson' && !empty($removedQuestionIds)) {
-                     $this->revalidateDependentTests($removedQuestionIds , true);
-                 }
-             }
-
-             foreach ($test->questions as $question) {
-                 if ($question->previous_question_id) {
-                     $this->checkIfQuestionCanBeArchived($question->previous_question_id);
-                 }
-             }
-         });
-     }
-     private function archivePreviousVersion($previousTestId): void
-     {
-         Test::where('id', $previousTestId)->update(['status' => ContentStatus::ARCHIVED]);
-     }
-
-     private function checkIfQuestionCanBeArchived($questionId):void
-     {
-         $oldQuestion = Question::find($questionId);
-
-         $isStillInPublishedTest = $oldQuestion->tests()
-             ->whereIn('status', [ContentStatus::PUBLISHED , ContentStatus::CLOSED])
-             ->exists();
-
-         if (!$isStillInPublishedTest) {
-             $oldQuestion->delete();
-         }
-     }
-
-     public function submitForReview(Test $test)
-     {
-         return DB::transaction(function () use ($test) {
-
-             $test = Test::where('id', $test->id)->lockForUpdate()->first();
-
-             if (!in_array($test->status, [ContentStatus::DRAFT, ContentStatus::CHANGES_REQUESTED])) {
-                 throw ValidationException::withMessages([
-                     'error' => 'This test cannot be submitted for review from its current status.',
-                 ]);
-             }
-
-             $questions = $test->questions()->withTrashed()->with('nextVersion')->get();
-
-             $deletedQuestions = $questions->filter(fn ($q) => $q->trashed());
-
-             if ($deletedQuestions->isNotEmpty()) {
-                 throw ValidationException::withMessages([
-                     'error' => 'This test references question(s) that no longer exist. Please replace them.',
-                     'deleted_question_ids' => $deletedQuestions->pluck('id'),
-                 ]);
-             }
-
-             $outdatedQuestions = $questions->filter(fn ($q) => $q->nextVersion !== null);
-
-             if ($outdatedQuestions->isNotEmpty()) {
-                 throw ValidationException::withMessages([
-                     'error' => 'This test uses outdated question version(s). Please update them to the latest version before submitting.',
-                     'outdated_question_ids' => $outdatedQuestions->pluck('id'),
-                 ]);
-             }
-
-             if ($test->testable_type === 'course') {
-                 $this->checkQuestionsAvailableForCourse($test->testable_id, $questions->pluck('id'));
-             } elseif ($test->testable_type === 'level') {
-                 $this->adminTestService()->checkQuestionsAvailableForLevel($test->testable_id, $questions->pluck('id'));
-             } elseif ($test->testable_type === 'placement_test') {
-                 $this->adminTestService()->checkQuestionsAreValidPlacementQuestions($questions->pluck('id'));
-             }
 
 
-             $test->update(['status' => ContentStatus::PENDING]);
-
-             return ['status' => 'submitted', 'test' => $test];
-         });
-     }
-
-     public function reject(Test $test, LessonReview $review)
-     {
-         return DB::transaction(function () use ($test, $review) {
-             $test = Test::where('id', $test->id)->lockForUpdate()->first();
-
-             if (!in_array($test->status, [ContentStatus::PENDING, ContentStatus::IN_REVIEW])) {
-                 throw ValidationException::withMessages([
-                     'error' => 'This test cannot be returned for changes from its current status.',
-                 ]);
-             }
-
-             $review->update([
-                 'status' => 'unclaimed',
-                 'assigned_to' => null,
-                 'claimed_at' => null,
-             ]);
-
-             $test->update(['status' => ContentStatus::CHANGES_REQUESTED]);
-         });
-     }
-
-     public function approve(Test $test, LessonReview $review)
-     {
-         return DB::transaction(function () use ($test, $review) {
-             $test = Test::where('id', $test->id)->lockForUpdate()->first();
-
-             if ($test->status !== ContentStatus::IN_REVIEW) {
-                 throw ValidationException::withMessages([
-                     'error' => 'This test is no longer awaiting your review — its status has changed. Please refresh.',
-                 ]);
-             }
-
-             if (!$this->isTestStillEligible($test)) {
-                 throw ValidationException::withMessages([
-                     'error' => 'This test cannot be approved — it contains a question that is no longer eligible. Please return it for changes.',
-                 ]);
-             }
-
-             $review->update(['status' => 'completed', 'completed_at' => now()]);
-
-             $test->update(['status' => ContentStatus::APPROVED]);
-         });
-     }
+//     public function approve(Test $test, ContentReview $review)
+//     {
+//         return DB::transaction(function () use ($test, $review) {
+//             $test = Test::where('id', $test->id)->lockForUpdate()->first();
+//
+//             if ($test->status !== ContentStatus::IN_REVIEW) {
+//                 throw ValidationException::withMessages([
+//                     'error' => 'This test is no longer awaiting your review — its status has changed. Please refresh.',
+//                 ]);
+//             }
+//
+//             if (!$this->isTestStillEligible($test)) {
+//                 throw ValidationException::withMessages([
+//                     'error' => 'This test cannot be approved — it contains a question that is no longer eligible. Please return it for changes.',
+//                 ]);
+//             }
+//
+//             $review->update(['status' => 'completed', 'completed_at' => now()]);
+//
+//             $test->update(['status' => ContentStatus::APPROVED]);
+//         });
+//     }
 
 
  }

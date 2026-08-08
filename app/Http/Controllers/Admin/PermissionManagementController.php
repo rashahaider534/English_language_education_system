@@ -14,7 +14,6 @@ class PermissionManagementController extends Controller
     public function index(): View
     {
         $admins = User::role('admin', 'web')->orderBy('first_name')->get();
-        $teachers = User::role('teacher', 'api')->orderBy('first_name')->get();
         $permissions = Permission::where('guard_name', 'web')->orderBy('name')->get();
 
         $permissionLabels = [
@@ -27,13 +26,24 @@ class PermissionManagementController extends Controller
             'publish_levels' => 'نشر المستويات',
         ];
 
-        return view('admin.permissions.index', compact('admins', 'teachers', 'permissions', 'permissionLabels'));
+        return view('admin.permissions.index', compact('admins', 'permissions', 'permissionLabels'));
     }
 
     public function update(Request $request): RedirectResponse
     {
-        // بانتظار الربط بالباك-إند: التغييرات هون تصميم واجهة فقط، ما بتنحفظ فعليًا لهلق.
+        $grants = $request->input('grants', []);
+        $userIds = User::role('admin', 'web')->pluck('id');
+
+        foreach ($userIds as $userId) {
+            $names = $grants[$userId] ?? [];
+            $permissionModels = Permission::where('guard_name', 'web')
+                ->whereIn('name', $names)
+                ->get();
+
+            User::find($userId)->syncPermissions($permissionModels);
+        }
+
         return redirect()->route('admin.permissions.index')
-            ->with('info', 'تعديل الصلاحيات ميزة قيد التطوير — الجدول أعلاه بيعرض الصلاحيات الحقيقية الحالية، بس الحفظ لسا مو مفعّل.');
+            ->with('success', 'تم حفظ الصلاحيات بنجاح');
     }
 }

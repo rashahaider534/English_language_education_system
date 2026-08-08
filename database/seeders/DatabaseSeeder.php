@@ -39,6 +39,7 @@ class DatabaseSeeder extends Seeder
             PodcastSeeder::class,
             UserPodcastSeeder::class,
             NotificationSeeder::class
+            ContentReviewSeeder::class
         ]);
     }
 }

@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('lesson_review_notes', function (Blueprint $table) {
+        Schema::create('content_review_notes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('lesson_review_id')->constrained('lesson_reviews')->onDelete('cascade');
-            $table->foreignId('admin_id')->constrained('users')->onDelete('cascade');
+            $table->morphs('reviewable');
+            $table->foreignId('content_review_id')->nullable()->constrained('content_reviews')->nullOnDelete();
+            $table->foreignId('admin_id')->nullable()->constrained('users')->nullOnDelete();
             $table->text('message');
+            $table->boolean('is_system_generated')->default(false);
             $table->timestamps();
         });
     }
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('lesson_review_notes');
+        Schema::dropIfExists('content_review_notes');
     }
 };
