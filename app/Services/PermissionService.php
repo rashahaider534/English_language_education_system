@@ -64,7 +64,7 @@ class PermissionService
         }
         if (User::where('email', $data['email'])->exists()) {
             throw ValidationException::withMessages([
-                'email' => ['Email already exists']
+                'email' => ['هذا البريد الإلكتروني مستخدم مسبقًا']
             ]);
         }
         $plainPassword = $data['password'];
@@ -92,7 +92,7 @@ class PermissionService
         }
         if (User::where('email', $data['email'])->exists()) {
             throw ValidationException::withMessages([
-                'email' => ['Email already exists']
+                'email' => ['هذا البريد الإلكتروني مستخدم مسبقًا']
             ]);
         }
         $plainPassword = $data['password'];

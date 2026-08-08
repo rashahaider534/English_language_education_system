@@ -52,7 +52,7 @@ class PermissionController extends Controller
 
         return redirect()
             ->route('admin.admins.index')
-            ->with('success', 'Admin created successfully');
+            ->with('success', 'تم إنشاء حساب الأدمن بنجاح');
     }
 
     public function storeTeacher(StoreAccountRequset $request)
@@ -61,7 +61,7 @@ class PermissionController extends Controller
 
         return redirect()
             ->route('admin.teachers.index')
-            ->with('success', 'Teacher created successfully');
+            ->with('success', 'تم إنشاء حساب الأستاذ بنجاح');
     }
 
     public function destroy(User $user)
@@ -69,7 +69,7 @@ class PermissionController extends Controller
         $this->roleservice->delete($user);
         return redirect()
             ->back()
-            ->with('success', 'User deleted successfully');
+            ->with('success', 'تم تعطيل الحساب بنجاح');
     }
 
     public function choosePermissions(User $user)
@@ -82,15 +82,15 @@ class PermissionController extends Controller
     {
         $this->roleservice->assignPermissions($user, $request->validated('permissions'));
         return redirect()
-            ->route('admin.permission.index')
-            ->with('success', 'Permissions assigned successfully');
+            ->route('admin.admins.index')
+            ->with('success', 'تم حفظ صلاحيات الأدمن بنجاح');
     }
 
     public function revokePermissions(User $user, RevokePermissionRequset $request)
     {
         $this->roleservice->revokePermissions($user, $request->validated('permissions'));
         return redirect()
-            ->route('admin.permission.show', $user)
-            ->with('success', 'Permissions revoked successfully');
+            ->route('admin.admins.index')
+            ->with('success', 'تم سحب الصلاحية بنجاح');
     }
 }
