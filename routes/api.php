@@ -20,6 +20,8 @@ use App\Http\Controllers\Student\LessonController  as StudentLessonController;
 use App\Http\Controllers\Teacher\WordController as TeacherWordController;
 use App\Http\Controllers\Student\WordController as StudentWordController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\FirebaseTokenController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Student\LevelExceptionController;
 use App\Http\Controllers\Student\RateController;
 use App\Http\Controllers\PaymentController;
@@ -51,6 +53,15 @@ Route::middleware(['auth:sanctum', 'role:student|teacher'])->group(function () {
     Route::post('/comments/{lesson}',[CommentController::class,'create']);
     Route::post('/comments/{comment}/update',[CommentController::class,'update']);
     Route::delete('/comments/{comment}/delete',[CommentController::class,'delete']);
+
+    //notification
+    Route::post('/firebase/token',[FirebaseTokenController::class, 'store']);
+    Route::get('/notifications',[NotificationController::class,'getNotifications']);
+    Route::get('/notifications/unread',[NotificationController::class,'getUnreadNotifications']);
+    Route::get('/notifications/unreadcount',[NotificationController::class,'getUnreadCount']);
+    Route::patch('/notifications/{notification}/markAsRead',[NotificationController::class,'markAsRead']);
+    Route::patch('/notifications/markAllAsRead',[NotificationController::class,'markAllAsRead']);
+    Route::delete('/notifications/{notification}/delete',[NotificationController::class,'deleteNotification']);
 });
 
 //teacher routes

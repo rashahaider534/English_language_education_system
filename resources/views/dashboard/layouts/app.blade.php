@@ -16,7 +16,6 @@
     <body class="dashboard-body">
         <div class="dashboard-shell" data-dashboard-shell>
             @include('dashboard.partials.sidebar')
-
             <button type="button" class="dashboard-mobile-toggle" data-sidebar-toggle aria-label="Toggle sidebar">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
                     <path d="M4 7h16M4 12h16M4 17h16" />
@@ -29,7 +28,9 @@
                 </main>
             </div>
         </div>
-
+          @hasanyrole(['admin', 'super-admin'])
+            @vite('resources/js/firebase-notifications.js')
+        @endhasanyrole
         @stack('scripts')
     </body>
 </html>

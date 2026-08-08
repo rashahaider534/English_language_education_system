@@ -17,7 +17,7 @@ class StudentLevelService
         private LevelAccessService $levelAccessService
     ) {}
 
-  
+
 
     public function getStudentLevels(User $user)
     {
@@ -54,22 +54,4 @@ class StudentLevelService
         ];
     }
 
-    // public function getPurchasableLevels(User $user)
-    // {
-    //     $userLevels = UserLevel::where('user_id', $user->id)->get();
-    //     $allowedOrder = $this->levelAccessService->getAllowedOrder($user);
-    //     $userLevelIds = $userLevels->pluck('level_id');
-    //     $approvedExceptionLevelIds = LevelException::query()
-    //         ->where('user_id', $user->id)
-    //         ->where('status', 'approved')
-    //         ->whereNotIn('requested_level_id', $userLevelIds)
-    //         ->pluck('requested_level_id')
-    //         ->toArray();
-
-    //     return $this->levelAccessService->getAvailableLevels(
-    //         $allowedOrder,
-    //         $userLevelIds,
-    //         $approvedExceptionLevelIds
-    //     );
-    // }
 }

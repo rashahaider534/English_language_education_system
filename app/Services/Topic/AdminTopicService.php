@@ -5,6 +5,7 @@ namespace App\Services\Topic;
 use App\Models\Topic;
 use App\Models\User;
 use App\Enums\TopicStatus;
+use App\Jobs\SendNotificationJob;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -73,6 +74,19 @@ class AdminTopicService
             ]);
         } else {
             $topic->update(['status' => TopicStatus::PUBLISHED]);
+            $students = User::role('student')
+                ->pluck('id')
+                ->toArray();
+            SendNotificationJob::dispatch(
+                $students,
+                'New Topic Published',
+                "A new topic has been published: {$topic->name_en}.",
+                [
+                    'topic_id' => $topic->id,
+                ],
+                'topic-published'
+            );
+            
             return ['topic published successfully'];
         }
     }

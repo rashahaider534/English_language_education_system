@@ -3,6 +3,7 @@
 namespace App\Services\Level_Exception;
 
 use App\Enums\LevelExceptionStatus;
+use App\Jobs\SendNotificationJob;
 use App\Services\LevelAccessService;
 use Illuminate\Validation\ValidationException;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -10,13 +11,15 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use App\Models\Level;
 use App\Models\User;
 use App\Models\LevelException;
+use App\Services\NotificationService;
 use Illuminate\Support\Facades\DB;
 
 
 class StudentLevelExceptionService
 {
     public function __construct(
-        private LevelAccessService $levelAccessService
+         private LevelAccessService $levelAccessService,
+         private NotificationService $notificationService
     ) {}
     public function index(User $user, ?string $status = null)
     {
@@ -86,7 +89,18 @@ class StudentLevelExceptionService
                         ->toMediaCollection('attachments');
                 }
             }
+
+            $admin= User::role('super-admin')->pluck('id')->toArray();
+            SendNotificationJob::dispatch(
+                $admin,
+                'New Level Exception Request',
+                'A student has submitted a request to access a locked level.',
+                [ 'level_exception_id' =>$levelException->id],
+                'level-exception'
+            );
+
             return $levelException;
+
         });
     }
     public function update(LevelException $levelException, array $data)
