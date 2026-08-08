@@ -50,7 +50,6 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'role:super-admin'])->group(function () {
     //permissions route
-    Route::get('/permissions/index', [PermissionController::class, 'index'])->name('admin.permission.index');
     Route::get('/permission/{user}/showadmin', [PermissionController::class, 'getAdmin'])->name('admin.permission.show');
     Route::get('/permission/admins/create', [PermissionController::class, 'createadmin'])->name('admins.permission.create');
     Route::post('/permission/admin', [PermissionController::class, 'storeAdmin'])->name('admins.permission.store');

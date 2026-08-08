@@ -32,7 +32,7 @@
 @endpush
 
 @section('content')
-<div x-data="{ createModalOpen: {{ $errors->any() ? 'true' : 'false' }}, saved: false }" class="-mx-4 -my-6 px-4 py-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8" style="background:#DFF2F9; font-family:'Tajawal',sans-serif; min-height:100vh;" dir="rtl">
+<div x-data="{ createModalOpen: {{ $errors->any() ? 'true' : 'false' }}, saved: false, deactivateModalOpen: false, deactivateTargetId: null, deactivateTargetName: '' }" class="-mx-4 -my-6 px-4 py-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8" style="background:#DFF2F9; font-family:'Tajawal',sans-serif; min-height:100vh;" dir="rtl">
 
     {{-- ============ HERO ============ --}}
     <div class="tch-hero" style="position:relative; overflow:hidden; background:linear-gradient(135deg,#013C58 0%, #00537A 60%, #0E6A96 130%); border-radius:26px; padding:26px 32px 24px; margin-bottom:22px; box-shadow:0 24px 55px rgba(1,60,88,0.22);">
@@ -150,19 +150,15 @@
                                 <a href="{{ route('admin.teachers.lessons', $teacher) }}" title="دروس الأستاذ" class="tch-icon-btn" style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; background:rgba(168,232,249,0.22); color:#00537A; text-decoration:none;">
                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" /></svg>
                                 </a>
-                                <form action="{{ route('admin.teachers.toggle-active', $teacher) }}" method="POST" title="تصميم فقط — بانتظار الربط بالباك-إند">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" class="tch-toggle" style="background:{{ $teacher->is_active ? '#4CAF78' : '#CBD5D9' }}; border-radius:999px; position:relative; display:inline-flex; height:26px; width:44px; align-items:center; border:none; cursor:pointer;">
-                                        <span style="display:block; position:absolute; height:20px; width:20px; border-radius:999px; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,0.25); transform:translateX({{ $teacher->is_active ? '-22px' : '-2px' }});"></span>
-                                    </button>
-                                </form>
+                                <button type="button" @click="deactivateTargetId = {{ $teacher->id }}; deactivateTargetName = {{ Illuminate\Support\Js::from($teacherName) }}; deactivateModalOpen = true;" title="تعطيل الحساب" style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; border:none; background:rgba(255,138,101,0.14); color:#C2591A; cursor:pointer;">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m5.5 5.5 13 13"/></svg>
+                                </button>
                             </div>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" style="padding:60px 20px; text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:14px;">ما في أساتذة بهالفلتر</td>
+                        <td colspan="7" style="padding:60px 20px; text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:14px;">لايوجد اساتذة بهذا القسم </td>
                     </tr>
                 @endforelse
             </tbody>
@@ -236,6 +232,33 @@
                     <button type="button" @click="createModalOpen = false" style="padding:12px 20px; border:none; background:transparent; color:rgba(1,60,88,0.5); font-family:'Poppins',sans-serif; font-weight:600; font-size:13.5px; cursor:pointer;">إلغاء</button>
                 </div>
             </form>
+        </div>
+      </div>
+    </div>
+
+    {{-- ============ DEACTIVATE CONFIRM MODAL ============ --}}
+    <div
+        x-show="deactivateModalOpen"
+        x-cloak
+        style="position:fixed; inset:0; z-index:50; background:rgba(1,42,63,0.5); backdrop-filter:blur(4px); overflow-y:auto;"
+        @click="deactivateModalOpen = false"
+    >
+      <div style="min-height:100%; display:flex; align-items:center; justify-content:center; padding:24px;">
+        <div @click.stop style="width:100%; max-width:400px; background:#EFFAFD; border-radius:22px; padding:30px 26px; box-shadow:0 44px 100px rgba(1,42,63,0.4); text-align:center;">
+            <div style="width:58px; height:58px; border-radius:16px; background:rgba(255,138,101,0.14); color:#C2591A; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m5.5 5.5 13 13"/></svg>
+            </div>
+            <h3 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; color:#013C58;">تعطيل حساب "<span x-text="deactivateTargetName"></span>"؟</h3>
+            <p style="margin:10px 0 0; font-size:13px; color:rgba(1,60,88,0.6); line-height:1.7;">
+            </p>
+            <div style="display:flex; gap:10px; margin-top:22px;">
+                <button type="button" @click="deactivateModalOpen = false" style="flex:1; padding:11px; border-radius:11px; border:1.5px solid rgba(0,83,122,0.12); background:#EFFAFD; color:#013C58; font-family:'Poppins',sans-serif; font-weight:600; font-size:13px; cursor:pointer;">إلغاء</button>
+                <form :action="'/permission/' + deactivateTargetId + '/delete'" method="POST" style="flex:1;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" style="width:100%; padding:11px; border-radius:11px; border:none; background:linear-gradient(90deg,#F5A201,#FFBA42); color:#013C58; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; cursor:pointer;">تأكيد</button>
+                </form>
+            </div>
         </div>
       </div>
     </div>

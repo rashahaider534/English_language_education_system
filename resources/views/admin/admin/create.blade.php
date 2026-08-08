@@ -4,7 +4,7 @@
 <div class="-mx-4 -my-6 px-4 py-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8" style="background:#DFF2F9; font-family:'Tajawal',sans-serif; min-height:100vh;" dir="rtl">
 
     <div style="display:flex; align-items:center; gap:14px; margin-bottom:22px;">
-        <a href="{{ route('admin.permission.index') }}" style="display:flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:12px; background:#EFFAFD; border:1.5px solid rgba(0,83,122,0.16); color:#00537A; text-decoration:none;">
+        <a href="{{ route('admin.admins.index') }}" style="display:flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:12px; background:#EFFAFD; border:1.5px solid rgba(0,83,122,0.16); color:#00537A; text-decoration:none;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"></path></svg>
         </a>
         <div>
@@ -49,7 +49,7 @@
         </div>
 
         <div style="display:flex; justify-content:flex-end; gap:10px;">
-            <a href="{{ route('admin.permission.index') }}" style="display:inline-flex; align-items:center; padding:10px 20px; border-radius:10px; background:rgba(0,83,122,0.08); color:#00537A; text-decoration:none; font-family:'Poppins',sans-serif; font-weight:600; font-size:12.5px;">إلغاء</a>
+            <a href="{{ route('admin.admins.index') }}" style="display:inline-flex; align-items:center; padding:10px 20px; border-radius:10px; background:rgba(0,83,122,0.08); color:#00537A; text-decoration:none; font-family:'Poppins',sans-serif; font-weight:600; font-size:12.5px;">إلغاء</a>
             <button type="submit" style="display:inline-flex; align-items:center; padding:10px 24px; border-radius:10px; border:none; background:linear-gradient(90deg,#F5A201,#FFBA42); color:#013C58; font-family:'Poppins',sans-serif; font-weight:700; font-size:12.5px; cursor:pointer;">حفظ</button>
         </div>
     </form>

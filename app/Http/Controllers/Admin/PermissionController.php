@@ -16,16 +16,6 @@ class PermissionController extends Controller
         private PermissionService $roleservice
     ) {}
 
-    public function index()
-    {
-        $data = $this->roleservice->index(auth()->user());
-
-        return view('admin.permission.index', [
-            'admins' => $data['admins'],
-            'teachers' => $data['teachers'],
-        ]);
-    }
-
     public function getAdmin(User $user)
     {
         $admin = $this->roleservice->getAdmin($user);

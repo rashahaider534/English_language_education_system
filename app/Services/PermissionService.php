@@ -14,29 +14,6 @@ use Spatie\Permission\Models\Permission;
 
 class PermissionService
 {
-    public function index(User $user)
-    {
-        if (!$user->hasRole('super-admin')) {
-            throw ValidationException::withMessages([
-                'error' => 'You are not allowed to view Admin.',
-            ]);
-        }
-
-        $admins = User::role('admin', 'web')
-            ->with('permissions')
-            ->orderBy('created_at', 'desc')
-            ->paginate(10, ['*'], 'admin_page');
-
-        $teachers = User::role('teacher', 'api')
-            ->orderBy('created_at', 'desc')
-            ->paginate(10, ['*'], 'teacher_page');
-
-        return [
-            'admins' => $admins,
-            'teachers' => $teachers
-        ];
-    }
-
     public function getAdmin(User $user)
     {
         if (!auth()->user()->hasRole('super-admin')) {
