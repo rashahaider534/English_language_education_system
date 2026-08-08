@@ -38,6 +38,7 @@ class DatabaseSeeder extends Seeder
             TopicSeeder::class,
             PodcastSeeder::class,
             UserPodcastSeeder::class,
+            NotificationSeeder::class
         ]);
     }
 }

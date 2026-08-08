@@ -12,16 +12,10 @@ class NotificationService
 {
     public function getNotifications(User $user)
     {
-         $unread = $user->notifications()
-            ->whereNull('read_at')
-            ->orderBy('created_at', 'desc')
-            ->get();
-        $read = $user->notifications()
-            ->whereNotNull('read_at')
-            ->orderBy('created_at', 'desc')
-            ->get();
-         $notifications = $unread->concat($read);
-         return $notifications;
+        return $user->notifications()
+        ->orderBy('read', 'asc')
+        ->orderBy('created_at', 'desc')
+        ->get();
     }
 
     public function getUnreadCount(User $user): int
