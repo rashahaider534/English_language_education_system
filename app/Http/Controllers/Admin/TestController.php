@@ -26,15 +26,15 @@ class TestController extends Controller
         $this->adminTestService = $adminTestService;
 
     }
-//    public function show(Test $test):View
-//    {
-//        $test = $this->testService->show($test);
-//        $isEligible = $this->testService->isTestStillEligible($test);
-//        return view('admin.tests.placement.show', [
-//            'test' => $test,
-//            'isEligible' => $isEligible,
-//        ]);
-//    }
+    public function show(Test $test):View
+    {
+        $test = $this->testService->show($test);
+        $isEligible = $this->testService->isTestStillEligible($test);
+        return view('admin.tests.show', [
+            'test' => $test,
+            'isEligible' => $isEligible,
+        ]);
+    }
 
     public function showLevelTest(Level $level, Test $test): View
     {

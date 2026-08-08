@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\ContentStatus;
+use App\Enums\QuestionType;
 use App\Http\Resources\Question\TeacherQuestionResource;
 use App\Models\Course;
 use App\Models\Lesson;
@@ -75,7 +76,7 @@ class QuestionService
             if (isset($data['image'])) {
                 $question->addMedia($data['image'])->toMediaCollection('image');
             }
-            if ($question->type === 'MCQ') {
+            if ($question->type === QuestionType::MCQ) {
                 $correctAnswersCount = collect($data['answers'])->where('is_correct', true)->count();
                 if ($correctAnswersCount > 1) {
                     throw ValidationException::withMessages(['It cant have more than one correct answer']);
@@ -158,12 +159,12 @@ class QuestionService
                 if (!$question->isUsedInPublishedTests() && !$question->isUsedInClosedTests()) {
                     $question->delete();
                 }
-                $this->cascadeApprovedTestsToChangesRequested($relatedTests);
+                $this->cascadeStatusOnQuestionEdit($relatedTests);
 
                 $relinkableTests = Test::whereIn('id', $relatedTests->pluck('id'))
                     ->whereIn('status', [
                         ContentStatus::DRAFT,
-                        ContentStatus::PENDING,
+                 //       ContentStatus::PENDING,
                         ContentStatus::CHANGES_REQUESTED,
                     ])
                     ->get();
@@ -187,7 +188,7 @@ class QuestionService
             $question->update($data);
             //  dd($data['answers']);
             $this->syncAnswersAndMedia($question, $question, $data, $isUpdate = true);
-            $this->cascadeApprovedTestsToChangesRequested($relatedTests);
+            $this->cascadeStatusOnQuestionEdit($relatedTests);
             return [
                 'status' => 'updated',
                 'message' => 'question updated successfully.',
@@ -242,7 +243,7 @@ class QuestionService
                         'error' => 'You cannot delete this question because it is used in published tests.',
                     ]);
                 }
-                $this->cascadeApprovedTestsToChangesRequested($relatedTests);
+                $this->cascadeStatusOnQuestionEdit($relatedTests);
 
                 if ($question->isUsedInArchivedTests()) {
                     return $question->delete();
@@ -250,17 +251,26 @@ class QuestionService
 
                 return $question->forceDelete();
             });
-        }private function cascadeApprovedTestsToChangesRequested($tests): void
-        {
-            $approvedTestIds = $tests
-                ->where('status', ContentStatus::APPROVED)
-                ->pluck('id');
-
-            if ($approvedTestIds->isNotEmpty()) {
-                Test::whereIn('id', $approvedTestIds)
-                    ->update(['status' => ContentStatus::CHANGES_REQUESTED]);
-            }
         }
+//        private function cascadeApprovedTestsToChangesRequested($tests): void
+//        {
+//            $approvedTestIds = $tests
+//                ->where('status', ContentStatus::APPROVED)
+//                ->pluck('id');
+//
+//            if ($approvedTestIds->isNotEmpty()) {
+//                Test::whereIn('id', $approvedTestIds)
+//                    ->update(['status' => ContentStatus::CHANGES_REQUESTED]);
+//            }
+//        }
+    private function cascadeStatusOnQuestionEdit($tests): void
+    {
+        Test::whereIn('id', $tests->where('status', ContentStatus::APPROVED)->pluck('id'))
+            ->update(['status' => ContentStatus::CHANGES_REQUESTED]);
+
+        Test::whereIn('id', $tests->where('status', ContentStatus::PENDING)->pluck('id'))
+            ->update(['status' => ContentStatus::DRAFT]);
+    }
     public function blockingTests(Question $question)
     {
         $tests = $question->tests()

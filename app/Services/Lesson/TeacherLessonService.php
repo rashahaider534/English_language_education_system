@@ -21,6 +21,18 @@ class TeacherLessonService
         private StudentWordService $studentWordService
     ) {}
 
+//    public function index(Course $course)
+//    {
+//        if ($course->teacher_id !== auth()->id()) {
+//            throw ValidationException::withMessages([
+//                'course' => 'You are not allowed to view lessons in this course.',
+//            ]);
+//        }
+//                    return $course->lessons()
+//                        ->with('media')
+//                        ->orderBy('order')
+//                        ->paginate(10);
+//    }
     public function index(Course $course)
     {
         if ($course->teacher_id !== auth()->id()) {
@@ -28,10 +40,23 @@ class TeacherLessonService
                 'course' => 'You are not allowed to view lessons in this course.',
             ]);
         }
-                    return $course->lessons()
-                        ->with('media')
-                        ->orderBy('order')
-                        ->paginate(10);
+
+        $lessons = $course->lessons()
+            ->with(['media', 'latestReview.notes'])
+            ->orderBy('order')
+            ->paginate(10);
+
+        $lessons->getCollection()->transform(function ($lesson) {
+            $lesson->review_notes = $lesson->status === ContentStatus::CHANGES_REQUESTED
+                ? $lesson->latestReview?->notes
+                : collect();
+
+            unset($lesson->latestReview);
+
+            return $lesson;
+        });
+
+        return $lessons;
     }
 
 
@@ -78,16 +103,16 @@ class TeacherLessonService
                 ]);
             }
             if (in_array($lesson->status, [
-                ContentStatus::CLOSED->value,
-                ContentStatus::ARCHIVED->value,
-                ContentStatus::APPROVED->value,
-                ContentStatus::IN_REVIEW->value,
+                ContentStatus::CLOSED,
+                ContentStatus::ARCHIVED,
+                ContentStatus::APPROVED,
+                ContentStatus::IN_REVIEW,
             ])) {
                 throw ValidationException::withMessages([
                     'lesson' => 'You cannot update lessons in this status.',
                 ]);
             }
-            if ($lesson->status === ContentStatus::PUBLISHED->value) {
+            if ($lesson->status === ContentStatus::PUBLISHED) {
                 $allowedFields = [
                     'title_en',
                     'title_ar',
@@ -116,11 +141,11 @@ class TeacherLessonService
             ]);
         }
         if (in_array($lesson->status, [
-            ContentStatus::CLOSED->value,
-            ContentStatus::ARCHIVED->value,
-            ContentStatus::APPROVED->value,
-            ContentStatus::PUBLISHED->value,
-            ContentStatus::IN_REVIEW->value,
+            ContentStatus::CLOSED,
+            ContentStatus::ARCHIVED,
+            ContentStatus::APPROVED,
+            ContentStatus::PUBLISHED,
+            ContentStatus::IN_REVIEW,
         ])) {
             throw ValidationException::withMessages([
                 'lesson' => 'You cannot delete lessons in this status.',

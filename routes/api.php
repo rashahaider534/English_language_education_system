@@ -1,7 +1,9 @@
 <?php
 
 
+use App\Http\Controllers\Admin\AdminContentReviewController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ContentReviewController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\StudentProfileController;
@@ -88,6 +90,15 @@ Route::middleware(['auth:sanctum', 'role:teacher'])->group(function () {
     //Profile api
     Route::get('/teacher/profile', [TeacherProfileController::class , 'show']);
     Route::post('/teacher/profile', [TeacherProfileController::class , 'update']);
+
+    //Submit content api
+    Route::post('lessons/{lesson}/submit', [ContentReviewController::class, 'submitLesson']);
+    Route::post('lessons/{lesson}/resubmit', [ContentReviewController::class, 'resubmitLesson']);
+    Route::post('tests/{test}/submit', [ContentReviewController::class, 'submitTest']);
+    Route::post('tests/{test}/resubmit', [ContentReviewController::class, 'resubmitTest']);
+
+    Route::get('lessons/{lesson}/history', [ContentReviewController::class, 'lessonReviewHistory']);
+    Route::get('tests/{test}/history', [ContentReviewController::class, 'testReviewHistory']);
 //بس للتجريب
    Route::get('/publishTest/{test}', [TestController::class, 'publishTest']);
 });
@@ -162,3 +173,5 @@ Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
 //    '/admin/levels/{level}/questions/filter',
 //    [AdminTestController::class, 'filterLevelTestQuestions']
 //);
+
+Route::get('lessons/{lesson}/tests', [AdminContentReviewController::class, 'showLessonTestVersions'])->name('lessons.tests.show');

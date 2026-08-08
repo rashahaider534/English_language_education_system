@@ -24,6 +24,8 @@ class TeacherTestResource extends JsonResource
             'previous_test_id' => $this->previous_test_id,
             'testable_type' => class_basename($this->testable_type),
             'testable_id' => $this->testable_id,
+            'testable' => $this->whenLoaded('testable'),
+            'review_notes' => $this->when(isset($this->review_notes), $this->review_notes),
             'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),
             'questions' => TeacherQuestionResource::collection($this->whenLoaded('questions')),

@@ -128,7 +128,7 @@ class User extends Authenticatable
 
     public function lessonReviews(): HasMany
     {
-        return $this->hasMany(LessonReview::class, 'assigned_to');
+        return $this->hasMany(ContentReview::class, 'assigned_to');
     }
     public function podcasts()
     {

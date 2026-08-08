@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminContentReviewController;
 use App\Http\Controllers\Admin\QuestionController;
 use App\Http\Controllers\Admin\TestController;
 use App\Http\Controllers\DashboardTemplateController;
@@ -60,7 +61,7 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
     Route::get('/lessons/pending', [LessonController::class, 'pending'])->name('lessons.pending');
     Route::get('/lessons/{lesson}', [LessonController::class, 'show'])->name('lessons.show');
     Route::patch('/lessons/{lesson}/archive', [LessonController::class, 'archive'])->name('lessons.archive');
-
+    Route::get('lessons/{lesson}/tests', [AdminContentReviewController::class, 'showLessonTestVersions'])->name('lessons.tests.show');
     //comment route
     Route::delete('/comments/{comment}/destroy', [CommentController::class, 'admindelete']);
     Route::patch('/comments/{comment}/block', [CommentController::class, 'block']);
@@ -195,6 +196,31 @@ Route::middleware(['auth:web'])->group(function () {
             Route::get('/podcasts/{podcast}/edit', [PodcastController::class, 'edit'])->name('podcasts.edit');
             Route::patch('/podcasts/{podcast}/update', [PodcastController::class, 'update'])->name('podcasts.update');
             Route::delete('/podcasts/{podcast}/delete', [PodcastController::class, 'destroy'])->name('podcasts.delete');
+        });
+
+    Route::middleware(['role:admin'])
+        ->prefix('admin/content-review')
+        ->name('admin.content-review.')
+        ->group(function () {
+            Route::get('pending-queue', [AdminContentReviewController::class, 'pendingQueue'])->name('pending-queue');
+            Route::get('my-sessions', [AdminContentReviewController::class, 'mySessions'])->name('my-sessions');
+
+            Route::post('lessons/{lesson}/claim', [AdminContentReviewController::class, 'claimLesson'])->name('lessons.claim');
+            Route::post('tests/{test}/claim', [AdminContentReviewController::class, 'claimTest'])->name('tests.claim');
+
+            Route::post('reviews/{review}/approve', [AdminContentReviewController::class, 'approve'])->name('reviews.approve');
+            Route::post('reviews/{review}/request-changes', [AdminContentReviewController::class, 'requestChanges'])->name('reviews.request-changes');
+            Route::post('reviews/{review}/release', [AdminContentReviewController::class, 'release'])->name('reviews.release');
+
+            Route::post('tests/{test}/approve-directly', [AdminContentReviewController::class, 'approveDirectly'])->name('tests.approve-directly');
+            Route::post('tests/{test}/publish', [AdminContentReviewController::class, 'publishTest'])->name('tests.publish');
+
+            Route::post('lessons/{lesson}/revert', [AdminContentReviewController::class, 'revertApprovedLesson'])->name('lessons.revert');
+
+            Route::get('lessons/{lesson}/history', [AdminContentReviewController::class, 'lessonHistory'])->name('lessons.history');
+            Route::get('tests/{test}/history', [AdminContentReviewController::class, 'testHistory'])->name('tests.history');
+
+            Route::post('levels/{level}/publish', [AdminContentReviewController::class, 'publishLevel'])->name('levels.publish');
         });
 });
 require __DIR__ . '/auth.php';
