@@ -41,9 +41,16 @@ class AdminTestService
         return $tests;
     }
 
-    public function testVersions(Lesson $lesson)
+    public function LessontestVersions(Lesson $lesson)
     {
         return $lesson->tests()
+            ->select('id', 'title_en', 'title_ar', 'status', 'previous_test_id', 'created_at')
+            ->orderByDesc('created_at')
+            ->get();
+    }
+    public function CoursetestVersions(Course $course)
+    {
+        return $course->tests()
             ->select('id', 'title_en', 'title_ar', 'status', 'previous_test_id', 'created_at')
             ->orderByDesc('created_at')
             ->get();
