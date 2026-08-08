@@ -96,11 +96,11 @@
                                 <a href="{{ route('admin.permissions', $admin) }}" title="إدارة الصلاحيات" class="pmi-icon-btn" style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; background:rgba(255,211,91,0.16); color:#8A5A00; text-decoration:none;">
                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
                                 </a>
-                                <form action="{{ route('admins.permission.destroy', $admin) }}" method="POST" onsubmit="return confirm('متأكدة إنك بدك تحذفي هالحساب؟');">
+                                <form action="{{ route('admins.permission.destroy', $admin) }}" method="POST" onsubmit="return confirm('متأكدة إنك بدك تعطّلي هالحساب؟ الشخص مارح يقدر يسجل دخول بعدها.');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" title="حذف" style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; border:none; background:rgba(255,138,101,0.14); color:#C2591A; cursor:pointer;">
-                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg>
+                                    <button type="submit" title="تعطيل الحساب" style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; border:none; background:rgba(255,138,101,0.14); color:#C2591A; cursor:pointer;">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m5.5 5.5 13 13"/></svg>
                                     </button>
                                 </form>
                             </div>
@@ -143,11 +143,11 @@
                         <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); font-size:12.5px; color:rgba(1,60,88,0.65); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $teacher->email }}</td>
                         <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); text-align:center; font-size:12.5px; color:rgba(1,60,88,0.65);">{{ $teacher->created_at?->format('Y-m-d') }}</td>
                         <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); text-align:center;">
-                            <form action="{{ route('admins.permission.destroy', $teacher) }}" method="POST" onsubmit="return confirm('متأكدة إنك بدك تحذفي هالحساب؟');" style="display:inline-block;">
+                            <form action="{{ route('admins.permission.destroy', $teacher) }}" method="POST" onsubmit="return confirm('متأكدة إنك بدك تعطّلي هالحساب؟ الشخص مارح يقدر يسجل دخول بعدها.');" style="display:inline-block;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" title="حذف" style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; border:none; background:rgba(255,138,101,0.14); color:#C2591A; cursor:pointer; margin:0 auto;">
-                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg>
+                                <button type="submit" title="تعطيل الحساب" style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; border:none; background:rgba(255,138,101,0.14); color:#C2591A; cursor:pointer; margin:0 auto;">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m5.5 5.5 13 13"/></svg>
                                 </button>
                             </form>
                         </td>
