@@ -32,8 +32,20 @@ class PermissionManagementController extends Controller
 
     public function update(Request $request): RedirectResponse
     {
-        // بانتظار الربط بالباك-إند: التغييرات هون تصميم واجهة فقط، ما بتنحفظ فعليًا لهلق.
+        $grants = $request->input('grants', []);
+        $userIds = User::role('admin', 'web')->pluck('id')
+            ->merge(User::role('teacher', 'api')->pluck('id'));
+
+        foreach ($userIds as $userId) {
+            $names = $grants[$userId] ?? [];
+            $permissionModels = Permission::where('guard_name', 'web')
+                ->whereIn('name', $names)
+                ->get();
+
+            User::find($userId)->syncPermissions($permissionModels);
+        }
+
         return redirect()->route('admin.permissions.index')
-            ->with('info', 'تعديل الصلاحيات ميزة قيد التطوير — الجدول أعلاه بيعرض الصلاحيات الحقيقية الحالية، بس الحفظ لسا مو مفعّل.');
+            ->with('success', 'تم حفظ الصلاحيات بنجاح');
     }
 }

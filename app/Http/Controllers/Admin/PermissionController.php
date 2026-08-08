@@ -44,9 +44,9 @@ class PermissionController extends Controller
 
     public function storeAdmin(StoreAccountRequset $request)
     {
-        $admin = $this->roleservice->storeAdmin(auth()->user(), $request->validated());
+        $this->roleservice->storeAdmin(auth()->user(), $request->validated());
         return redirect()
-            ->route('admin.permissions', $admin)
+            ->route('admin.admins.index')
             ->with('success', 'Admin created successfully');
     }
 
@@ -55,7 +55,7 @@ class PermissionController extends Controller
         $this->roleservice->storeTeacher(auth()->user(), $request->validated());
 
         return redirect()
-            ->route('admin.permission.index')
+            ->route('admin.teachers.index')
             ->with('success', 'Teacher created successfully');
     }
 
@@ -77,7 +77,7 @@ class PermissionController extends Controller
     {
         $this->roleservice->assignPermissions($user, $request->validated('permissions'));
         return redirect()
-            ->route('admin.permission.index')
+            ->route('admin.permissions.index')
             ->with('success', 'Permissions assigned successfully');
     }
 
@@ -85,7 +85,7 @@ class PermissionController extends Controller
     {
         $this->roleservice->revokePermissions($user, $request->validated('permissions'));
         return redirect()
-            ->route('admin.permission.index')
+            ->route('admin.permissions.index')
             ->with('success', 'Permissions revoked successfully');
     }
 }
