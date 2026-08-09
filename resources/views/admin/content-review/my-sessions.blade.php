@@ -171,7 +171,7 @@
         <div style="min-height:100%; display:flex; align-items:center; justify-content:center; padding:24px;">
             <div @click.stop style="width:100%; max-width:480px; background:#EFFAFD; border-radius:22px; padding:28px;" dir="rtl">
                 <h3 style="margin:0 0 6px; font-family:'Poppins',sans-serif; font-weight:800; font-size:16px; color:#013C58;">طلب تعديل</h3>
-                <p style="margin:0 0 16px; font-size:12.5px; color:rgba(1,60,88,0.55);">اكتبي ملاحظاتك للمعلّم عن التعديلات المطلوبة (٥ أحرف على الأقل).</p>
+                <p style="margin:0 0 16px; font-size:12.5px; color:rgba(1,60,88,0.55);">اكتب  ملاحظاتك للمعلّم عن التعديلات المطلوبة (٥ أحرف على الأقل).</p>
                 <form :action="'{{ url('admin/content-review/reviews') }}/' + changesReviewId + '/request-changes'" method="POST">
                     @csrf
                     <div style="border:1.5px solid rgba(0,83,122,0.14); border-radius:11px; background:#FBFEFF; margin-bottom:16px;">
