@@ -46,19 +46,21 @@
 
     $statusLabels = [
         'pending' => 'قيد الانتظار', 'in_review' => 'قيد المراجعة', 'changes_requested' => 'طلب تعديل',
-        'published' => 'منشور', 'closed' => 'مغلق', 'archived' => 'مؤرشف',
+        'approved' => 'معتمَد', 'published' => 'منشور', 'closed' => 'مغلق', 'archived' => 'مؤرشف',
     ];
     // Same soft palette used on the per-course lessons table
     $statusColors = [
         'pending'         => ['bg' => 'rgba(255,186,66,0.16)', 'fg' => '#8A5A00', 'dot' => '#F5A201'],
         'in_review'       => ['bg' => 'rgba(14,106,150,0.14)', 'fg' => '#0E6A96', 'dot' => '#0E6A96'],
         'changes_requested' => ['bg' => 'rgba(255,138,101,0.13)', 'fg' => '#C2591A', 'dot' => '#FF8A65'],
+        'approved'        => ['bg' => 'rgba(76,175,120,0.16)', 'fg' => '#2E7D55', 'dot' => '#4CAF78'],
         'published'       => ['bg' => 'rgba(76,175,120,0.16)', 'fg' => '#2E7D55', 'dot' => '#4CAF78'],
         'closed'          => ['bg' => 'rgba(1,60,88,0.07)', 'fg' => 'rgba(1,60,88,0.55)', 'dot' => '#013C58'],
         'archived'        => ['bg' => 'rgba(1,60,88,0.05)', 'fg' => 'rgba(1,60,88,0.4)', 'dot' => 'rgba(1,60,88,0.65)'],
     ];
-    $sc = $statusColors[$lessonModel->status] ?? $statusColors['pending'];
-    $canArchive = $lessonModel->status === 'published';
+    $lessonStatusVal = $lessonModel->status instanceof \BackedEnum ? $lessonModel->status->value : $lessonModel->status;
+    $sc = $statusColors[$lessonStatusVal] ?? $statusColors['pending'];
+    $canArchive = $lessonStatusVal === 'published';
     $hasStudents = $lessonModel->users()->exists();
     $videoUrl = $lessonModel->getFirstMediaUrl('videos');
 @endphp
@@ -88,7 +90,7 @@
                 <span style="display:inline-block; padding:6px 12px; border-radius:999px; background:rgba(0,83,122,0.06); color:#00537A; font-size:11px; font-weight:700; letter-spacing:0.5px; text-transform:uppercase;">{{ $level->name_ar }}</span>
             @endif
             <span style="display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:999px; background:{{ $sc['bg'] }}; color:{{ $sc['fg'] }}; font-size:12px; font-weight:700;">
-                <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:{{ $sc['dot'] }};"></span>{{ $statusLabels[$lessonModel->status] ?? $lessonModel->status }}
+                <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:{{ $sc['dot'] }};"></span>{{ $statusLabels[$lessonStatusVal] ?? $lessonStatusVal }}
             </span>
         </div>
 

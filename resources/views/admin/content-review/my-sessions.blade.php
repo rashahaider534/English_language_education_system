@@ -104,6 +104,9 @@
                 $historyRoute = $isLesson
                     ? route('admin.content-review.lessons.history', $reviewable->id)
                     : route('admin.content-review.tests.history', $reviewable->id);
+                $contentRoute = $isLesson
+                    ? route('lessons.show', $reviewable->id)
+                    : route('test.show', $reviewable->id);
             @endphp
             <div class="cr-row" style="display:flex; align-items:center; gap:18px; padding:18px 22px; border-radius:14px; background:rgba(0,83,122,0.03);">
                 <span style="display:inline-flex; padding:5px 11px; border-radius:999px; background:{{ $rc['bg'] }}; color:{{ $rc['fg'] }}; font-size:10.5px; font-weight:700; flex-shrink:0;">{{ $reviewStatusLabels[$rsVal] ?? $rsVal }}</span>
@@ -123,6 +126,10 @@
                 </div>
 
                 <div style="display:flex; gap:8px; flex-shrink:0;">
+                    <a href="{{ $contentRoute }}" title="عرض المحتوى" class="cr-action-btn" style="display:flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:10px; background:rgba(255,211,91,0.28); color:#8A5A00; text-decoration:none;">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </a>
+
                     <a href="{{ $historyRoute }}" title="السجل" class="cr-action-btn" style="display:flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:10px; background:rgba(0,83,122,0.07); color:#00537A; text-decoration:none;">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
                     </a>
