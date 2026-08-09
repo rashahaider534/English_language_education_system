@@ -123,6 +123,11 @@
                             <span style="font-size:11.5px; color:rgba(1,60,88,0.7); font-weight:600;">{{ $teacherName }}</span>
                         @endif
                     </div>
+                    @if ($rsVal === 'changes_requested' && $review->notes->isNotEmpty())
+                        <div style="margin-top:8px; background:rgba(255,138,101,0.1); border:1px solid rgba(255,138,101,0.25); border-radius:10px; padding:9px 12px;">
+                            <p style="margin:0; font-size:12px; color:#8A3A1A; line-height:1.6;">{{ $review->notes->first()->message }}</p>
+                        </div>
+                    @endif
                 </div>
 
                 <div style="display:flex; gap:8px; flex-shrink:0;">
