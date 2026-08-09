@@ -78,7 +78,7 @@ class AdminLevelExceptionService
                 'Level Exception Approved',
                 'Your request to access the level has been approved.',
                 [
-                    'level_exception_id' => $levelException->id,
+                    'level_exception' => $levelException,
                 ],
                 'level-exception-approved'
             );
@@ -108,7 +108,7 @@ class AdminLevelExceptionService
                 'Level Exception reject',
                  'Your request to access the level: ' . $levelException->requestedLevel->name_en . ' has been rejected.',
                 [
-                    'level_exception_id' => $levelException->id,
+                    'level_exception_id' => $levelException,
                 ],
                 'level-exception-reject'
             );
