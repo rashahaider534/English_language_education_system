@@ -58,7 +58,7 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
             </div>
             <div>
-                <p style="margin:0; font-size:11.5px; font-weight:700; letter-spacing:1.4px; text-transform:uppercase; color:rgba(168,232,249,0.8);">لوحتي</p>
+                <p style="margin:0; font-size:11.5px; font-weight:700; letter-spacing:1.4px; text-transform:uppercase; color:rgba(168,232,249,0.8);"></p>
                 <h1 style="margin:6px 0 0; font-family:'Poppins',sans-serif; font-weight:800; font-size:23px; color:#fff;">مراجعاتي الحالية</h1>
             </div>
         </div>
@@ -155,7 +155,7 @@
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
                 </div>
                 <div style="text-align:center;">
-                    <p style="margin:0; font-size:14.5px; font-weight:700; color:#013C58;">ما عندك مراجعات حاليًا</p>
+                    <p style="margin:0; font-size:14.5px; font-weight:700; color:#013C58;">لايوجد مراجعات حاليا</p>
                     <p style="margin:5px 0 0; font-size:12.5px; color:rgba(1,60,88,0.45);">استلمي محتوى من طابور المراجعة لتبدأ</p>
                 </div>
             </div>
