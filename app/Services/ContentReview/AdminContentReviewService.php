@@ -110,13 +110,13 @@ class AdminContentReviewService
 
             if (!$test) {
                 throw ValidationException::withMessages([
-                    'error' => 'This lesson has no associated test — data inconsistency.',
+                    'error' => 'هذا الدرس ليس له اختبار مرتبط به — خلل في البيانات.',
                 ]);
             }
 
             if ($lesson->status !== ContentStatus::PENDING || $test->status !== ContentStatus::PENDING) {
                 throw ValidationException::withMessages([
-                    'error' => 'This lesson is no longer available in the queue. It may have already been claimed.',
+                    'error' => 'هذا الدرس لم يعد متاحًا في الطابور، قد يكون تم استلامه مسبقًا.',
                 ]);
             }
 
@@ -149,7 +149,7 @@ class AdminContentReviewService
 
             if ($test->status !== ContentStatus::PENDING) {
                 throw ValidationException::withMessages([
-                    'error' => 'This test is no longer available in the queue.',
+                    'error' => 'هذا الاختبار لم يعد متاحًا في الطابور.',
                 ]);
             }
 
@@ -173,7 +173,7 @@ class AdminContentReviewService
 
             if ($test->status !== ContentStatus::DRAFT) {
                 throw ValidationException::withMessages([
-                    'error' => 'This test cannot be approved from its current status.',
+                    'error' => 'لا يمكن الموافقة على هذا الاختبار من حالته الحالية.',
                 ]);
             }
 
@@ -186,7 +186,7 @@ class AdminContentReviewService
 
             if ($existingApproved) {
                 throw ValidationException::withMessages([
-                    'error' => 'There is already an approved test you cant approve this test unless you handle the approved test.',
+                    'error' => 'يوجد اختبار آخر معتمَد بالفعل لنفس المحتوى، لا يمكن اعتماد هذا الاختبار قبل معالجة الاختبار المعتمَد الآخر.',
                 ]);
             }
 
@@ -195,7 +195,7 @@ class AdminContentReviewService
             $deletedQuestions = $questions->filter(fn ($q) => $q->trashed());
             if ($deletedQuestions->isNotEmpty()) {
                 throw ValidationException::withMessages([
-                    'error' => 'This test references question(s) that no longer exist. Please replace them.',
+                    'error' => 'هذا الاختبار يحتوي على سؤال (أو أكثر) لم يعد موجودًا، الرجاء استبداله.',
                     'deleted_question_ids' => $deletedQuestions->pluck('id'),
                 ]);
             }
@@ -203,7 +203,7 @@ class AdminContentReviewService
             $outdatedQuestions = $questions->filter(fn ($q) => $q->nextVersion !== null);
             if ($outdatedQuestions->isNotEmpty()) {
                 throw ValidationException::withMessages([
-                    'error' => 'This test uses outdated question version(s). Please update them to the latest version before approving.',
+                    'error' => 'هذا الاختبار يستخدم نسخة قديمة من سؤال (أو أكثر)، الرجاء تحديثها لآخر نسخة قبل الاعتماد.',
                     'outdated_question_ids' => $outdatedQuestions->pluck('id'),
                 ]);
             }
@@ -231,7 +231,7 @@ class AdminContentReviewService
 
             if ($reviewable instanceof Test && !$this->testService->isTestStillEligible($reviewable)) {
                 throw ValidationException::withMessages([
-                    'error' => 'This test contains a question that is no longer eligible. Please return it for changes.',
+                    'error' => 'هذا الاختبار يحتوي على سؤال لم يعد مؤهلًا، الرجاء إعادته لطلب تعديل.',
                 ]);
             }
 
@@ -263,13 +263,13 @@ class AdminContentReviewService
     {
         if ($review->status !== ReviewStatus::IN_REVIEW) {
             throw ValidationException::withMessages([
-                'error' => 'This review is no longer awaiting your decision — it may have changed. Please refresh.',
+                'error' => 'هذه المراجعة لم تعد بانتظار قرارك، قد يكون وضعها تغيّر. الرجاء تحديث الصفحة.',
             ]);
         }
 
         if ($review->reviewer_id !== auth()->id()) {
             throw ValidationException::withMessages([
-                'error' => 'You are not the reviewer assigned to this task.',
+                'error' => 'أنتِ لستِ المراجع المكلَّف بهذه المهمة.',
             ]);
         }
     }
@@ -280,22 +280,21 @@ class AdminContentReviewService
 
             if ($review->status !== ReviewStatus::IN_REVIEW) {
                 throw ValidationException::withMessages([
-                    'error' => 'This review is not currently open.',
+                    'error' => 'هذه المراجعة غير مفتوحة حاليًا.',
                 ]);
             }
 
             if ($review->reviewer_id !== auth()->id()) {
                 throw ValidationException::withMessages([
-                    'error' => 'You are not the reviewer assigned to this task.',
+                    'error' => 'أنتِ لستِ المراجع المكلَّف بهذه المهمة.',
                 ]);
             }
 
             $sibling = $this->getSiblingReview($review);
-           // dd($sibling);
             if ($sibling) {
                 if (in_array($sibling->status, [ReviewStatus::APPROVED, ReviewStatus::CHANGES_REQUESTED])) {
                     throw ValidationException::withMessages([
-                        'error' => 'You have already decided on the related item. Please complete your review of this one as well before releasing.',
+                        'error' => 'لقد اتخذتِ قرارًا بالفعل بخصوص العنصر المرتبط، الرجاء إكمال مراجعة هذا العنصر أيضًا قبل التخلي عنه.',
                     ]);
                 }
 
@@ -342,7 +341,7 @@ class AdminContentReviewService
 
             if ($test->status !== ContentStatus::APPROVED) {
                 throw ValidationException::withMessages([
-                    'error' => 'This test cannot be published from its current status.',
+                    'error' => 'لا يمكن نشر هذا الاختبار من حالته الحالية.',
                 ]);
             }
 
@@ -357,7 +356,7 @@ class AdminContentReviewService
 
                 if (!$parentPublished) {
                     throw ValidationException::withMessages([
-                        'error' => 'Cannot publish a new test version before its parent content is published.',
+                        'error' => 'لا يمكن نشر نسخة جديدة من الاختبار قبل نشر المحتوى الأصلي المرتبط فيه.',
                     ]);
                 }
             }
@@ -421,7 +420,7 @@ class AdminContentReviewService
             $incompleteLessons = $lessons->where('status', '!=', ContentStatus::APPROVED);
             if ($incompleteLessons->isNotEmpty()) {
                 throw ValidationException::withMessages([
-                    'error' => 'Not all lessons are approved yet.',
+                    'error' => 'ليست كل دروس هذا المستوى معتمَدة بعد.',
                     'lesson_ids' => $incompleteLessons->pluck('id'),
                 ]);
             }
@@ -446,7 +445,7 @@ class AdminContentReviewService
 
             if ($lessonsMissingApprovedTest->isNotEmpty()) {
                 throw ValidationException::withMessages([
-                    'error' => 'Some lessons do not have an approved test.',
+                    'error' => 'بعض الدروس ليس لها اختبار معتمَد.',
                     'lesson_ids' => $lessonsMissingApprovedTest->values(),
                 ]);
             }
@@ -456,14 +455,14 @@ class AdminContentReviewService
 
             if ($coursesMissingApprovedTest->isNotEmpty()) {
                 throw ValidationException::withMessages([
-                    'error' => 'Some courses do not have an approved test.',
+                    'error' => 'بعض الكورسات ليس لها اختبار معتمَد.',
                     'course_ids' => $coursesMissingApprovedTest->values(),
                 ]);
             }
 
             if (!$levelTest) {
                 throw ValidationException::withMessages([
-                    'error' => 'This level does not have an approved test.',
+                    'error' => 'هذا المستوى ليس له اختبار معتمَد.',
                 ]);
             }
 
@@ -490,7 +489,7 @@ class AdminContentReviewService
 
             if ($lesson->status !== ContentStatus::APPROVED) {
                 throw ValidationException::withMessages([
-                    'error' => 'This lesson is not currently approved.',
+                    'error' => 'هذا الدرس ليس معتمَدًا حاليًا.',
                 ]);
             }
 

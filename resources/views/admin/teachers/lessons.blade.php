@@ -51,12 +51,15 @@
             </thead>
             <tbody>
                 @forelse ($lessons as $lesson)
-                    @php $sc = $statusColors[$lesson->status] ?? $statusColors['draft']; @endphp
+                    @php
+                        $lessonStatusVal = $lesson->status instanceof \BackedEnum ? $lesson->status->value : $lesson->status;
+                        $sc = $statusColors[$lessonStatusVal] ?? $statusColors['draft'];
+                    @endphp
                     <tr>
                         <td style="padding:14px 16px; border-bottom:1px solid rgba(0,83,122,0.05); font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; color:#00537A; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $lesson->title_ar ?? $lesson->title_en }}</td>
                         <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); font-size:12.5px; color:rgba(1,60,88,0.65); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $lesson->course->name_ar ?? $lesson->course->name_en ?? '—' }}</td>
                         <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); text-align:center;">
-                            <span style="display:inline-flex; padding:5px 11px; border-radius:999px; background:{{ $sc['bg'] }}; color:{{ $sc['fg'] }}; font-size:11px; font-weight:700;">{{ $statusLabels[$lesson->status] ?? $lesson->status }}</span>
+                            <span style="display:inline-flex; padding:5px 11px; border-radius:999px; background:{{ $sc['bg'] }}; color:{{ $sc['fg'] }}; font-size:11px; font-weight:700;">{{ $statusLabels[$lessonStatusVal] ?? $lessonStatusVal }}</span>
                         </td>
                         <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); text-align:center; font-size:12.5px; color:rgba(1,60,88,0.65);">{{ $lesson->created_at?->format('Y-m-d') }}</td>
                     </tr>

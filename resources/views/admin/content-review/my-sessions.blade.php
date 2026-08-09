@@ -58,7 +58,7 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
             </div>
             <div>
-                <p style="margin:0; font-size:11.5px; font-weight:700; letter-spacing:1.4px; text-transform:uppercase; color:rgba(168,232,249,0.8);">لوحتي</p>
+                <p style="margin:0; font-size:11.5px; font-weight:700; letter-spacing:1.4px; text-transform:uppercase; color:rgba(168,232,249,0.8);"></p>
                 <h1 style="margin:6px 0 0; font-family:'Poppins',sans-serif; font-weight:800; font-size:23px; color:#fff;">مراجعاتي الحالية</h1>
             </div>
         </div>
@@ -104,6 +104,9 @@
                 $historyRoute = $isLesson
                     ? route('admin.content-review.lessons.history', $reviewable->id)
                     : route('admin.content-review.tests.history', $reviewable->id);
+                $contentRoute = $isLesson
+                    ? route('lessons.show', $reviewable->id)
+                    : route('test.show', $reviewable->id);
             @endphp
             <div class="cr-row" style="display:flex; align-items:center; gap:18px; padding:18px 22px; border-radius:14px; background:rgba(0,83,122,0.03);">
                 <span style="display:inline-flex; padding:5px 11px; border-radius:999px; background:{{ $rc['bg'] }}; color:{{ $rc['fg'] }}; font-size:10.5px; font-weight:700; flex-shrink:0;">{{ $reviewStatusLabels[$rsVal] ?? $rsVal }}</span>
@@ -123,6 +126,10 @@
                 </div>
 
                 <div style="display:flex; gap:8px; flex-shrink:0;">
+                    <a href="{{ $contentRoute }}" title="عرض المحتوى" class="cr-action-btn" style="display:flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:10px; background:rgba(255,211,91,0.28); color:#8A5A00; text-decoration:none;">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </a>
+
                     <a href="{{ $historyRoute }}" title="السجل" class="cr-action-btn" style="display:flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:10px; background:rgba(0,83,122,0.07); color:#00537A; text-decoration:none;">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
                     </a>
@@ -155,7 +162,7 @@
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
                 </div>
                 <div style="text-align:center;">
-                    <p style="margin:0; font-size:14.5px; font-weight:700; color:#013C58;">ما عندك مراجعات حاليًا</p>
+                    <p style="margin:0; font-size:14.5px; font-weight:700; color:#013C58;">لايوجد مراجعات حاليا</p>
                     <p style="margin:5px 0 0; font-size:12.5px; color:rgba(1,60,88,0.45);">استلمي محتوى من طابور المراجعة لتبدأ</p>
                 </div>
             </div>
@@ -171,7 +178,7 @@
         <div style="min-height:100%; display:flex; align-items:center; justify-content:center; padding:24px;">
             <div @click.stop style="width:100%; max-width:480px; background:#EFFAFD; border-radius:22px; padding:28px;" dir="rtl">
                 <h3 style="margin:0 0 6px; font-family:'Poppins',sans-serif; font-weight:800; font-size:16px; color:#013C58;">طلب تعديل</h3>
-                <p style="margin:0 0 16px; font-size:12.5px; color:rgba(1,60,88,0.55);">اكتبي ملاحظاتك للمعلّم عن التعديلات المطلوبة (٥ أحرف على الأقل).</p>
+                <p style="margin:0 0 16px; font-size:12.5px; color:rgba(1,60,88,0.55);">اكتب  ملاحظاتك للمعلّم عن التعديلات المطلوبة (٥ أحرف على الأقل).</p>
                 <form :action="'{{ url('admin/content-review/reviews') }}/' + changesReviewId + '/request-changes'" method="POST">
                     @csrf
                     <div style="border:1.5px solid rgba(0,83,122,0.14); border-radius:11px; background:#FBFEFF; margin-bottom:16px;">

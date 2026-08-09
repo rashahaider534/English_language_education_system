@@ -57,7 +57,7 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::patch('/levelexceptions/{levelException}/start', [LevelExceptionController::class, 'startReview'])->name('levelException.review');
     Route::patch('/levelexceptions/{levelException}/approve', [LevelExceptionController::class, 'approve'])->name('levelException.approve');
     Route::patch('/levelexceptions/{levelException}/reject', [LevelExceptionController::class, 'reject'])->name('levelException.reject');
-    
+
     //permissions route
     Route::get('/permission/{user}/showadmin', [PermissionController::class, 'getAdmin'])->name('admin.permission.show');
     Route::get('/permission/admins/create', [PermissionController::class, 'createadmin'])->name('admins.permission.create');
@@ -274,20 +274,23 @@ Route::middleware(['auth:web'])->group(function () {
             Route::post('reviews/{review}/request-changes', [AdminContentReviewController::class, 'requestChanges'])->name('reviews.request-changes');
             Route::post('reviews/{review}/release', [AdminContentReviewController::class, 'release'])->name('reviews.release');
 
-            Route::post('tests/{test}/approve-directly', [AdminContentReviewController::class, 'approveDirectly'])->name('tests.approve-directly');
-            Route::post('tests/{test}/publish', [AdminContentReviewController::class, 'publishTest'])->name('tests.publish');
-
             Route::post('lessons/{lesson}/revert', [AdminContentReviewController::class, 'revertApprovedLesson'])->name('lessons.revert');
 
             Route::get('lessons/{lesson}/history', [AdminContentReviewController::class, 'lessonHistory'])->name('lessons.history');
             Route::get('tests/{test}/history', [AdminContentReviewController::class, 'testHistory'])->name('tests.history');
 
-            Route::post('levels/{level}/publish', [AdminContentReviewController::class, 'publishLevel'])->name('levels.publish');
+            Route::middleware('permission:publish_levels')->group(function () {
+                Route::post('tests/{test}/approve-directly', [AdminContentReviewController::class, 'approveDirectly'])->name('tests.approve-directly');
+                Route::post('tests/{test}/publish', [AdminContentReviewController::class, 'publishTest'])->name('tests.publish');
+
+                Route::post('levels/{level}/publish', [AdminContentReviewController::class, 'publishLevel'])->name('levels.publish');
+
+            });
         });
-});
 
 // Registered last so it doesn't shadow the more specific tests/placement
 // and levels/{level}/tests/... routes above (both match tests/{test}-shaped URIs).
-Route::middleware(['auth', 'role:admin|super-admin'])->get('tests/{test}', [TestController::class, 'show'])->name('test.show');
+    Route::middleware(['auth', 'role:admin|super-admin'])->get('tests/{test}', [TestController::class, 'show'])->name('test.show');
 
-require __DIR__ . '/auth.php';
+    require __DIR__ . '/auth.php';
+});

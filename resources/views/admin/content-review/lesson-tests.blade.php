@@ -59,7 +59,7 @@
                 <span style="font-size:12px; color:rgba(1,60,88,0.5); flex-shrink:0;">{{ $test->created_at?->format('Y-m-d') }}</span>
             </a>
         @empty
-            <p style="text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:13px; padding:50px 0;">ما في اختبارات لهالدرس لسا</p>
+            <p style="text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:13px; padding:50px 0;">لايوجد اختبارات لهذا الدرس </p>
         @endforelse
     </div>
 </div>
