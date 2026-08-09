@@ -32,7 +32,7 @@ class ContentReviewService
 
             if ($draftTests->count() > 1) {
                 throw ValidationException::withMessages([
-                    'error' => 'There is more than one draft test for this lesson Please decide on one and delete the rest.',
+                    'error' => 'يوجد أكثر من مسودة اختبار لهذا الدرس، الرجاء تحديد واحدة وحذف الباقي.',
                     'draft_test_ids' => $draftTests->pluck('id'),
                 ]);
             }
@@ -41,13 +41,13 @@ class ContentReviewService
 
             if (!$test) {
                 throw ValidationException::withMessages([
-                    'error' => 'This lesson has no associated test — data inconsistency.',
+                    'error' => 'هذا الدرس ليس له اختبار مرتبط به — خلل في البيانات.',
                 ]);
             }
 
             if ($lesson->status !== ContentStatus::DRAFT->value) {
                 throw ValidationException::withMessages([
-                    'error' => 'This lesson cannot be submitted for review from its current status.',
+                    'error' => 'لا يمكن إرسال هذا الدرس للمراجعة من حالته الحالية.',
                 ]);
             }
 
@@ -68,7 +68,7 @@ class ContentReviewService
 
             if ($lesson->status !== ContentStatus::CHANGES_REQUESTED->value) {
                 throw ValidationException::withMessages([
-                    'error' => 'This lesson is not awaiting resubmission.',
+                    'error' => 'هذا الدرس ليس بانتظار إعادة إرسال.',
                 ]);
             }
 
@@ -86,7 +86,7 @@ class ContentReviewService
     {
         if (!$lesson->getFirstMedia('videos')) {
             throw ValidationException::withMessages([
-                'error' => 'This lesson must have a video uploaded before submission.',
+                'error' => 'يجب رفع فيديو لهذا الدرس قبل الإرسال.',
             ]);
         }
     }
@@ -98,7 +98,7 @@ class ContentReviewService
 
             if (!in_array($test->status, [ContentStatus::DRAFT, ContentStatus::CHANGES_REQUESTED])) {
                 throw ValidationException::withMessages([
-                    'error' => 'This test cannot be submitted for review from its current status.',
+                    'error' => 'لا يمكن إرسال هذا الاختبار للمراجعة من حالته الحالية.',
                 ]);
             }
             $this->validateTestForSubmission($test);
@@ -116,7 +116,7 @@ class ContentReviewService
 
             if ($test->status !== ContentStatus::CHANGES_REQUESTED) {
                 throw ValidationException::withMessages([
-                    'error' => 'This test is not awaiting resubmission.',
+                    'error' => 'هذا الاختبار ليس بانتظار إعادة إرسال.',
                 ]);
             }
 
@@ -153,7 +153,7 @@ class ContentReviewService
         $deletedQuestions = $questions->filter(fn ($q) => $q->trashed());
         if ($deletedQuestions->isNotEmpty()) {
             throw ValidationException::withMessages([
-                'error' => 'This test references question(s) that no longer exist. Please replace them.',
+                'error' => 'هذا الاختبار يحتوي على سؤال (أو أكثر) لم يعد موجودًا، الرجاء استبداله.',
                 'deleted_question_ids' => $deletedQuestions->pluck('id'),
             ]);
         }
@@ -161,7 +161,7 @@ class ContentReviewService
         $outdatedQuestions = $questions->filter(fn ($q) => $q->nextVersion !== null);
         if ($outdatedQuestions->isNotEmpty()) {
             throw ValidationException::withMessages([
-                'error' => 'This test uses outdated question version(s). Please update them to the latest version before submitting.',
+                'error' => 'هذا الاختبار يستخدم نسخة قديمة من سؤال (أو أكثر)، الرجاء تحديثها لآخر نسخة قبل الإرسال.',
                 'outdated_question_ids' => $outdatedQuestions->pluck('id'),
             ]);
         }
@@ -171,16 +171,6 @@ class ContentReviewService
 
     }
 
-//    public function reviewHistory(Model $reviewable)
-//    {
-//        return $reviewable->reviews()
-//            ->with([
-//                'reviewer:id,first_name,last_name',
-//                'notes' => fn ($q) => $q->latest(),
-//            ])
-//            ->orderBy('claimed_at')
-//            ->get();
-//   }
     public function reviewHistory(Model $reviewable)
     {
         $reviews = $reviewable->reviews()
