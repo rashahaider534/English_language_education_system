@@ -65,7 +65,7 @@
     $videoUrl = $lessonModel->getFirstMediaUrl('videos');
 @endphp
 <div
-    x-data="{ archiveModalOpen: false, blockModalOpen: false, blockTarget: null, deleteModalOpen: false, deleteTarget: null, deleteError: null, deleting: false }"
+    x-data="{ archiveModalOpen: false, blockModalOpen: false, blockTarget: null, deleteModalOpen: false, deleteTarget: null, deleteError: null, deleting: false, revertModalOpen: false, revertMessage: '' }"
     class="-mx-4 -my-6 px-4 py-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
     style="background:#DFF2F9; font-family:'Tajawal',sans-serif; min-height:100vh;" dir="rtl"
 >
@@ -73,6 +73,11 @@
         <div style="display:flex; align-items:center; gap:10px; background:rgba(168,232,249,0.18); color:#00537A; border:1px solid rgba(0,83,122,0.14); border-radius:14px; padding:14px 18px; margin-bottom:20px; font-size:13.5px; font-weight:600;">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><path d="M22 4 12 14.01l-3-3"></path></svg>
             {{ session('success') }}
+        </div>
+    @endif
+    @if ($errors->any())
+        <div style="display:flex; align-items:center; gap:10px; background:rgba(255,138,101,0.14); color:#C2591A; border:1px solid rgba(255,138,101,0.3); border-radius:14px; padding:14px 18px; margin-bottom:20px; font-size:13.5px; font-weight:600;">
+            {{ $errors->first() }}
         </div>
     @endif
 
@@ -273,6 +278,13 @@
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"></rect><path d="M8 2v4M16 2v4M3 10h18"></path></svg>
                 كل اختبارات الدرس
             </a>
+            @if ($lessonStatusVal === 'approved')
+                <button type="button" @click="revertModalOpen = true; revertMessage = ''"
+                    style="display:inline-flex; align-items:center; gap:8px; padding:11px 22px; border-radius:11px; border:none; cursor:pointer; background:rgba(255,138,101,0.16); color:#C2591A; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"></path></svg>
+                    طلب تعديل رغم الاعتماد
+                </button>
+            @endif
             <button type="button"
                 class="show-archive-btn"
                 @if($canArchive) @click="archiveModalOpen = true" @else disabled @endif
@@ -308,6 +320,33 @@
                     <button type="submit" style="width:100%; padding:11px; border-radius:11px; border:none; background:linear-gradient(90deg,#F5A201,#FFBA42); color:#013C58; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; cursor:pointer;">تأكيد</button>
                 </form>
             </div>
+        </div>
+      </div>
+    </div>
+
+    {{-- ============ REVERT APPROVED LESSON MODAL ============ --}}
+    <div x-show="revertModalOpen" x-cloak
+         x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+         style="position:fixed; inset:0; z-index:50; background:rgba(1,42,63,0.5); backdrop-filter:blur(4px); overflow-y:auto;"
+         @click="revertModalOpen = false">
+      <div style="min-height:100%; display:flex; align-items:center; justify-content:center; padding:24px;">
+        <div @click.stop
+             x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+             style="width:100%; max-width:440px; background:#EFFAFD; border-radius:22px; padding:30px 26px; box-shadow:0 44px 100px rgba(1,42,63,0.4);" dir="rtl">
+            <h3 style="margin:0 0 6px; font-family:'Poppins',sans-serif; font-weight:800; font-size:16px; color:#013C58;">طلب تعديل على درس معتمَد</h3>
+            <p style="margin:0 0 16px; font-size:12.5px; color:rgba(1,60,88,0.55); line-height:1.7;">هذا الدرس تمت الموافقة عليه لكن يمكنك تقديم طلب تعديل عليه (٥ أحرف على الأقل).</p>
+            <form action="{{ route('admin.content-review.lessons.revert', $lessonModel) }}" method="POST">
+                @csrf
+                <div style="border:1.5px solid rgba(0,83,122,0.14); border-radius:11px; background:#FBFEFF; margin-bottom:16px;">
+                    <textarea name="message" x-model="revertMessage" rows="4" required minlength="5" placeholder="مثال: في معلومة غلط بالدقيقة الثالثة، الرجاء تصحيحها." style="width:100%; background:transparent; border:none; outline:none; padding:12px 14px; font-size:13px; color:#013C58; font-family:'Tajawal',sans-serif; resize:vertical;"></textarea>
+                </div>
+                <div style="display:flex; gap:10px; justify-content:flex-end;">
+                    <button type="button" @click="revertModalOpen = false" style="padding:11px 20px; border-radius:10px; border:1.5px solid rgba(0,83,122,0.16); background:transparent; color:#00537A; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; cursor:pointer;">إلغاء</button>
+                    <button type="submit" style="padding:11px 24px; border-radius:10px; border:none; background:linear-gradient(90deg,#F5A201,#FFBA42); color:#013C58; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; cursor:pointer;">إرسال طلب التعديل</button>
+                </div>
+            </form>
         </div>
       </div>
     </div>

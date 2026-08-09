@@ -43,6 +43,11 @@
             {{ session('success') }}
         </div>
     @endif
+    @if ($errors->any())
+        <div style="display:flex; align-items:center; gap:10px; background:rgba(255,138,101,0.14); color:#C2591A; border:1px solid rgba(255,138,101,0.3); border-radius:14px; padding:14px 18px; margin-bottom:20px; font-size:13.5px; font-weight:600;">
+            {{ $errors->first() }}
+        </div>
+    @endif
 
     {{-- ============ HERO ============ --}}
     <div class="t-hero" style="position:relative; overflow:hidden; background:linear-gradient(135deg,#013C58 0%, #00537A 60%, #0E6A96 130%); border-radius:26px; padding:26px 32px 24px; margin-bottom:22px; box-shadow:0 24px 55px rgba(1,60,88,0.22);">
@@ -118,6 +123,14 @@
                                     <span title="ما فيك تعدلي اختبار مؤرشف أو مغلق" style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; background:rgba(1,60,88,0.05); color:rgba(1,60,88,0.25);">
                                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
                                     </span>
+                                @endif
+                                @if ($statusVal === 'draft' && auth()->user()->can('publish_levels'))
+                                    <form action="{{ route('admin.content-review.tests.approve-directly', $test) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" title="موافقة مباشرة" class="t-icon-btn" style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; border:none; background:rgba(76,175,120,0.16); color:#2E7D55; cursor:pointer;">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+                                        </button>
+                                    </form>
                                 @endif
                             </div>
                         </td>

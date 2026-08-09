@@ -423,7 +423,7 @@ function levelTestForm(pool, initSelected) {
             .then(async r => {
                 if (!r.ok) {
                     const err = await r.json().catch(() => null);
-                    const firstError = err?.errors ? Object.values(err.errors)[0][0] : 'صار خطأ، تأكدي من تعبئة كل الحقول المطلوبة.';
+                    const firstError = err?.errors ? Object.values(err.errors)[0][0] : 'يوجد خطا الرجاء التاكد من الحقول ';
                     throw new Error(firstError);
                 }
                 return r.json();

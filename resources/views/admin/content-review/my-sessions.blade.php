@@ -168,7 +168,7 @@
                 </div>
                 <div style="text-align:center;">
                     <p style="margin:0; font-size:14.5px; font-weight:700; color:#013C58;">لايوجد مراجعات حاليا</p>
-                    <p style="margin:5px 0 0; font-size:12.5px; color:rgba(1,60,88,0.45);">استلمي محتوى من طابور المراجعة لتبدأ</p>
+                    <p style="margin:5px 0 0; font-size:12.5px; color:rgba(1,60,88,0.45);">  </p>
                 </div>
             </div>
         @endforelse

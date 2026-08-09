@@ -44,6 +44,11 @@
             {{ session('success') }}
         </div>
     @endif
+    @if ($errors->any())
+        <div style="display:flex; align-items:center; gap:10px; background:rgba(255,138,101,0.14); color:#C2591A; border:1px solid rgba(255,138,101,0.3); border-radius:14px; padding:14px 18px; margin-bottom:20px; font-size:13.5px; font-weight:600;">
+            {{ $errors->first() }}
+        </div>
+    @endif
 
     <div style="margin-bottom:18px;">
         <a href="{{ route('levels.index') }}" style="display:inline-flex; align-items:center; gap:6px; color:#00537A; font-size:13px; font-weight:600; text-decoration:none;">
@@ -124,12 +129,20 @@
                                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"></path></svg>
                                     </a>
                                 @endunless
+                                @if ($statusVal === 'draft' && auth()->user()->can('publish_levels'))
+                                    <form action="{{ route('admin.content-review.tests.approve-directly', $test) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" title="موافقة مباشرة" class="t-icon-btn" style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; border:none; background:rgba(76,175,120,0.16); color:#2E7D55; cursor:pointer;">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+                                        </button>
+                                    </form>
+                                @endif
                             </div>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" style="padding:60px 20px; text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:14px;">لا يوجد اختبارلهذا المستوى 
+                        <td colspan="5" style="padding:60px 20px; text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:14px;">لا يوجد اختبارلهذا المستوى
 </td>
                     </tr>
                 @endforelse

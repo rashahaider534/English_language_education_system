@@ -78,11 +78,11 @@
         </div>
     @endif
 
-    {{-- generic error flash (e.g. archive rejected by the backend for a reason the UI doesn't already explain) --}}
-    @if ($errors->has('level'))
+    {{-- generic error flash (e.g. archive/publish rejected by the backend for a reason the UI doesn't already explain) --}}
+    @if ($errors->has('level') || $errors->has('error'))
         <div style="display:flex; align-items:center; gap:10px; background:rgba(255,138,101,0.14); color:#C2591A; border:1px solid rgba(255,138,101,0.3); border-radius:14px; padding:14px 18px; margin-bottom:20px; font-size:13.5px; font-weight:600;">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg>
-            {{ $errors->first('level') }}
+            {{ $errors->first('level') ?: $errors->first('error') }}
         </div>
     @endif
 
@@ -284,6 +284,16 @@
                                        style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; background:rgba(255,211,91,0.16); color:#8A5A00; text-decoration:none;">
                                         <svg width="15.5" height="15.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"></rect><path d="M8 2v4M16 2v4M3 10h18"></path></svg>
                                     </a>
+                                @endcan
+                                @can('publish_levels', 'web')
+                                    @if ($level->status === 'pending')
+                                        <form action="{{ route('admin.content-review.levels.publish', $level) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" title="نشر المستوى" style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; border:none; background:rgba(76,175,120,0.16); color:#2E7D55; cursor:pointer;">
+                                                <svg width="15.5" height="15.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"></path><path d="m5 12 7-7 7 7"></path></svg>
+                                            </button>
+                                        </form>
+                                    @endif
                                 @endcan
                                 <button type="button" title="{{ $canEdit ? 'تعديل' : 'ما فيك تعدّلي هالمستوى لأنه مش من إنشائك' }}"
                                    @if($canEdit) @click="openEdit({{ Illuminate\Support\Js::from([

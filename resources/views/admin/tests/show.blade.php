@@ -41,16 +41,62 @@
     $sc = $statusColors[$statusVal] ?? $statusColors['draft'];
     $orderedQuestions = $test->questions->sortBy(fn($q) => $q->pivot->order)->values();
     $totalScore = $orderedQuestions->sum('score');
-    $canViewQuestions = auth()->user()->hasPermissionTo('manage_placement_questions', 'web');
+    $canViewQuestions = auth()->user()->can('manage_placement_questions');
+    $canPublish = auth()->user()->can('publish_levels');
+    $isNewVersion = !is_null($test->previous_test_id);
+    $showPublishButton = $isNewVersion && $statusVal === 'approved';
 @endphp
-<div x-data="{ toastVisible: false, toastMessage: '' }" class="-mx-4 -my-6 px-4 py-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8" style="background:#DFF2F9; font-family:'Tajawal',sans-serif; min-height:100vh;" dir="rtl">
+<div x-data="{
+        toastVisible: false,
+        toastMessage: '',
+        submitGuarded(event, deniedMessage) {
+            const form = event.target;
+            fetch(form.action, { method: 'POST', body: new FormData(form) }).then(r => {
+                if (r.status === 403) {
+                    this.toastMessage = deniedMessage;
+                    this.toastVisible = true;
+                    setTimeout(() => this.toastVisible = false, 3000);
+                } else if (r.ok) {
+                    window.location.href = r.url || window.location.href;
+                } else {
+                    this.toastMessage = 'صار خطأ غير متوقع، حاولي مرة تانية';
+                    this.toastVisible = true;
+                    setTimeout(() => this.toastVisible = false, 3000);
+                }
+            });
+        }
+    }" class="-mx-4 -my-6 px-4 py-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8" style="background:#DFF2F9; font-family:'Tajawal',sans-serif; min-height:100vh;" dir="rtl">
 
-    <div style="margin-bottom:18px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; flex-wrap:wrap; gap:12px;">
         <a href="{{ url()->previous() }}" style="display:inline-flex; align-items:center; gap:6px; color:#00537A; font-size:13px; font-weight:600; text-decoration:none;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 19-7-7 7-7"></path></svg>
             رجوع
         </a>
+
+        @if ($showPublishButton)
+            @if ($canPublish)
+                <form @submit.prevent="submitGuarded($event, 'لا تملك صلاحية كافية لنشر الاختبار')" action="{{ route('admin.content-review.tests.publish', $test) }}" method="POST">
+                    @csrf
+                    <button type="submit" style="display:inline-flex; align-items:center; gap:8px; padding:11px 22px; border-radius:11px; border:none; background:linear-gradient(90deg,#F5A201,#FFBA42); color:#013C58; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; cursor:pointer;">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"></path><path d="m5 12 7-7 7 7"></path></svg>
+                        نشر هذه النسخة من الاختبار
+                    </button>
+                </form>
+            @else
+                <button type="button" @click="toastMessage = 'لا تملك صلاحية كافية لنشر الاختبار'; toastVisible = true; setTimeout(() => toastVisible = false, 3000)" style="display:inline-flex; align-items:center; gap:8px; padding:11px 22px; border-radius:11px; border:none; background:rgba(245,162,1,0.15); color:#8A5A00; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; cursor:pointer;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"></path><path d="m5 12 7-7 7 7"></path></svg>
+                    نشر هذه النسخة من الاختبار
+                </button>
+            @endif
+        @endif
     </div>
+
+    @if ($isNewVersion && $statusVal !== 'approved' && $statusVal !== 'published' && $statusVal !== 'archived')
+        <div style="display:flex; align-items:center; gap:10px; background:rgba(14,106,150,0.1); color:#0E6A96; border:1px solid rgba(14,106,150,0.25); border-radius:14px; padding:12px 18px; margin-bottom:22px; font-size:12.5px; font-weight:600;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4M12 8h.01"></path></svg>
+            هاي نسخة جديدة من اختبار سابق — لازم توصل لحالة "معتمَد" أول قبل ما تقدري تنشريها.
+        </div>
+    @endif
 
     {{-- ============ HERO ============ --}}
     <div style="position:relative; overflow:hidden; background:linear-gradient(135deg,#013C58 0%, #00537A 60%, #0E6A96 130%); border-radius:26px; padding:26px 32px 24px; margin-bottom:22px; box-shadow:0 24px 55px rgba(1,60,88,0.22);">
