@@ -77,9 +77,9 @@
     @endif
 
     <div style="margin-bottom:18px;">
-        <a href="{{ url()->previous() }}" style="display:inline-flex; align-items:center; gap:6px; color:#00537A; font-size:13px; font-weight:600; text-decoration:none;">
+        <a href="{{ route('lessons.index', $course) }}" style="display:inline-flex; align-items:center; gap:6px; color:#00537A; font-size:13px; font-weight:600; text-decoration:none;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 19-7-7 7-7"></path></svg>
-            رجوع
+            العودة لدروس {{ $course->name_ar }}
         </a>
     </div>
 
@@ -265,9 +265,9 @@
     <div style="height:76px;"></div>
     <template x-teleport="body">
         <div class="show-actionbar" dir="rtl" style="position:fixed; bottom:20px; right:24px; z-index:9999; display:flex; align-items:center; justify-content:space-between; gap:14px; background:#EFFAFD; border:1.5px solid rgba(0,83,122,0.16); border-radius:18px; padding:14px 18px; box-shadow:0 20px 44px rgba(1,60,88,0.22); font-family:'Tajawal',sans-serif;">
-            <a href="{{ url()->previous() }}" class="show-back-btn" style="display:inline-flex; align-items:center; gap:7px; padding:11px 18px; border-radius:11px; color:#013C58; font-family:'Poppins',sans-serif; font-weight:600; font-size:13px; text-decoration:none;">
+            <a href="{{ route('lessons.index', $course) }}" class="show-back-btn" style="display:inline-flex; align-items:center; gap:7px; padding:11px 18px; border-radius:11px; color:#013C58; font-family:'Poppins',sans-serif; font-weight:600; font-size:13px; text-decoration:none;">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 19-7-7 7-7"></path></svg>
-                رجوع
+                رجوع للدروس
             </a>
             <a href="{{ route('lessons.tests.show', $lessonModel) }}" class="show-back-btn" style="display:inline-flex; align-items:center; gap:7px; padding:11px 18px; border-radius:11px; color:#00537A; background:rgba(168,232,249,0.22); font-family:'Poppins',sans-serif; font-weight:600; font-size:13px; text-decoration:none;">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"></rect><path d="M8 2v4M16 2v4M3 10h18"></path></svg>

@@ -41,8 +41,9 @@
     $sc = $statusColors[$statusVal] ?? $statusColors['draft'];
     $orderedQuestions = $test->questions->sortBy(fn($q) => $q->pivot->order)->values();
     $totalScore = $orderedQuestions->sum('score');
+    $canViewQuestions = auth()->user()->hasPermissionTo('manage_placement_questions', 'web');
 @endphp
-<div class="-mx-4 -my-6 px-4 py-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8" style="background:#DFF2F9; font-family:'Tajawal',sans-serif; min-height:100vh;" dir="rtl">
+<div x-data="{ toastVisible: false, toastMessage: '' }" class="-mx-4 -my-6 px-4 py-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8" style="background:#DFF2F9; font-family:'Tajawal',sans-serif; min-height:100vh;" dir="rtl">
 
     <div style="margin-bottom:18px;">
         <a href="{{ url()->previous() }}" style="display:inline-flex; align-items:center; gap:6px; color:#00537A; font-size:13px; font-weight:600; text-decoration:none;">
@@ -106,7 +107,11 @@
         <div style="display:flex; flex-direction:column; gap:10px;">
             @forelse ($orderedQuestions as $q)
                 @php $qType = $q->type instanceof \BackedEnum ? $q->type->value : $q->type; @endphp
-                <a href="{{ route('questions.show', $q) }}" class="t-q-row" style="display:flex; align-items:center; gap:14px; padding:13px 16px; border-radius:13px; background:rgba(0,83,122,0.03); text-decoration:none;">
+                @if ($canViewQuestions)
+                    <a href="{{ route('questions.show', $q) }}" class="t-q-row" style="display:flex; align-items:center; gap:14px; padding:13px 16px; border-radius:13px; background:rgba(0,83,122,0.03); text-decoration:none; cursor:pointer;">
+                @else
+                    <div @click="toastMessage = 'لا تملك صلاحية كافية لعرض تفاصيل الأسئلة'; toastVisible = true; setTimeout(() => toastVisible = false, 3000)" class="t-q-row" style="display:flex; align-items:center; gap:14px; padding:13px 16px; border-radius:13px; background:rgba(0,83,122,0.03); cursor:pointer;">
+                @endif
                     <span style="display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:9px; background:#00537A; color:#fff; font-family:'Poppins',sans-serif; font-weight:700; font-size:12.5px; flex-shrink:0;">{{ $q->pivot->order }}</span>
                     <div style="flex:1; min-width:0;">
                         <p style="margin:0; font-size:13.5px; font-weight:700; color:#013C58; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $q->title_question_en }}</p>
@@ -115,11 +120,20 @@
                     <span style="display:inline-flex; padding:5px 11px; border-radius:999px; background:rgba(14,106,150,0.12); color:#0E6A96; font-size:11px; font-weight:700; flex-shrink:0;">{{ $typeLabels[$qType] ?? $qType }}</span>
                     <span style="display:inline-flex; padding:5px 11px; border-radius:999px; background:rgba(255,186,66,0.16); color:#8A5A00; font-size:11px; font-weight:700; flex-shrink:0;">{{ $difficultyLabels[$q->difficulty] ?? $q->difficulty }}</span>
                     <span style="font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; color:rgba(1,60,88,0.7); flex-shrink:0;">{{ $q->score }} نقطة</span>
-                </a>
+                @if ($canViewQuestions)
+                    </a>
+                @else
+                    </div>
+                @endif
             @empty
                 <p style="text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:13px; padding:30px 0;">لايوجد اسئلة داخل هذا الاختبار </p>
             @endforelse
         </div>
+    </div>
+
+    <div x-show="toastVisible" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-3" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" style="position:fixed; bottom:24px; right:24px; z-index:9999; display:flex; align-items:center; gap:10px; background:#013C58; color:#fff; padding:14px 20px; border-radius:14px; box-shadow:0 16px 32px rgba(1,60,88,0.3); font-size:13px; font-weight:600;">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#FFD35B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <span x-text="toastMessage"></span>
     </div>
 </div>
 @endsection
