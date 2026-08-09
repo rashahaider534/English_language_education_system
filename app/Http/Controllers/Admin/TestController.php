@@ -30,6 +30,7 @@ class TestController extends Controller
     public function show(Test $test):View
     {
         $test = $this->testService->show($test);
+        $test->load('testable');
         $isEligible = $this->testService->isTestStillEligible($test);
         return view('admin.tests.show', [
             'test' => $test,
