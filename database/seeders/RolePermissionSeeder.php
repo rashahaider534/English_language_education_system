@@ -30,7 +30,7 @@ class RolePermissionSeeder extends Seeder
                 'publish_levels',
             ])
             ->get();
-
+        $admin->givePermissionTo($permissions);
         $superAdmin->givePermissionTo($permissions);
     }
 }

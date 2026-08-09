@@ -45,7 +45,7 @@ class ContentReviewService
                 ]);
             }
 
-            if ($lesson->status !== ContentStatus::DRAFT->value) {
+            if ($lesson->status !== ContentStatus::DRAFT) {
                 throw ValidationException::withMessages([
                     'error' => 'لا يمكن إرسال هذا الدرس للمراجعة من حالته الحالية.',
                 ]);
@@ -66,7 +66,7 @@ class ContentReviewService
         return DB::transaction(function () use ($lesson) {
             $lesson = Lesson::where('id', $lesson->id)->lockForUpdate()->first();
 
-            if ($lesson->status !== ContentStatus::CHANGES_REQUESTED->value) {
+            if ($lesson->status !== ContentStatus::CHANGES_REQUESTED) {
                 throw ValidationException::withMessages([
                     'error' => 'هذا الدرس ليس بانتظار إعادة إرسال.',
                 ]);
@@ -96,7 +96,7 @@ class ContentReviewService
         return DB::transaction(function () use ($test) {
             $test = Test::where('id', $test->id)->lockForUpdate()->first();
 
-            if (!in_array($test->status, [ContentStatus::DRAFT, ContentStatus::CHANGES_REQUESTED])) {
+            if ($test->status !== ContentStatus::DRAFT) {
                 throw ValidationException::withMessages([
                     'error' => 'لا يمكن إرسال هذا الاختبار للمراجعة من حالته الحالية.',
                 ]);
