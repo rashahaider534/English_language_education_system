@@ -358,7 +358,7 @@
             @empty
                 <p style="text-align:center; color:var(--muted-soft); font-size:12.5px; padding:30px 0;">ما في دروس بانتظار المراجعة</p>
             @endforelse
-            <a href="{{ route('lessons.pending') }}" class="db2-footer-link">
+            <a href="{{ route('admin.content-review.pending-queue') }}" class="db2-footer-link">
                 عرض جميع الدروس
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 19-7-7 7-7"></path></svg>
             </a>

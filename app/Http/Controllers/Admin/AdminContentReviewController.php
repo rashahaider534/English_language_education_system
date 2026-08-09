@@ -155,19 +155,19 @@ class AdminContentReviewController extends Controller
     {
         $testVersions = $this->adminTestService->LessontestVersions($lesson);
 
-        return view('admin.lesson-show', [
+        return view('admin.content-review.lesson-tests', [
+            'lesson' => $lesson,
             'testVersions' => $testVersions,
         ]);
     }
-    public function showCourseTestVersions(Course $course)
-    //: View
+    public function showCourseTestVersions(Course $course): View
     {
         $testVersions = $this->adminTestService->CoursetestVersions($course);
 
-//        return view('admin.course-show', [
-//            'testVersions' => $testVersions,
-//        ]);
-        return response()->json($testVersions);
+        return view('admin.content-review.course-tests', [
+            'course' => $course,
+            'testVersions' => $testVersions,
+        ]);
     }
 
     /**

@@ -28,11 +28,6 @@ class LessonController extends Controller
             'course'
         ));
     }
-    public function pending()
-    {
-        $lessons = $this->service->getPendingLessons();
-        return view('admin.lessons.pending', compact('lessons'));
-    }
     public function show(Lesson $lesson)
     {
         $lesson = $this->service->show($lesson);

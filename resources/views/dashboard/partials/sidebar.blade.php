@@ -2,7 +2,7 @@
     $dashboardNav = [
         ['label' => 'لوحة التحكم', 'route' => 'dashboard', 'icon' => 'home'],
         ['label' => 'محتوى تعليمي', 'route' => 'levels.index', 'icon' => 'levels'],
-        ['label' => 'الدروس قيد الانتظار', 'route' => 'lessons.pending', 'icon' => 'pending-lessons'],
+        ['label' => 'محتوى قيد المراجعة', 'route' => 'admin.content-review.pending-queue', 'icon' => 'pending-lessons'],
         ['label' => 'طلبات الاستثناء', 'route' => 'levelException.index', 'icon' => 'level-exceptions', 'superAdminOnly' => true],
         ['label' => 'بنك أسئلة تحديد المستوى', 'route' => 'questions.placement.index', 'icon' => 'question-bank', 'requiredPermission' => 'manage_placement_questions'],
         ['label' => 'اختبارات تحديد المستوى', 'route' => 'tests.placement.placement.index', 'icon' => 'placement-tests', 'requiredPermission' => 'manage_placement_tests'],
@@ -146,7 +146,8 @@
                 $active = request()->routeIs($item['route'])
                     || ($item['route'] === 'levels.index' && (request()->routeIs('levels.*') || request()->routeIs('courses.*')))
                     || ($item['route'] === 'tests.placement.placement.index' && request()->routeIs('tests.placement.*'))
-                    || ($item['route'] === 'topics.index' && (request()->routeIs('topics.*') || request()->routeIs('podcasts.*')));
+                    || ($item['route'] === 'topics.index' && (request()->routeIs('topics.*') || request()->routeIs('podcasts.*')))
+                    || ($item['route'] === 'admin.content-review.pending-queue' && request()->routeIs('admin.content-review.*'));
             @endphp
             <a href="{{ route($item['route']) }}" class="dashboard-nav-link {{ $active ? 'is-active' : '' }}" title="{{ $item['label'] }}">
                 <span class="dashboard-nav-link__icon">

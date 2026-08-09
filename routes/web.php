@@ -99,7 +99,6 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
     Route::get('courses/{course}/tests' , [AdminContentReviewController::class,'showCourseTestVersions'])->name('courses.tests');
     //lesson route
     Route::get('/courses/{course}/lessons/{status?}', [LessonController::class, 'index'])->name('lessons.index');
-    Route::get('/lessons/pending', [LessonController::class, 'pending'])->name('lessons.pending');
     Route::get('/lessons/{lesson}', [LessonController::class, 'show'])->name('lessons.show');
     Route::patch('/lessons/{lesson}/archive', [LessonController::class, 'archive'])->name('lessons.archive');
     Route::get('lessons/{lesson}/tests', [AdminContentReviewController::class, 'showLessonTestVersions'])->name('lessons.tests.show');

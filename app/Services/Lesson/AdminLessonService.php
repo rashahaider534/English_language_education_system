@@ -17,26 +17,6 @@ class AdminLessonService
         private CommentService $commentService,
         private StudentWordService $studentWordService
     ) {}
-//    public function getPendingLessons()
-//    {
-//                return Lesson::query()->select([
-//                    'id',
-//                    'title_ar',
-//                    'title_en',
-//                    'course_id',
-//                    'order',
-//                    'status',
-//                    'created_at',
-//                ])
-//                    ->with([
-//                        'course:id,name_ar,name_en,teacher_id',
-//                        'course.teacher:id,first_name,last_name,email',
-//                    ])
-//                    ->where('status', ContentStatus::PENDING->value)
-//                    ->paginate(10);
-//            }
-
-
 
     public function getlessonscourse(Course $course, ?string $status = null)
     {
