@@ -15,7 +15,7 @@ class UserLevelSeeder extends Seeder
               UserLevel::create([
             'user_id' => 2,
             'level_id' => 1,
-            'status' => 'in_progress',
+            'status' => 'completed',
             'enrolled_at' => now(),
             'completed_at' => null,
         ]);

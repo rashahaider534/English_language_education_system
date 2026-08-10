@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\LessonController;
 use App\Http\Controllers\Admin\LevelExceptionController;
 use App\Http\Controllers\Admin\TeacherManagementController;
 use App\Http\Controllers\Admin\StudentManagementController;
+use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\ComplaintController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\Admin\TopicController;
@@ -23,6 +24,7 @@ use App\Http\Controllers\Admin\PermissionManagementController;
 use App\Http\Controllers\Admin\PaymentManagementController;
 use App\Http\Controllers\Admin\AuditController;
 use App\Http\Controllers\FirebaseTokenController;
+
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -72,8 +74,6 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     // Admin management (super-admin only)
     Route::prefix('management/admins')->name('admin.admins.')->group(function () {
         Route::get('/', [AdminManagementController::class, 'index'])->name('index');
-        Route::get('/create', [AdminManagementController::class, 'create'])->name('create');
-        Route::post('/', [AdminManagementController::class, 'store'])->name('store');
         Route::patch('/{admin}/toggle-active', [AdminManagementController::class, 'toggleActive'])->name('toggle-active');
     });
 
@@ -101,14 +101,20 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
-    //notification
+    //firebase
     Route::middleware('auth:sanctum')->post('/firebase/token', [FirebaseTokenController::class, 'store']);
 
+    //notifications route
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::patch('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
+    Route::delete('/notifications/{notification}', [NotificationController::class, 'deleteNotification'])->name('notifications.destroy');
+    
     //level route
     Route::get('/levels', [LevelController::class, 'index'])->name('levels.index');
     //course route
     Route::get('/courses/{level}', [CourseController::class, 'index'])->name('courses.index');
-    Route::get('courses/{course}/tests' , [AdminContentReviewController::class,'showCourseTestVersions'])->name('courses.tests');
+    Route::get('courses/{course}/tests', [AdminContentReviewController::class, 'showCourseTestVersions'])->name('courses.tests');
     //lesson route
     Route::get('/courses/{course}/lessons/{status?}', [LessonController::class, 'index'])->name('lessons.index');
     Route::get('/lessons/{lesson}', [LessonController::class, 'show'])->name('lessons.show');
@@ -118,16 +124,13 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
     //comment route
     Route::delete('/comments/{comment}/destroy', [CommentController::class, 'admindelete']);
     Route::patch('/comments/{comment}/block', [CommentController::class, 'block']);
-
-    Route::patch('/comments/{comment}/block',[CommentController::class,'block']);
+    Route::patch('/comments/{comment}/block', [CommentController::class, 'block']);
 
     // Teachers management & monitoring — index/lessons query real data;
     // create/store/toggle-active are UI-only placeholders pending backend work.
     Route::prefix('management/teachers')->name('admin.teachers.')->group(function () {
         Route::get('/', [TeacherManagementController::class, 'index'])->name('index');
-        Route::get('/create', [TeacherManagementController::class, 'create'])->name('create');
-        Route::post('/', [TeacherManagementController::class, 'store'])->name('store');
-        Route::get('/{teacher}/lessons', [TeacherManagementController::class, 'lessons'])->name('lessons');
+        Route::get('/{teacher}/courses', [TeacherManagementController::class, 'courses'])->name('courses');
         Route::patch('/{teacher}/toggle-active', [TeacherManagementController::class, 'toggleActive'])->name('toggle-active');
     });
 
@@ -284,13 +287,12 @@ Route::middleware(['auth:web'])->group(function () {
                 Route::post('tests/{test}/publish', [AdminContentReviewController::class, 'publishTest'])->name('tests.publish');
 
                 Route::post('levels/{level}/publish', [AdminContentReviewController::class, 'publishLevel'])->name('levels.publish');
-
             });
         });
 
-// Registered last so it doesn't shadow the more specific tests/placement
-// and levels/{level}/tests/... routes above (both match tests/{test}-shaped URIs).
+    // Registered last so it doesn't shadow the more specific tests/placement
+    // and levels/{level}/tests/... routes above (both match tests/{test}-shaped URIs).
     Route::middleware(['auth', 'role:admin|super-admin'])->get('tests/{test}', [TestController::class, 'show'])->name('test.show');
-
-    require __DIR__ . '/auth.php';
 });
+
+require __DIR__ . '/auth.php';

@@ -19,12 +19,6 @@ class NotificationController extends Controller
         return NotificationResource::collection($notifications);
     }
 
-    public function getUnreadNotifications()
-    {
-        $unreadnotification = $this->notificationservice->getUnreadNotifications(auth()->user());
-        return NotificationResource::collection($unreadnotification);
-    }
-
     public function getUnreadCount()
     {
         $count = $this->notificationservice->getUnreadCount(auth()->user());
@@ -49,4 +43,5 @@ class NotificationController extends Controller
             $this->notificationservice->deleteNotification(auth()->user(), $notification)
         );
     }
+    
 }
