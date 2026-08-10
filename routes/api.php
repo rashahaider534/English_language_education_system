@@ -33,6 +33,7 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle']);
+
 Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:2,1');
 Route::post('/verifyOtp/{type}', [AuthController::class, 'verifyOtp']);
 Route::post('/resendOtp/{type}', [AuthController::class, 'resendOtp'])
