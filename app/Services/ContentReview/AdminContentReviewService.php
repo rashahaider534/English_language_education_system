@@ -83,12 +83,12 @@ class AdminContentReviewService
     public function myReviewSessions(?string $status = null)
     {
         $latestReviewIds = ContentReview::where('reviewer_id', auth()->id())
-            ->where('status', '!=', ReviewStatus::RELEASED)
             ->selectRaw('MAX(id) as id')
             ->groupBy('reviewable_type', 'reviewable_id')
             ->pluck('id');
 
         return ContentReview::whereIn('id', $latestReviewIds)
+            ->where('status', '!=', ReviewStatus::RELEASED)
             ->when($status, fn ($q) => $q->where('status', $status))
             ->with([
                 'reviewable' => function ($morphTo) {
