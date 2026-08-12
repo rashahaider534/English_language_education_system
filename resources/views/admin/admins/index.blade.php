@@ -322,6 +322,7 @@
                                             <circle cx="12" cy="12" r="3" />
                                         </svg>
                                     </a>
+                                     @unless ($admin->deleted_at)
                                     <a href="{{ route('admin.permissions', $admin) }}" title="تعديل الصلاحيات"
                                         class="adm-icon-btn"
                                         style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; background:rgba(255,211,91,0.16); color:#8A5A00; text-decoration:none;">
@@ -332,17 +333,19 @@
                                             <circle cx="12" cy="12" r="10" />
                                         </svg>
                                     </a>
-                                    <button type="button"
-                                        @click="deactivateTargetId = {{ $admin->id }}; deactivateTargetName = {{ Illuminate\Support\Js::from($adminName) }}; deactivateModalOpen = true;"
-                                        title="تعطيل الحساب"
-                                        style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; border:none; background:rgba(255,138,101,0.14); color:#C2591A; cursor:pointer;">
-                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-                                            stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
-                                            stroke-linejoin="round">
-                                            <circle cx="12" cy="12" r="9" />
-                                            <path d="m5.5 5.5 13 13" />
-                                        </svg>
-                                    </button>
+                                   
+                                        <button type="button"
+                                            @click="deactivateTargetId = {{ $admin->id }}; deactivateTargetName = {{ Illuminate\Support\Js::from($adminName) }}; deactivateModalOpen = true;"
+                                            title="تعطيل الحساب"
+                                            style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; border:none; background:rgba(255,138,101,0.14); color:#C2591A; cursor:pointer;">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
+                                                stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="9" />
+                                                <path d="m5.5 5.5 13 13" />
+                                            </svg>
+                                        </button>
+                                    @endunless
                                 </div>
                             </td>
                         </tr>

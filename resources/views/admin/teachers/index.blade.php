@@ -332,7 +332,7 @@
                             </td>
                             <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); text-align:center;">
                                 <div style="display:flex; gap:8px; justify-content:center; align-items:center;">
-                                    <a href="{{ route('admin.teachers.lessons', $teacher) }}" title="دروس الأستاذ"
+                                    <a href="{{ route('admin.teachers.courses', $teacher) }}" title="دروس الأستاذ"
                                         class="tch-icon-btn"
                                         style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; background:rgba(168,232,249,0.22); color:#00537A; text-decoration:none;">
                                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
@@ -342,17 +342,19 @@
                                             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
                                         </svg>
                                     </a>
-                                    <button type="button"
-                                        @click="deactivateTargetId = {{ $teacher->id }}; deactivateTargetName = {{ Illuminate\Support\Js::from($teacherName) }}; deactivateModalOpen = true;"
-                                        title="تعطيل الحساب"
-                                        style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; border:none; background:rgba(255,138,101,0.14); color:#C2591A; cursor:pointer;">
-                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-                                            stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
-                                            stroke-linejoin="round">
-                                            <circle cx="12" cy="12" r="9" />
-                                            <path d="m5.5 5.5 13 13" />
-                                        </svg>
-                                    </button>
+                                    @unless ($teacher->deleted_at)
+                                        <button type="button"
+                                            @click="deactivateTargetId = {{ $teacher->id }}; deactivateTargetName = {{ Illuminate\Support\Js::from($teacherName) }}; deactivateModalOpen = true;"
+                                            title="تعطيل الحساب"
+                                            style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; border:none; background:rgba(255,138,101,0.14); color:#C2591A; cursor:pointer;">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
+                                                stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="9" />
+                                                <path d="m5.5 5.5 13 13" />
+                                            </svg>
+                                        </button>
+                                    @endunless
                                 </div>
                             </td>
                         </tr>

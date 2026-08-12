@@ -94,6 +94,7 @@ class PermissionService
                 'error' => 'You are not allowed to add Admin.',
             ]);
         }
+
         $user->delete();
         return ['account unactive successfully'];
     }

@@ -23,7 +23,7 @@ class NotificationController extends Controller
     {
         $this->notificationService->markAsRead(auth()->user(), $notification);
         return redirect()
-        ->route('admin.notifications.index')
+        ->route('notifications.index')
         ->with('success', 'تم تحديد الإشعار كمقروء.');
     }
 
@@ -31,7 +31,7 @@ class NotificationController extends Controller
     {
         $this->notificationService->markAllAsRead(auth()->user());
         return redirect()
-            ->route('admin.notifications.index')
+            ->route('notifications.index')
             ->with('success', 'تم تحديد جميع الإشعارات كمقروءة.');
     }
 
@@ -39,7 +39,7 @@ class NotificationController extends Controller
     {
         $this->notificationService->deleteNotification(auth()->user(), $notification);
         return redirect()
-            ->route('admin.notifications.index')
+            ->route('notifications.index')
             ->with('success', 'تم حذف الإشعار.');
     }
 }
