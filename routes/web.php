@@ -61,7 +61,7 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::patch('/levelexceptions/{levelException}/reject', [LevelExceptionController::class, 'reject'])->name('levelException.reject');
 
     //permissions route
-    Route::get('/permission/{user}/showadmin', [PermissionController::class, 'getAdmin'])->name('admin.permission.show');
+    Route::get('/permission/{user}/showadmin', [AdminManagementController::class, 'show'])->name('admin.permission.show')->withTrashed();
     Route::get('/permission/admins/create', [PermissionController::class, 'createadmin'])->name('admins.permission.create');
     Route::post('/permission/admin', [PermissionController::class, 'storeAdmin'])->name('admins.permission.store');
     Route::delete('/permission/{user}/delete', [PermissionController::class, 'destroy'])->name('admins.permission.destroy');
@@ -77,12 +77,12 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
         Route::patch('/{admin}/toggle-active', [AdminManagementController::class, 'toggleActive'])->name('toggle-active');
     });
 
-    // Discounts & offers
-    Route::prefix('offers')->name('admin.offers.')->group(function () {
-        Route::get('/', [OfferController::class, 'index'])->name('index');
-        Route::get('/create', [OfferController::class, 'create'])->name('create');
-        Route::post('/', [OfferController::class, 'store'])->name('store');
-    });
+    // Discounts & offers — disabled by request (feature not ready), routes intentionally not registered.
+    // Route::prefix('offers')->name('admin.offers.')->group(function () {
+    //     Route::get('/', [OfferController::class, 'index'])->name('index');
+    //     Route::get('/create', [OfferController::class, 'create'])->name('create');
+    //     Route::post('/', [OfferController::class, 'store'])->name('store');
+    // });
 
     // Permissions
     Route::prefix('permissions')->name('admin.permissions.')->group(function () {
@@ -93,11 +93,11 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     // Payments
     Route::get('/payments', [PaymentManagementController::class, 'index'])->name('admin.payments.index');
 
-    // Audit & business management
-    Route::prefix('audit')->name('admin.audit.')->group(function () {
-        Route::get('/', [AuditController::class, 'index'])->name('index');
-        Route::get('/levels/{level}', [AuditController::class, 'level'])->name('level');
-    });
+    // Audit & business management — disabled by request (feature not ready), routes intentionally not registered.
+    // Route::prefix('audit')->name('admin.audit.')->group(function () {
+    //     Route::get('/', [AuditController::class, 'index'])->name('index');
+    //     Route::get('/levels/{level}', [AuditController::class, 'level'])->name('level');
+    // });
 });
 
 Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
@@ -130,7 +130,7 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
     // create/store/toggle-active are UI-only placeholders pending backend work.
     Route::prefix('management/teachers')->name('admin.teachers.')->group(function () {
         Route::get('/', [TeacherManagementController::class, 'index'])->name('index');
-        Route::get('/{teacher}/courses', [TeacherManagementController::class, 'courses'])->name('courses');
+        Route::get('/{teacher}/courses', [TeacherManagementController::class, 'courses'])->name('courses')->withTrashed();
         Route::patch('/{teacher}/toggle-active', [TeacherManagementController::class, 'toggleActive'])->name('toggle-active');
     });
 
@@ -282,7 +282,7 @@ Route::middleware(['auth:web'])->group(function () {
             Route::get('lessons/{lesson}/history', [AdminContentReviewController::class, 'lessonHistory'])->name('lessons.history');
             Route::get('tests/{test}/history', [AdminContentReviewController::class, 'testHistory'])->name('tests.history');
 
-            Route::middleware('permission:publish_levels')->group(function () {
+            Route::middleware("can:publish_levels,'web'")->group(function () {
                 Route::post('tests/{test}/approve-directly', [AdminContentReviewController::class, 'approveDirectly'])->name('tests.approve-directly');
                 Route::post('tests/{test}/publish', [AdminContentReviewController::class, 'publishTest'])->name('tests.publish');
 

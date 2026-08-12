@@ -105,14 +105,6 @@
     $pendPct = round(($coursesPending / $coursesTotal) * 100);
     $closedPct = max(0, 100 - $pubPct - $pendPct);
 
-    $maxTeacherLessons = max(1, $lessonsByTeacher->max('count') ?? 1);
-
-    $urgencyStyles = [
-        'high' => ['label' => 'أولوية عالية', 'bg' => 'rgba(255,138,101,0.16)', 'fg' => '#C2591A'],
-        'medium' => ['label' => 'أولوية متوسطة', 'bg' => 'rgba(255,186,66,0.18)', 'fg' => '#8A5A00'],
-        'low' => ['label' => 'أولوية منخفضة', 'bg' => 'rgba(1,60,88,0.07)', 'fg' => 'var(--muted)'],
-    ];
-
     $activityStyles = [
         'lesson_published' => ['dot' => '#4CAF78'],
         'course_created' => ['dot' => '#0E6A96'],
@@ -145,11 +137,7 @@
                     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7.5 12 3l10 4.5-10 4.5-10-4.5Z"></path><path d="M6 10v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"></path></svg>
                 </div>
             </div>
-            <p style="margin:0; font-size:27px; font-weight:800; color:var(--navy-900);" class="num">{{ number_format($totalStudents) }}</p>
-            <p style="margin:6px 0 10px; display:flex; align-items:center; gap:5px; font-size:11px; font-weight:700; color:{{ $studentsGrowthPct >= 0 ? 'var(--green-600)' : '#C2591A' }};">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">@if($studentsGrowthPct>=0)<path d="M12 19V5"></path><path d="m5 12 7-7 7 7"></path>@else<path d="M12 5v14"></path><path d="m5 12 7 7 7-7"></path>@endif</svg>
-                {{ $studentsGrowthPct >= 0 ? '+' : '' }}{{ $studentsGrowthPct }}% من الشهر الماضي
-            </p>
+            <p style="margin:0 0 10px; font-size:27px; font-weight:800; color:var(--navy-900);" class="num">{{ number_format($totalStudents) }}</p>
             <svg width="100%" height="34" viewBox="0 0 140 40" preserveAspectRatio="none"><polyline points="{{ $studentsSpark }}" fill="none" stroke="var(--blue-500)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
 
@@ -160,11 +148,7 @@
                     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5.8c0-.9.6-1.6 1.4-1.8L18 2v16.5"></path><path d="M18 18.5H6a2 2 0 0 0-2 2"></path></svg>
                 </div>
             </div>
-            <p style="margin:0; font-size:27px; font-weight:800; color:var(--navy-900);" class="num">{{ number_format($coursesPublished) }}</p>
-            <p style="margin:6px 0 10px; display:flex; align-items:center; gap:5px; font-size:11px; font-weight:700; color:{{ $coursesPublishedGrowthPct >= 0 ? 'var(--green-600)' : '#C2591A' }};">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">@if($coursesPublishedGrowthPct>=0)<path d="M12 19V5"></path><path d="m5 12 7-7 7 7"></path>@else<path d="M12 5v14"></path><path d="m5 12 7 7 7-7"></path>@endif</svg>
-                {{ $coursesPublishedGrowthPct >= 0 ? '+' : '' }}{{ $coursesPublishedGrowthPct }}% من الشهر الماضي
-            </p>
+            <p style="margin:0 0 10px; font-size:27px; font-weight:800; color:var(--navy-900);" class="num">{{ number_format($coursesPublished) }}</p>
             <svg width="100%" height="34" viewBox="0 0 140 40" preserveAspectRatio="none"><polyline points="{{ $coursesSpark }}" fill="none" stroke="#C1650A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
 
@@ -175,11 +159,7 @@
                     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
                 </div>
             </div>
-            <p style="margin:0; font-size:27px; font-weight:800; color:var(--navy-900);" class="num">{{ number_format($lessonsPending) }}</p>
-            <p style="margin:6px 0 10px; display:flex; align-items:center; gap:5px; font-size:11px; font-weight:700; color:{{ $lessonsPendingGrowthPct >= 0 ? '#C2591A' : 'var(--green-600)' }};">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">@if($lessonsPendingGrowthPct>=0)<path d="M12 19V5"></path><path d="m5 12 7-7 7 7"></path>@else<path d="M12 5v14"></path><path d="m5 12 7 7 7-7"></path>@endif</svg>
-                {{ $lessonsPendingGrowthPct >= 0 ? '+' : '' }}{{ $lessonsPendingGrowthPct }}% من الشهر الماضي
-            </p>
+            <p style="margin:0 0 10px; font-size:27px; font-weight:800; color:var(--navy-900);" class="num">{{ number_format($lessonsPending) }}</p>
             <svg width="100%" height="34" viewBox="0 0 140 40" preserveAspectRatio="none"><polyline points="{{ $pendingSpark }}" fill="none" stroke="#F5A201" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
 
@@ -260,56 +240,7 @@
         </div>
     </div>
 
-    {{-- ============ ROW 3: LESSON TILES + TEACHER BAR CHART ============ --}}
-    <div class="db2-grid-2" style="display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:18px;">
-
-        <div class="db2-card" style="padding:22px;">
-            <div class="db2-card-head">
-                <h3 class="db2-card-title">إجمالي الدروس</h3>
-            </div>
-            <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:14px;">
-                @foreach ([
-                    ['label' => 'إجمالي الدروس', 'value' => $lessonsTotalAll, 'icon' => 'M4 19.5V5.8c0-.9.6-1.6 1.4-1.8L18 2v16.5', 'bg' => 'var(--sky-100)', 'fg' => 'var(--blue-500)'],
-                    ['label' => 'دروس منشورة', 'value' => $lessonsPublished, 'icon' => 'M20 6 9 17l-5-5', 'bg' => 'var(--green-100)', 'fg' => 'var(--green-600)'],
-                    ['label' => 'دروس قيد المراجعة', 'value' => $lessonsPending, 'icon' => 'M12 8v4l3 3', 'bg' => '#FFF3E3', 'fg' => '#B25E00'],
-                    ['label' => 'مؤرشفة', 'value' => $lessonsArchived, 'icon' => 'M3 10h18', 'bg' => 'rgba(1,60,88,0.06)', 'fg' => 'var(--muted)'],
-                ] as $tile)
-                    <div style="background:rgba(2,32,71,0.02); border:1px solid var(--line); border-radius:14px; padding:14px;">
-                        <div class="db2-icon-circle" style="width:34px; height:34px; background:{{ $tile['bg'] }}; color:{{ $tile['fg'] }}; margin-bottom:10px;">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ $tile['icon'] }}"></path></svg>
-                        </div>
-                        <p style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:19px; color:var(--navy-900);" class="num">{{ $tile['value'] }}</p>
-                        <p style="margin:4px 0 0; font-size:11px; color:var(--muted); font-weight:600;">{{ $tile['label'] }}</p>
-                    </div>
-                @endforeach
-            </div>
-        </div>
-
-        <div class="db2-card" style="padding:22px;">
-            <div class="db2-card-head">
-                <h3 class="db2-card-title">الدروس حسب الأستاذ</h3>
-            </div>
-            @if ($lessonsByTeacher->isEmpty())
-                <p style="text-align:center; color:var(--muted-soft); font-size:12.5px; padding:50px 0;">ما في دروس مرتبطة بأساتذة حاليًا</p>
-            @else
-                <div style="display:flex; align-items:flex-end; gap:16px; height:170px; padding:4px 4px 0;">
-                    @foreach ($lessonsByTeacher as $row)
-                        @php
-                            $teacherName = $row['teacher'] ? (trim(($row['teacher']->first_name ?? '').' '.($row['teacher']->last_name ?? '')) ?: $row['teacher']->email) : 'بدون أستاذ';
-                            $barHeight = max(14, round(($row['count'] / $maxTeacherLessons) * 120));
-                        @endphp
-                        <div class="db2-mini-bar-col">
-                            <span class="num" style="font-weight:700; font-size:13px; color:var(--navy-900);">{{ $row['count'] }}</span>
-                            <div class="db2-mini-bar-fill" style="background:linear-gradient(180deg,var(--blue-500),var(--navy-900)); height:{{ $barHeight }}px;"></div>
-                            <span style="font-size:10.5px; color:var(--muted); font-weight:600; text-align:center; max-width:80px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $teacherName }}</span>
-                        </div>
-                    @endforeach
-                </div>
-            @endif
-        </div>
-    </div>
-
-    {{-- ============ ROW 4: RECENT STUDENTS + PENDING LESSONS + ACTIVITY ============ --}}
+    {{-- ============ ROW 4: PENDING REVIEW CTA + PENDING LESSONS + ACTIVITY ============ --}}
     <div class="db2-grid-3" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:18px;">
 
         <div class="db2-card" style="padding:22px;">
@@ -345,13 +276,9 @@
                 <h3 class="db2-card-title">الدروس قيد المراجعة</h3>
             </div>
             @forelse ($pendingLessonsList as $row)
-                @php $u = $urgencyStyles[$row['urgency']]; @endphp
                 <div class="db2-list-row" style="align-items:flex-start;">
                     <div style="flex:1; min-width:0;">
-                        <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:5px;">
-                            <p style="margin:0; font-size:12.5px; font-weight:700; color:var(--navy-900); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $row['lesson']->title_ar }}</p>
-                            <span style="flex-shrink:0; display:inline-flex; padding:3px 9px; border-radius:999px; background:{{ $u['bg'] }}; color:{{ $u['fg'] }}; font-size:10px; font-weight:700;">{{ $u['label'] }}</span>
-                        </div>
+                        <p style="margin:0 0 5px; font-size:12.5px; font-weight:700; color:var(--navy-900); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $row['lesson']->title_ar }}</p>
                         <p style="margin:0; font-size:11px; color:var(--muted);">{{ $row['lesson']->course->level->name_ar ?? '—' }} · منذ {{ $row['days_pending'] }} يوم</p>
                     </div>
                 </div>

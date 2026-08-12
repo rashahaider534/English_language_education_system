@@ -65,6 +65,24 @@
             this.editTarget = level;
             this.editModalOpen = true;
         },
+        toastVisible: false,
+        toastMessage: '',
+        submitGuarded(event, deniedMessage) {
+            const form = event.target;
+            fetch(form.action, { method: 'POST', body: new FormData(form), redirect: 'manual' }).then(r => {
+                if (r.status === 403) {
+                    this.toastMessage = deniedMessage;
+                    this.toastVisible = true;
+                    setTimeout(() => this.toastVisible = false, 3000);
+                } else if (r.type === 'opaqueredirect' || r.ok) {
+                    window.location.reload();
+                } else {
+                    this.toastMessage = 'صار خطأ غير متوقع، حاولي مرة تانية';
+                    this.toastVisible = true;
+                    setTimeout(() => this.toastVisible = false, 3000);
+                }
+            });
+        }
     }"
     class="-mx-4 -my-6 px-4 py-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
     style="background:#DFF2F9; font-family:'Tajawal',sans-serif; min-height:100vh;"
@@ -285,16 +303,20 @@
                                         <svg width="15.5" height="15.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"></rect><path d="M8 2v4M16 2v4M3 10h18"></path></svg>
                                     </a>
                                 @endcan
-                                @can('publish_levels', 'web')
-                                    @if ($level->status === 'pending')
-                                        <form action="{{ route('admin.content-review.levels.publish', $level) }}" method="POST">
+                                @if ($level->status === 'pending')
+                                    @can('publish_levels', 'web')
+                                        <form @submit.prevent="submitGuarded($event, 'لا تملك صلاحية كافية لنشر المستوى')" action="{{ route('admin.content-review.levels.publish', $level) }}" method="POST">
                                             @csrf
                                             <button type="submit" title="نشر المستوى" style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; border:none; background:rgba(76,175,120,0.16); color:#2E7D55; cursor:pointer;">
                                                 <svg width="15.5" height="15.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"></path><path d="m5 12 7-7 7 7"></path></svg>
                                             </button>
                                         </form>
-                                    @endif
-                                @endcan
+                                    @else
+                                        <button type="button" title="نشر المستوى" @click="toastMessage = 'لا تملك صلاحية كافية لنشر المستوى'; toastVisible = true; setTimeout(() => toastVisible = false, 3000)" style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; border:none; background:rgba(76,175,120,0.16); color:#2E7D55; cursor:pointer;">
+                                            <svg width="15.5" height="15.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"></path><path d="m5 12 7-7 7 7"></path></svg>
+                                        </button>
+                                    @endcan
+                                @endif
                                 <button type="button" title="{{ $canEdit ? 'تعديل' : 'ما فيك تعدّلي هالمستوى لأنه مش من إنشائك' }}"
                                    @if($canEdit) @click="openEdit({{ Illuminate\Support\Js::from([
                                         'id' => $level->id,
@@ -594,6 +616,11 @@
             </form>
         </div>
       </div>
+    </div>
+
+    <div x-show="toastVisible" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-3" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" style="position:fixed; bottom:24px; right:24px; z-index:9999; display:flex; align-items:center; gap:10px; background:#013C58; color:#fff; padding:14px 20px; border-radius:14px; box-shadow:0 16px 32px rgba(1,60,88,0.3); font-size:13px; font-weight:600;">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#FFD35B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <span x-text="toastMessage"></span>
     </div>
 </div>
 @endsection

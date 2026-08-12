@@ -37,7 +37,7 @@
             @forelse ($admin->permissions as $permission)
                 <span style="display:inline-flex; margin:3px; padding:6px 14px; border-radius:999px; background:rgba(14,106,150,0.1); color:#0E6A96; font-size:12px; font-weight:700;">{{ $permission->name }}</span>
             @empty
-                <p style="margin:0; font-size:13px; color:rgba(1,60,88,0.45);">ما في صلاحيات ممنوحة لهالأدمن لهلق.</p>
+                <p style="margin:0; font-size:13px; color:rgba(1,60,88,0.45);">لايوجد صلاحيات ممنوحة للادمن</p>
             @endforelse
         </div>
     </div>

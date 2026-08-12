@@ -2,7 +2,7 @@
     $dashboardNav = [
         ['label' => 'لوحة التحكم', 'route' => 'dashboard', 'icon' => 'home'],
         ['label' => 'محتوى تعليمي', 'route' => 'levels.index', 'icon' => 'levels'],
-        ['label' => 'محتوى قيد المراجعة', 'route' => 'admin.content-review.pending-queue', 'icon' => 'pending-lessons'],
+        ['label' => 'محتوى قيد المراجعة', 'route' => 'admin.content-review.pending-queue', 'icon' => 'pending-lessons', 'hideForSuperAdmin' => true],
         ['label' => 'طلبات الاستثناء', 'route' => 'levelException.index', 'icon' => 'level-exceptions', 'superAdminOnly' => true],
         ['label' => 'بنك أسئلة تحديد المستوى', 'route' => 'questions.placement.index', 'icon' => 'question-bank', 'requiredPermission' => 'manage_placement_questions'],
         ['label' => 'اختبارات تحديد المستوى', 'route' => 'tests.placement.placement.index', 'icon' => 'placement-tests', 'requiredPermission' => 'manage_placement_tests'],
@@ -17,9 +17,7 @@
             ],
         ],
         ['label' => 'صندوق الشكاوي', 'route' => 'admin.complaints.index', 'icon' => 'complaints'],
-        ['label' => 'الخصومات والعروض', 'route' => 'admin.offers.index', 'icon' => 'offers', 'superAdminOnly' => true],
         ['label' => 'المدفوعات', 'route' => 'admin.payments.index', 'icon' => 'payments', 'superAdminOnly' => true],
-        ['label' => 'الرقابة وإدارة الأعمال', 'route' => 'admin.audit.index', 'icon' => 'audit', 'superAdminOnly' => true],
         ['label' => 'الصلاحيات', 'route' => 'admin.permissions.index', 'icon' => 'permissions', 'superAdminOnly' => true],
     ];
 @endphp
@@ -54,43 +52,64 @@
             {{ $dashboardLangLabel }}
         </a>
 
+        @php
+            $sidebarNotifications = $sidebarUser ? $sidebarUser->notifications()->orderBy('read')->orderByDesc('created_at')->take(8)->get() : collect();
+            $sidebarUnreadCount = $sidebarUser ? $sidebarUser->notifications()->where('read', false)->count() : 0;
+        @endphp
         <div class="relative" x-data="{ open: false }" @click.outside="open = false">
             <button type="button" class="dashboard-icon-button dashboard-topbar-accent dashboard-notification-button" aria-label="Notifications" @click="open = !open" :aria-expanded="open.toString()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
                     <path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5" />
                     <path d="M9.5 17a2.5 2.5 0 0 0 5 0" />
                 </svg>
+                @if ($sidebarUnreadCount > 0)
+                    <span class="dashboard-notification-badge">{{ $sidebarUnreadCount > 9 ? '9+' : $sidebarUnreadCount }}</span>
+                @endif
             </button>
 
             <div class="dashboard-notification-panel" x-show="open" x-transition x-cloak>
                 <div class="dashboard-notification-panel__header">
                     <span class="dashboard-notification-panel__title">الإشعارات</span>
-                    <span class="dashboard-badge dashboard-badge--info">تجريبي</span>
+                    @if ($sidebarUnreadCount > 0)
+                        <form action="{{ route('notifications.readAll') }}" method="POST">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" style="border:none; background:none; padding:0; font-size:11px; font-weight:700; color:#0E6A96; cursor:pointer;">تحديد الكل كمقروء</button>
+                        </form>
+                    @endif
                 </div>
                 <div class="dashboard-notification-panel__list">
-                    <div class="dashboard-notification-item">
-                        <span class="dashboard-notification-item__dot" style="background:#F5A201;"></span>
-                        <div>
-                            <p style="margin:0; font-size:13px; font-weight:600; color:#013C58;">طلب استثناء جديد بانتظار المراجعة</p>
-                            <p style="margin:2px 0 0; font-size:11px; color:rgba(0,83,122,0.5);">منذ 5 دقائق</p>
+                    @forelse ($sidebarNotifications as $notification)
+                        @if ($notification->read)
+                            <div class="dashboard-notification-item">
+                                <span class="dashboard-notification-item__dot" style="background:rgba(0,83,122,0.2);"></span>
+                                <div>
+                                    <p style="margin:0; font-size:13px; font-weight:600; color:rgba(1,60,88,0.6);">{{ $notification->title }}</p>
+                                    <p style="margin:2px 0 0; font-size:11px; color:rgba(0,83,122,0.45);">{{ $notification->created_at->diffForHumans() }}</p>
+                                </div>
+                            </div>
+                        @else
+                            <form action="{{ route('notifications.read', $notification->id) }}" method="POST">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="dashboard-notification-item" style="width:100%; text-align:right; border:none; background:none; cursor:pointer;">
+                                    <span class="dashboard-notification-item__dot" style="background:#F5A201;"></span>
+                                    <div>
+                                        <p style="margin:0; font-size:13px; font-weight:700; color:#013C58;">{{ $notification->title }}</p>
+                                        <p style="margin:2px 0 0; font-size:11px; color:rgba(0,83,122,0.5);">{{ $notification->created_at->diffForHumans() }}</p>
+                                    </div>
+                                </button>
+                            </form>
+                        @endif
+                    @empty
+                        <div class="dashboard-notification-item">
+                            <p style="margin:0; font-size:13px; color:rgba(1,60,88,0.45);">لايوجد اشعارات للان </p>
                         </div>
-                    </div>
-                    <div class="dashboard-notification-item">
-                        <span class="dashboard-notification-item__dot" style="background:#0E6A96;"></span>
-                        <div>
-                            <p style="margin:0; font-size:13px; font-weight:600; color:#013C58;">درس جديد قيد الانتظار للمراجعة</p>
-                            <p style="margin:2px 0 0; font-size:11px; color:rgba(0,83,122,0.5);">منذ ساعة</p>
-                        </div>
-                    </div>
-                    <div class="dashboard-notification-item">
-                        <span class="dashboard-notification-item__dot" style="background:#4CAF78;"></span>
-                        <div>
-                            <p style="margin:0; font-size:13px; font-weight:600; color:#013C58;">تم اعتماد سؤال جديد ببنك الأسئلة</p>
-                            <p style="margin:2px 0 0; font-size:11px; color:rgba(0,83,122,0.5);">أمس</p>
-                        </div>
-                    </div>
+                    @endforelse
                 </div>
-                <div class="dashboard-notification-panel__footer">نظام الإشعارات قيد التطوير — هذه بيانات توضيحية مؤقتة</div>
+                @if ($sidebarNotifications->isNotEmpty())
+                    <a href="{{ route('notifications.index') }}" class="dashboard-notification-panel__footer" style="display:block; text-decoration:none;">عرض جميع الإشعارات</a>
+                @endif
             </div>
         </div>
     </div>
@@ -100,6 +119,7 @@
 
         @foreach ($dashboardNav as $item)
             @continue(($item['superAdminOnly'] ?? false) && !auth()->user()->hasRole('super-admin', 'web'))
+            @continue(($item['hideForSuperAdmin'] ?? false) && auth()->user()->hasRole('super-admin', 'web'))
             @continue(($item['requiredPermission'] ?? null) && !auth()->user()->can($item['requiredPermission'], 'web'))
 
             @if (!empty($item['children']))

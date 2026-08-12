@@ -37,6 +37,12 @@ class AdminManagementController extends Controller
 
     }
 
+    public function show(User $user): View
+    {
+        $activity = $this->adminmanagemntservice->getAdminActivity($user);
+        return view('admin.admins.show', ['admin' => $user, 'activity' => $activity]);
+    }
+
     public function toggleActive(User $admin): RedirectResponse
     {
         // بانتظار الربط بالباك-إند: عمود is_active غير مفعّل بأي منطق فعلي حاليًا.

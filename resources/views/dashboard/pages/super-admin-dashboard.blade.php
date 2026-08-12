@@ -50,12 +50,15 @@
     .sa-activity-avatar { display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:50%; background:var(--sky-100); color:var(--blue-500); flex-shrink:0; }
 
     .sa-grid-4 { grid-template-columns:repeat(4, minmax(0, 1fr)); }
+    .sa-grid-3 { grid-template-columns:repeat(3, minmax(0, 1fr)); }
 
     @media (max-width:1100px) {
         .sa-grid-4 { grid-template-columns:repeat(2, minmax(0, 1fr)); }
+        .sa-grid-3 { grid-template-columns:repeat(2, minmax(0, 1fr)); }
     }
     @media (max-width:560px) {
         .sa-grid-4 { grid-template-columns:1fr; }
+        .sa-grid-3 { grid-template-columns:1fr; }
     }
     @media (max-width:900px) {
         .sa-grid-2 { grid-template-columns:1fr !important; }
@@ -65,11 +68,11 @@
 
 @section('content')
 @php
-    $maxSignup = max(1, $monthlySignups->max('count'));
-    $chartN = $monthlySignups->count();
+    $maxSignup = max(1, $studentsByLevel->max('count'));
+    $chartN = $studentsByLevel->count();
     $chartW = 680; $chartX0 = 20; $chartBottom = 165; $chartTop = 15;
     $chartPts = [];
-    foreach ($monthlySignups->values() as $i => $row) {
+    foreach ($studentsByLevel->values() as $i => $row) {
         $x = $chartN > 1 ? $chartX0 + ($i * (($chartW - $chartX0) / ($chartN - 1))) : $chartX0;
         $y = $chartBottom - (($row['count'] / $maxSignup) * ($chartBottom - $chartTop));
         $chartPts[] = ['x' => round($x, 1), 'y' => round($y, 1), 'label' => $row['label'], 'count' => $row['count']];
@@ -80,9 +83,6 @@
     $revenueYearly = (float) $revenueYearly;
     $revenueMonthly = (float) $revenueMonthly;
     $donutPct = $revenueYearly > 0 ? min(100, round(($revenueMonthly / $revenueYearly) * 100)) : 0;
-
-    $maxMiniBar = max(1, $monthlySignups->max('count'));
-    $peakMonth = $monthlySignups->sortByDesc('count')->first();
 @endphp
 <div class="sa -mx-4 -my-6 px-4 py-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8" dir="rtl">
 
@@ -132,21 +132,17 @@
             </div>
             <p style="position:relative; margin:0; font-size:27px; font-weight:800; color:#fff;" class="num">{{ number_format($totalStudents) }}</p>
             <p style="position:relative; margin:6px 0 0; font-size:11.5px; font-weight:600; color:rgba(168,232,249,.9);">طالب مسجل</p>
-            <p style="position:relative; margin:10px 0 0; display:flex; align-items:center; gap:5px; font-size:11px; font-weight:700; color:var(--yellow-300);">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"></path><path d="m5 12 7-7 7 7"></path></svg>
-                {{ $studentGrowthPct }}% نسبة زيادة المشتركين هذا الشهر
-            </p>
         </div>
 
         <div class="sa-card sa-stat sa-stat-green">
             <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:14px;">
-                <p style="margin:0; font-size:12.5px; font-weight:700; color:var(--navy-900);">إجمالي المستخدمين</p>
+                <p style="margin:0; font-size:12.5px; font-weight:700; color:var(--navy-900);">إجمالي عدد الأدمن</p>
                 <div class="sa-icon-circle" style="background:rgba(255,255,255,.65); color:var(--green-600);">
                     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                 </div>
             </div>
-            <p style="margin:0; font-size:27px; font-weight:800; color:var(--navy-900);" class="num">{{ number_format($totalUsers) }}</p>
-            <p style="margin:6px 0 0; font-size:11.5px; font-weight:600; color:var(--muted);">جميع المستخدمين</p>
+            <p style="margin:0; font-size:27px; font-weight:800; color:var(--navy-900);" class="num">{{ number_format($totalAdmins) }}</p>
+            <p style="margin:6px 0 0; font-size:11.5px; font-weight:600; color:var(--muted);">حسابات الأدمن والسوبر أدمن</p>
         </div>
     </div>
 
@@ -183,7 +179,7 @@
         <div class="sa-card" style="padding:22px;">
             <div class="sa-card-head">
                 <h3 class="sa-card-title">نظرة عامة على الأداء</h3>
-                <span style="font-size:11px; font-weight:600; color:var(--muted-soft);">تسجيلات الطلاب — آخر 6 أشهر</span>
+                <span style="font-size:11px; font-weight:600; color:var(--muted-soft);">توزيع الطلاب حسب المستوى</span>
             </div>
             <div dir="ltr">
                 <svg viewBox="0 0 700 180" style="width:100%; height:auto; display:block;" preserveAspectRatio="none">
@@ -210,13 +206,13 @@
             </div>
             <div style="display:flex; align-items:center; gap:8px; margin-top:16px; padding-top:14px; border-top:1px solid var(--line);">
                 <span class="sa-legend-dot" style="background:#0E6A96;"></span>
-                <span style="font-size:12px; color:var(--navy-900); font-weight:600;">طلاب جدد مسجلين</span>
+                <span style="font-size:12px; color:var(--navy-900); font-weight:600;">عدد الطلاب المسجلين بكل مستوى</span>
             </div>
         </div>
     </div>
 
-    {{-- ============ ROW 3: BEST-SELLING LEVEL + MINI BARS + GROWTH RATE + ACTIVITY ============ --}}
-    <div class="sa-grid-4" style="display:grid; gap:18px;">
+    {{-- ============ ROW 3: BEST-SELLING LEVEL + PUBLISHED LEVELS + ACTIVITY ============ --}}
+    <div class="sa-grid-3" style="display:grid; gap:18px;">
 
         <div class="sa-card" style="padding:22px; display:flex; flex-direction:column;">
             <h3 class="sa-card-title" style="margin-bottom:16px;">المستوى الأكثر مبيعًا</h3>
@@ -235,35 +231,16 @@
             </div>
         </div>
 
-        <div class="sa-card" style="padding:22px;">
-            <h3 class="sa-card-title" style="margin-bottom:16px;">آخر 6 أشهر</h3>
-            <div style="display:flex; align-items:flex-end; gap:8px; height:110px;">
-                @foreach ($monthlySignups as $row)
-                    @php $barHeight = max(4, round(($row['count'] / $maxMiniBar) * 90)); @endphp
-                    <div class="sa-mini-bar-col">
-                        @if ($peakMonth && $row['label'] === $peakMonth['label'] && $row['count'] > 0)
-                            <span class="num" style="font-size:10px; font-weight:700; color:var(--navy-900);">{{ $row['count'] }}</span>
-                        @else
-                            <span style="font-size:10px; font-weight:700; color:transparent;">0</span>
-                        @endif
-                        <div class="sa-mini-bar-fill" style="background:{{ $row['count'] > 0 ? 'linear-gradient(180deg,var(--blue-500),var(--navy-700))' : 'rgba(0,83,122,0.08)' }}; height:{{ $row['count'] > 0 ? $barHeight : 3 }}px;"></div>
-                        <span title="{{ $row['label'] }}" style="font-size:9.5px; color:var(--muted-soft); font-weight:600; white-space:nowrap;">{{ mb_substr($row['label'], 0, 3) }}</span>
-                        <span class="num" style="font-size:10px; font-weight:700; color:var(--muted);">{{ $row['count'] }}</span>
-                    </div>
-                @endforeach
-            </div>
-        </div>
-
         <div class="sa-card" style="padding:22px; display:flex; flex-direction:column;">
-            <h3 class="sa-card-title" style="margin-bottom:16px;">معدل زيادة الطلب شهريًا</h3>
+            <h3 class="sa-card-title" style="margin-bottom:16px;">إجمالي المستويات المنشورة</h3>
             <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;">
                 <div style="display:flex; align-items:center; gap:10px;">
-                    <span class="num" style="font-size:30px; font-weight:800; color:var(--navy-900);">{{ $studentGrowthPct }}%</span>
-                    <span style="display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:50%; background:var(--green-100); color:var(--green-600);">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"></path><path d="m5 12 7-7 7 7"></path></svg>
+                    <span class="num" style="font-size:30px; font-weight:800; color:var(--navy-900);">{{ number_format($totalPublishedLevels) }}</span>
+                    <span style="display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:50%; background:var(--sky-100); color:var(--blue-500);">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 9 4.5-9 4.5-9-4.5Z"></path><path d="m3 11.5 9 4.5 9-4.5"></path><path d="m3 16.5 9 4.5 9-4.5"></path></svg>
                     </span>
                 </div>
-                <p style="margin:0; font-size:11.5px; color:var(--muted); font-weight:600; text-align:center;">نسبة زيادة الطلب مقارنة بالشهر الماضي</p>
+                <p style="margin:0; font-size:11.5px; color:var(--muted); font-weight:600; text-align:center;">مستوى منشور ومتاح للطلاب</p>
             </div>
         </div>
 
@@ -272,32 +249,19 @@
                 <h3 class="sa-card-title">الأنشطة الأخيرة</h3>
             </div>
             <div>
-                <div class="sa-activity-row">
-                    <div class="sa-activity-avatar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
-                    <div style="flex:1; min-width:0;">
-                        <p style="margin:0; font-size:12.5px; font-weight:700; color:var(--navy-900);">تم تسجيل طالب جديد</p>
-                        <p style="margin:2px 0 0; font-size:11px; color:var(--muted-soft);">منذ 5 دقائق</p>
+                @forelse ($recentActivity as $activity)
+                    <div class="sa-activity-row">
+                        <div class="sa-activity-avatar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
+                        <div style="flex:1; min-width:0;">
+                            <p style="margin:0; font-size:12.5px; font-weight:700; color:var(--navy-900);">{{ $activity['label'] }}</p>
+                            <p style="margin:2px 0 0; font-size:11px; color:var(--muted-soft);">{{ $activity['detail'] }} · {{ $activity['at']?->diffForHumans() }}</p>
+                        </div>
+                        <span class="sa-legend-dot" style="background:{{ $activity['dot'] }}; margin-top:4px;"></span>
                     </div>
-                    <span class="sa-legend-dot" style="background:#E5484D; margin-top:4px;"></span>
-                </div>
-                <div class="sa-activity-row">
-                    <div class="sa-activity-avatar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
-                    <div style="flex:1; min-width:0;">
-                        <p style="margin:0; font-size:12.5px; font-weight:700; color:var(--navy-900);">تم تسجيل أستاذ جديد</p>
-                        <p style="margin:2px 0 0; font-size:11px; color:var(--muted-soft);">منذ ساعة</p>
-                    </div>
-                    <span class="sa-legend-dot" style="background:var(--blue-500); margin-top:4px;"></span>
-                </div>
-                <div class="sa-activity-row">
-                    <div class="sa-activity-avatar" style="background:var(--green-100); color:var(--green-600);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"></path></svg></div>
-                    <div style="flex:1; min-width:0;">
-                        <p style="margin:0; font-size:12.5px; font-weight:700; color:var(--navy-900);">تحديث محتوى تعليمي</p>
-                        <p style="margin:2px 0 0; font-size:11px; color:var(--muted-soft);">منذ 3 ساعات</p>
-                    </div>
-                    <span class="sa-legend-dot" style="background:var(--green-600); margin-top:4px;"></span>
-                </div>
+                @empty
+                    <p style="margin:0; padding:10px 0; font-size:12.5px; color:var(--muted-soft); font-weight:600; text-align:center;">ما في أنشطة لعرضها لهلق</p>
+                @endforelse
             </div>
-            <p style="margin:12px 0 0; font-size:9.5px; color:var(--muted-soft); text-align:center;">نظام سجل الأنشطة قيد التطوير — هذه بيانات توضيحية مؤقتة</p>
         </div>
     </div>
 </div>

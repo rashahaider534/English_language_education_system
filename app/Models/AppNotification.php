@@ -9,6 +9,8 @@ use Illuminate\Support\Str;
 class AppNotification extends Model
 {
     protected $table = 'notifications';
+    public $incrementing = false;
+protected $keyType = 'string';
     protected $fillable = [
         'id',
         'user_id',

@@ -43,13 +43,13 @@
         toastMessage: '',
         submitGuarded(event, deniedMessage) {
             const form = event.target;
-            fetch(form.action, { method: 'POST', body: new FormData(form) }).then(r => {
+            fetch(form.action, { method: 'POST', body: new FormData(form), redirect: 'manual' }).then(r => {
                 if (r.status === 403) {
                     this.toastMessage = deniedMessage;
                     this.toastVisible = true;
                     setTimeout(() => this.toastVisible = false, 3000);
-                } else if (r.ok) {
-                    window.location.href = r.url || window.location.href;
+                } else if (r.type === 'opaqueredirect' || r.ok) {
+                    window.location.reload();
                 } else {
                     this.toastMessage = 'صار خطأ غير متوقع، حاولي مرة تانية';
                     this.toastVisible = true;
