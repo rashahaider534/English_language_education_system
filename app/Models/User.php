@@ -154,6 +154,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(FirebaseToken::class);
     }
+    public function chatSessions(): HasMany
+    {
+        return $this->hasMany(ChatSession::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.

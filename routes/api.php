@@ -2,6 +2,7 @@
 
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ChatSessionController;
 use App\Http\Controllers\ContentReviewController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SocialAuthController;
@@ -171,6 +172,17 @@ Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
     //Profile api
     Route::get('/student/profile', [StudentProfileController::class , 'show']);
     Route::post('/student/profile', [StudentProfileController::class , 'update']);
+
+    //chat api
+    Route::middleware('auth:sanctum')->prefix('chat')->group(function () {
+        Route::get('/sessions/active', [ChatSessionController::class, 'active']);
+        Route::get('/sessions/history', [ChatSessionController::class, 'history']);
+        Route::post('/sessions', [ChatSessionController::class, 'store']);
+        Route::post('/sessions/{session}/messages', [ChatSessionController::class, 'sendMessage']);
+        Route::post('/sessions/{session}/end', [ChatSessionController::class, 'end']);
+        Route::get('/sessions/{session}', [ChatSessionController::class, 'showHistorySession']);
+        Route::get('/topics', [ChatSessionController::class, 'availableTopics']);
+    });
 });
 
 //Route::post('generateLevelTest', [AdminTestController::class, 'generateLevelTest']);
@@ -184,4 +196,5 @@ Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
 //    '/admin/levels/{level}/questions/filter',
 //    [AdminTestController::class, 'filterLevelTestQuestions']
 //);
+
 

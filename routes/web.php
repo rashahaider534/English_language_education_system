@@ -109,7 +109,7 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
     Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::patch('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
     Route::delete('/notifications/{notification}', [NotificationController::class, 'deleteNotification'])->name('notifications.destroy');
-    
+
     //level route
     Route::get('/levels', [LevelController::class, 'index'])->name('levels.index');
     //course route
