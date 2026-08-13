@@ -124,7 +124,7 @@
                     <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:16%;">المستوى الحالي</th>
                     <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:14%;">تاريخ الانضمام</th>
                     <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:12%;">الحالة</th>
-                    <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:12%;">إجراءات</th>
+                    {{-- <th style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:12%;">إجراءات</th> --}}
                 </tr>
             </thead>
             <tbody>
@@ -156,16 +156,7 @@
                                 <span style="display:inline-flex; padding:5px 11px; border-radius:999px; background:rgba(255,138,101,0.18); color:#C2591A; font-size:11px; font-weight:700;">محظور</span>
                             @endif
                         </td>
-                        <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); text-align:center;">
-                            <form action="{{ route('admin.students.ban', $student) }}" method="POST" onsubmit="return confirm('حظر هالطالب؟');" title="تصميم فقط — بانتظار الربط بالباك-إند">
-                                @csrf
-                                @method('PATCH')
-                                <button type="submit" class="std-ban-btn" style="display:inline-flex; align-items:center; gap:5px; padding:7px 13px; border-radius:9px; border:none; background:rgba(229,72,77,0.1); color:#C2591A; font-family:'Poppins',sans-serif; font-weight:700; font-size:11px; cursor:pointer;">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="m4.9 4.9 14.2 14.2"></path></svg>
-                                    حظر
-                                </button>
-                            </form>
-                        </td>
+
                     </tr>
                 @empty
                     <tr>
