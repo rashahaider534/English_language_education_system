@@ -19,6 +19,7 @@ return new class extends Migration
             $table->timestamp('started_at')->useCurrent();
             $table->timestamp('completed_at')->nullable();
             $table->timestamps();
+            $table->index(['user_id', 'status', 'completed_at']);
         });
     }
 

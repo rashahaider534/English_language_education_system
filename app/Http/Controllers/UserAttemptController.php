@@ -51,12 +51,22 @@ class UserAttemptController extends Controller
     {
         $this->authorize('update', $attempt);
 
-        $attempt = $this->attemptService->finishAttempt($attempt);
+        $result = $this->attemptService->finishAttempt($attempt);
+
+        $attempt = $result['attempt'];
 
         return response()->json([
             'attempt_id' => $attempt->id,
             'score'      => $attempt->score,
             'passed'     => $attempt->score >= $attempt->test->passing_score,
+            'streak'     => [
+                'current'   => $result['streak'],
+                'increased' => $result['increased'],
+            ],
+            'reward' => [
+                'points_awarded'   => $result['reward']['points_awarded'],
+                'points'           => $result['reward']['points'],
+            ],
         ]);
     }
 

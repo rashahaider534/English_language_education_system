@@ -10,3 +10,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::job(new CloseIdleChatSessions)->everyFiveMinutes();
+Schedule::command('streaks:reset')->dailyAt('00:10');

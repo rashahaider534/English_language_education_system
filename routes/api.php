@@ -172,6 +172,7 @@ Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
     //Profile api
     Route::get('/student/profile', [StudentProfileController::class , 'show']);
     Route::post('/student/profile', [StudentProfileController::class , 'update']);
+    Route::get('/student/weeklyActivity' ,[StudentProfileController::class , 'weeklyActivity'] );
 
     //chat api
     Route::middleware('auth:sanctum')->prefix('chat')->group(function () {

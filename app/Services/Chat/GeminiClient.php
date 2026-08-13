@@ -9,7 +9,7 @@ use Illuminate\Support\Collection;
 class GeminiClient
 {
     private string $apiKey;
-   private string $model = 'gemini-2.5-flash';
+   private string $model = 'gemini-3.6-flash';
 
     public function __construct()
     {
