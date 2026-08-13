@@ -256,16 +256,13 @@
                             style="text-align:right; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 16px; background:rgba(168,232,249,0.22); width:26%;">
                             الاسم</th>
                         <th
-                            style="text-align:right; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:24%;">
+                            style="text-align:right; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:27%;">
                             الإيميل</th>
                         <th
-                            style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:12%;">
+                            style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:14%;">
                             تاريخ الانضمام</th>
                         <th
-                            style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:10%;">
-                            دروس منشورة</th>
-                        <th
-                            style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:12%;">
+                            style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:14%;">
                             الراتب</th>
                         <th
                             style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:12%;">
@@ -301,10 +298,6 @@
                             <td
                                 style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); text-align:center; font-size:12.5px; color:rgba(1,60,88,0.65);">
                                 {{ $teacher->created_at?->format('Y-m-d') }}</td>
-                            <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); text-align:center;">
-                                <span
-                                    style="font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; color:rgba(1,60,88,0.7);">{{ $teacher->published_lessons_count }}</span>
-                            </td>
                             <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); text-align:center;">
                                 <span title="عمود الراتب تصميم فقط — بانتظار الربط بالباك-إند"
                                     style="display:inline-flex; align-items:center; gap:4px; font-family:'Poppins',sans-serif; font-weight:700; font-size:12.5px; color:rgba(1,60,88,0.4);">
@@ -360,7 +353,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7"
+                            <td colspan="6"
                                 style="padding:60px 20px; text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:14px;">
                                 لايوجد اساتذة بهذا القسم </td>
                         </tr>

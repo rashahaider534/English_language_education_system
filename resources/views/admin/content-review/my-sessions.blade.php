@@ -105,7 +105,7 @@
                     ? route('admin.content-review.lessons.history', $reviewable->id)
                     : route('admin.content-review.tests.history', $reviewable->id);
                 $contentRoute = $isLesson
-                    ? route('lessons.show', $reviewable->id)
+                    ? route('lessons.show', [$reviewable->id, 'from' => 'review'])
                     : route('test.show', $reviewable->id);
             @endphp
             <div class="cr-row" style="display:flex; align-items:center; gap:18px; padding:18px 22px; border-radius:14px; background:rgba(0,83,122,0.03);">

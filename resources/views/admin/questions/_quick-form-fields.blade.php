@@ -53,14 +53,24 @@
         </div>
     </div>
 
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+    <div x-data="{ imageFileName: '', audioFileName: '' }" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
         <div>
             <label style="display:block; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.55); margin-bottom:6px;">صورة (اختياري)</label>
-            <div class="q-field-wrap"><input type="file" name="image" accept=".jpg,.jpeg,.png" @change="if($event.target.files.length) audioCleared = true"></div>
+            <div class="q-field-wrap" style="display:flex; align-items:center; gap:4px; padding-left:6px;">
+                <input type="file" name="image" x-ref="imageInput" accept=".jpg,.jpeg,.png" style="flex:1;"
+                    @change="imageFileName = $event.target.files[0]?.name || ''; if (imageFileName) { audioFileName = ''; $refs.audioInput.value = ''; }">
+                <button type="button" x-show="imageFileName" x-cloak @click="imageFileName = ''; $refs.imageInput.value = ''" title="إزالة الصورة"
+                    style="display:flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:7px; border:none; background:rgba(229,72,77,0.12); color:#C2591A; font-size:13px; font-weight:700; cursor:pointer; flex-shrink:0;">×</button>
+            </div>
         </div>
         <div>
             <label style="display:block; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.55); margin-bottom:6px;">صوت (اختياري)</label>
-            <div class="q-field-wrap"><input type="file" name="audio" accept=".mp3,.wav,.ogg" @change="if($event.target.files.length) imageCleared = true"></div>
+            <div class="q-field-wrap" style="display:flex; align-items:center; gap:4px; padding-left:6px;">
+                <input type="file" name="audio" x-ref="audioInput" accept=".mp3,.wav,.ogg" style="flex:1;"
+                    @change="audioFileName = $event.target.files[0]?.name || ''; if (audioFileName) { imageFileName = ''; $refs.imageInput.value = ''; }">
+                <button type="button" x-show="audioFileName" x-cloak @click="audioFileName = ''; $refs.audioInput.value = ''" title="إزالة الصوت"
+                    style="display:flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:7px; border:none; background:rgba(229,72,77,0.12); color:#C2591A; font-size:13px; font-weight:700; cursor:pointer; flex-shrink:0;">×</button>
+            </div>
         </div>
     </div>
     <p style="margin:8px 0 0; font-size:11px; color:rgba(1,60,88,0.45);">صورة أو صوت، وليس الاثنين  معا .</p>
