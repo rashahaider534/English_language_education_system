@@ -118,7 +118,6 @@ Route::middleware(['auth:sanctum', 'role:teacher'])->group(function () {
 Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
     //level api
     Route::get('/getStudentLevels', [LevelController::class, 'getStudentLevels']);
-    Route::get('/getPurchasableLevels', [LevelController::class, 'getPurchasableLevels']);
     Route::get('/getStudentcourses/{level}', [CourseController::class, 'index']);
 
     //lesson api

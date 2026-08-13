@@ -15,9 +15,8 @@ class StudentWordService
     public function getLessonWords(Lesson $lesson)
     {
         return $lesson->words()
-                    ->with('media')
-                    ->get();
-
+            ->with('media')
+            ->get();
     }
 
     public function saveWordStatus(User $user, Word $word, WordStatus $status)
@@ -32,7 +31,7 @@ class StudentWordService
 
         if (! $canAccess) {
             throw ValidationException::withMessages([
-                'word' => 'You cannot add this word to your word bank.',
+                'word' => __('messages.cannot_add_word_to_bank'),
             ]);
         }
 
@@ -67,7 +66,7 @@ class StudentWordService
     {
         return $user->words()
             ->wherePivot('status', WordStatus::KNOW)
-            ->with(['lesson','media'])
+            ->with(['lesson', 'media'])
             ->paginate(20);
     }
 
@@ -75,7 +74,7 @@ class StudentWordService
     {
         return $user->words()
             ->wherePivot('status', $status->value)
-           ->with(['lesson','media'])
+            ->with(['lesson', 'media'])
             ->paginate(20)->load('media');
     }
 
@@ -89,17 +88,21 @@ class StudentWordService
 
         if (! $exists) {
             throw ValidationException::withMessages([
-                'word' => 'This word does not belong to your word bank.',
+                'word' => __('messages.word_not_in_bank'),
             ]);
         }
 
         $isCorrect = $word->id === $answerId;
 
+        if ($isCorrect) {
+            $user->studentProfile->increment('points', 5);
+        }
+
         return [
             'correct' => $isCorrect,
             'message' => $isCorrect
-                ? 'Answer is correct'
-                : 'Answer is incorrect',
+                ? __('messages.correct_answer_earned_points')
+                : __('messages.incorrect_answer'),
             'correct_answer_id' => $isCorrect ? null : $word->id,
         ];
     }
