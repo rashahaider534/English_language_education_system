@@ -16,6 +16,10 @@ class Payment extends Model
         'status',
         'paid_at',
     ];
+    protected $casts = [
+        'paid_at' => 'datetime',
+        'created_at' => 'datetime',
+    ];
 
     public function user()
     {
@@ -26,8 +30,8 @@ class Payment extends Model
     {
         return $this->belongsTo(Level::class);
     }
-    
-      protected function casts(): array
+
+    protected function casts(): array
     {
         return [
             'status' => PaymentStatus::class,

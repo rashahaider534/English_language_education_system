@@ -40,7 +40,9 @@ class DatabaseSeeder extends Seeder
             UserPodcastSeeder::class,
             NotificationSeeder::class,
             ContentReviewSeeder::class,
-            ChatTopicSeeder::class
+            ChatTopicSeeder::class,
+            LevelExceptionSeeder::class,
+            PaymentSeeder::class,
 
         ]);
     }
