@@ -140,7 +140,7 @@ class AttemptService
         return $lastAttempt->completed_at->diffInDays(now()) >= 30;
     }
 
-    public function finishAttempt(UserAttempt $attempt): UserAttempt
+    public function finishAttempt(UserAttempt $attempt): array
     {
         return DB::transaction(function () use ($attempt) {
             if ($attempt->status !== AttemptStatus::IN_PROGRESS) {
@@ -160,45 +160,79 @@ class AttemptService
                 'completed_at' => now(),
                 'score'        => $percentage,
             ]);
-
+            $streakResult = app(StreakService::class)->recordActivity($attempt->user_id);
             $test = $attempt->test;
             $passed = $percentage >= $test->passing_score;
 
-            if ($passed) {
-                    match ($test->testable_type) {
-                        'lesson' => $this->handleLessonPass($test, $attempt->user),
+            $rewardResult = [
+                'points_awarded'   => false,
+                'points'           => 0,
+            ];
 
-                        'course' => $this->handleCoursePass(
-                            $test,
-                            $attempt->user
-                        ),
-                    default  => null,
+            if ($passed) {
+                $rewardResult = match ($test->testable_type) {
+                    'lesson' => $this->handleLessonPass($test, $attempt->user),
+                    'course' => $this->handleCoursePass($test, $attempt->user, $attempt),
+                    default  => $rewardResult,
                 };
             }
-            return $attempt->fresh();
-        });
-    }
+            return [
+                'attempt'   => $attempt->fresh(),
+                'streak'    => $streakResult['streak'],
+                'increased' => $streakResult['increased'],
+                'reward'    => $rewardResult,
+            ];
+    });
 
-    private function handleLessonPass($test, $user): void
+}
+    private function handleLessonPass(Test $test, User $user): array
     {
         $lesson = $test->testable;
 
-        $user->lessons()->updateExistingPivot(
-            $lesson->id,
-            [
+        $userLesson = $user->lessons()->where('lesson_id', $lesson->id)->first();
+
+        if ($userLesson && $userLesson->pivot->status === 'completed') {
+            return [
+                'points_awarded' => false,
+                'points'         => 0,
+            ];
+        }
+
+        if ($userLesson) {
+            $userLesson->update([
                 'status' => 'completed',
                 'completed_at' => now(),
-            ]
-        );
+            ]);
+        }
+
         StudentProfile::where('user_id', $user->id)
             ->increment('points', $lesson->xp_points);
 
         $this->studentLessonService->openNextLesson($lesson->course, $user);
+
+        return [
+            'points_awarded' => true,
+            'points'         => $lesson->xp_points,
+        ];
     }
-    private function handleCoursePass($test, $user): void
+    private function handleCoursePass(Test $test, User $user, UserAttempt $currentAttempt): array
     {
         $course = $test->testable;
+        $courseXpPoints = 50; // نقاط ثابتة عند اجتياز اختبار الكورس لأول مرة
 
+        $alreadyPassedBefore = UserAttempt::where('user_id', $user->id)
+            ->where('test_id', $test->id)
+            ->where('id', '!=', $currentAttempt->id)
+            ->where('status', AttemptStatus::COMPLETED)
+            ->where('score', '>=', $test->passing_score)
+            ->exists();
+
+        if ($alreadyPassedBefore) {
+            return [
+                'points_awarded'   => false,
+                'points'           => 0,
+            ];
+        }
         $user->StudentCourses()->updateExistingPivot(
             $course->id,
             [
@@ -207,12 +241,18 @@ class AttemptService
             ]
         );
 
+        StudentProfile::where('user_id', $user->id)
+            ->increment('points', $courseXpPoints);
+
         $this->studentCourseService->openNextCourse(
             $course->level,
             $user
         );
+        return [
+            'points_awarded'   => true,
+            'points'           => $courseXpPoints,
+        ];
     }
-
     public function leaveAttempt(UserAttempt $attempt): UserAttempt
     {
         if ($attempt->status !== AttemptStatus::IN_PROGRESS) {
