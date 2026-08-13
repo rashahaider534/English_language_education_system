@@ -36,7 +36,6 @@
     $sc = $statusColors[$statusVal] ?? $statusColors['draft'];
     $canEdit = !in_array($statusVal, ['archived', 'closed']);
     $orderedQuestions = $test->questions->sortBy(fn($q) => $q->pivot->order)->values();
-    $canViewQuestions = auth()->user()->can('manage_placement_questions');
     $canPublish = auth()->user()->can('publish_levels');
     $isNewVersion = !is_null($test->previous_test_id);
     $showPublishButton = $isNewVersion && $statusVal === 'approved';
@@ -130,25 +129,69 @@
         <h3 style="margin:0 0 18px; font-family:'Poppins',sans-serif; font-weight:800; font-size:14px; color:#013C58;">أسئلة الاختبار (بالترتيب)</h3>
         <div style="display:flex; flex-direction:column; gap:10px;">
             @forelse ($orderedQuestions as $q)
-                @php $qType = $q->type instanceof \BackedEnum ? $q->type->value : $q->type; @endphp
-                @if ($canViewQuestions)
-                    <a href="{{ route('questions.show', $q) }}" class="t-q-row" style="display:flex; align-items:center; gap:14px; padding:13px 16px; border-radius:13px; background:rgba(0,83,122,0.03); text-decoration:none; cursor:pointer;">
-                @else
-                    <div @click="toastMessage = 'لا تملك صلاحية كافية لعرض تفاصيل الأسئلة'; toastVisible = true; setTimeout(() => toastVisible = false, 3000)" class="t-q-row" style="display:flex; align-items:center; gap:14px; padding:13px 16px; border-radius:13px; background:rgba(0,83,122,0.03); cursor:pointer;">
-                @endif
-                    <span style="display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:9px; background:#00537A; color:#fff; font-family:'Poppins',sans-serif; font-weight:700; font-size:12.5px; flex-shrink:0;">{{ $q->pivot->order }}</span>
-                    <div style="flex:1; min-width:0;">
-                        <p style="margin:0; font-size:13.5px; font-weight:700; color:#013C58; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $q->title_question_en }}</p>
-                        <p style="margin:2px 0 0; font-size:12px; color:rgba(1,60,88,0.55);">{{ $q->title_question_ar }}</p>
+                @php
+                    $qType = $q->type instanceof \BackedEnum ? $q->type->value : $q->type;
+                    $answers = $q->{$q->getAnswersRelationName()};
+                @endphp
+                <div x-data="{ open: false }" class="t-q-row" style="border-radius:13px; background:rgba(0,83,122,0.03); overflow:hidden;">
+                    <button type="button" @click="open = !open" style="width:100%; display:flex; align-items:center; gap:14px; padding:13px 16px; border:none; background:transparent; cursor:pointer; text-align:right;">
+                        <span style="display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:9px; background:#00537A; color:#fff; font-family:'Poppins',sans-serif; font-weight:700; font-size:12.5px; flex-shrink:0;">{{ $q->pivot->order }}</span>
+                        <div style="flex:1; min-width:0;">
+                            <p style="margin:0; font-size:13.5px; font-weight:700; color:#013C58; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $q->title_question_en }}</p>
+                            <p style="margin:2px 0 0; font-size:12px; color:rgba(1,60,88,0.55);">{{ $q->title_question_ar }}</p>
+                        </div>
+                        <span style="display:inline-flex; padding:5px 11px; border-radius:999px; background:rgba(14,106,150,0.12); color:#0E6A96; font-size:11px; font-weight:700; flex-shrink:0;">{{ $typeLabels[$qType] ?? $qType }}</span>
+                        <span style="display:inline-flex; padding:5px 11px; border-radius:999px; background:rgba(255,186,66,0.16); color:#8A5A00; font-size:11px; font-weight:700; flex-shrink:0;">{{ $difficultyLabels[$q->difficulty] ?? $q->difficulty }}</span>
+                        <span style="font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; color:rgba(1,60,88,0.7); flex-shrink:0;">{{ $q->score }} نقطة</span>
+                        <span :style="open ? 'transform:rotate(180deg);' : ''" style="display:flex; flex-shrink:0; color:rgba(1,60,88,0.4); transition:transform 0.15s;">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+                        </span>
+                    </button>
+                    <div x-show="open" x-cloak x-transition style="padding:0 16px 16px 60px;">
+                        @if ($q->text_question)
+                            <p style="margin:0 0 10px; font-size:12.5px; color:#013C58; background:#fff; border:1px solid rgba(0,83,122,0.1); border-radius:10px; padding:10px 12px;">{{ $q->text_question }}</p>
+                        @endif
+                        @if ($qType === 'MCQ')
+                            <div style="display:flex; flex-direction:column; gap:6px;">
+                                @foreach ($answers as $a)
+                                    <div style="display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:9px; background:{{ $a->is_correct ? 'rgba(76,175,120,0.14)' : '#fff' }}; border:1px solid {{ $a->is_correct ? 'rgba(76,175,120,0.3)' : 'rgba(0,83,122,0.08)' }};">
+                                        @if ($a->is_correct)
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2E7D55" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M20 6 9 17l-5-5"></path></svg>
+                                        @else
+                                            <span style="width:14px; height:14px; flex-shrink:0;"></span>
+                                        @endif
+                                        <span style="font-size:12.5px; color:#013C58; font-weight:{{ $a->is_correct ? '700' : '500' }};">{{ $a->text_answer }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @elseif ($qType === 'FILL')
+                            <div style="display:flex; flex-direction:column; gap:6px;">
+                                @foreach ($answers->sortBy('blank_order') as $a)
+                                    <div style="display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:9px; background:rgba(76,175,120,0.14); border:1px solid rgba(76,175,120,0.3);">
+                                        <span style="display:flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:6px; background:#00537A; color:#fff; font-size:10px; font-weight:700; flex-shrink:0;">{{ $a->blank_order }}</span>
+                                        <span style="font-size:12.5px; color:#013C58; font-weight:700;">{{ $a->text_answer }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @elseif ($qType === 'ARRANGE')
+                            <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                                @foreach ($answers->sortBy('order') as $a)
+                                    <span style="display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:999px; background:rgba(76,175,120,0.14); border:1px solid rgba(76,175,120,0.3); font-size:12.5px; color:#013C58; font-weight:700;">{{ $a->order }}. {{ $a->text_answer }}</span>
+                                @endforeach
+                            </div>
+                        @elseif ($qType === 'PAIR')
+                            <div style="display:flex; flex-direction:column; gap:6px;">
+                                @foreach ($answers as $a)
+                                    <div style="display:flex; align-items:center; gap:10px; padding:8px 12px; border-radius:9px; background:#fff; border:1px solid rgba(0,83,122,0.08); font-size:12.5px; color:#013C58; font-weight:600;">
+                                        <span>{{ $a->left_text }}</span>
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(1,60,88,0.4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M17 8v8M17 8l4 4-4 4M7 8v8M7 8 3 12l4 4"></path></svg>
+                                        <span>{{ $a->right_text }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
-                    <span style="display:inline-flex; padding:5px 11px; border-radius:999px; background:rgba(14,106,150,0.12); color:#0E6A96; font-size:11px; font-weight:700; flex-shrink:0;">{{ $typeLabels[$qType] ?? $qType }}</span>
-                    <span style="display:inline-flex; padding:5px 11px; border-radius:999px; background:rgba(255,186,66,0.16); color:#8A5A00; font-size:11px; font-weight:700; flex-shrink:0;">{{ $difficultyLabels[$q->difficulty] ?? $q->difficulty }}</span>
-                    <span style="font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; color:rgba(1,60,88,0.7); flex-shrink:0;">{{ $q->score }} نقطة</span>
-                @if ($canViewQuestions)
-                    </a>
-                @else
-                    </div>
-                @endif
+                </div>
             @empty
                 <p style="text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:13px; padding:30px 0;">لايوجد اسئلة داخل هذا الاختبار </p>
             @endforelse
