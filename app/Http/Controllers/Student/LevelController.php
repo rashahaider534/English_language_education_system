@@ -25,9 +25,4 @@ class LevelController extends Controller
             'locked_levels' => LevelResource::collection($data['locked_levels']),
         ]);
     }
-    // public function getPurchasableLevels()
-    // {
-    //     $levels = $this->service->getPurchasableLevels(auth()->user());
-    //     return LevelResource::collection($levels);
-    // }
 }

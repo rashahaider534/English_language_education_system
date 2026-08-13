@@ -22,7 +22,7 @@ class RateServiece
 
         if (! $canRate) {
             throw ValidationException::withMessages([
-                'course' => 'You cannot rate this course.',
+                'course' => __('messages.cannot_rate_course'),
             ]);
         }
         Cache::tags(['courses'])->flush();
@@ -40,11 +40,11 @@ class RateServiece
     {
         if ($rate->user_id !== auth()->id()) {
             throw ValidationException::withMessages([
-                'rate' => 'You cannot delete this rating.',
+                'rate' => __('messages.cannot_delete_rating'),
             ]);
         }
         $rate->delete();
         Cache::tags(['courses'])->flush();
-       return ['rate deleted successfully'];
+       return [__('messages.rating_deleted_successfully')];
     }
 }

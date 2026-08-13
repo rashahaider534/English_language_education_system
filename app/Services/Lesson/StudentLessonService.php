@@ -95,7 +95,7 @@ class StudentLessonService
                 ->exists()
         ) {
             throw ValidationException::withMessages([
-                'course' => 'Lessons can only be accessed for the course currently in progress.',
+                'course' => __('messages.lessons_access_only_in_progress_course'),
             ]);
         }
         $allowedOrder = $this->getAllowedOrder($course, $user);
@@ -134,7 +134,7 @@ class StudentLessonService
 
         if (! $canAccess) {
             throw ValidationException::withMessages([
-                'lesson' => 'You cannot access this lesson.',
+                'lesson' => __('messages.cannot_access_lesson'),
             ]);
         }
 
