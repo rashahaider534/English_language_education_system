@@ -125,7 +125,7 @@
 
         <div class="sa-card sa-stat sa-hero">
             <div style="position:relative; display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:14px;">
-                <p style="margin:0; font-size:12.5px; font-weight:700; color:rgba(168,232,249,.9);">إجمالي الطلب</p>
+                <p style="margin:0; font-size:12.5px; font-weight:700; color:rgba(168,232,249,.9);">إجمالي  الطلاب</p>
                 <div class="sa-icon-circle" style="background:rgba(255,255,255,.14); color:var(--yellow-300);">
                     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z"></path><path d="M6 12v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"></path></svg>
                 </div>
@@ -142,7 +142,7 @@
                 </div>
             </div>
             <p style="margin:0; font-size:27px; font-weight:800; color:var(--navy-900);" class="num">{{ number_format($totalAdmins) }}</p>
-            <p style="margin:6px 0 0; font-size:11.5px; font-weight:600; color:var(--muted);">حسابات الأدمن والسوبر أدمن</p>
+            <p style="margin:6px 0 0; font-size:11.5px; font-weight:600; color:var(--muted);">حسابات الأدمن </p>
         </div>
     </div>
 
@@ -226,7 +226,7 @@
                         <p style="margin:4px 0 0; font-size:11.5px; color:var(--muted); font-weight:600;">{{ $bestSellingLevel->sales_count }} عملية شراء</p>
                     </div>
                 @else
-                    <p style="margin:0; font-size:12.5px; color:var(--muted-soft); font-weight:600;">ما في مبيعات مستويات لعرضها بعد</p>
+                    <p style="margin:0; font-size:12.5px; color:var(--muted-soft); font-weight:600;">لايوجد مبيعات مستويات لعرضها </p>
                 @endif
             </div>
         </div>

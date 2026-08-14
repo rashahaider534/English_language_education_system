@@ -461,7 +461,7 @@
                                             'manage_level_tests' => 'إدارة اختبارات تحديد المستوى',
                                             'manage_placement_tests' => 'إدارة اختبارات القبول',
                                             'manage_placement_questions' => 'إدارة بنك أسئلة تحديد المستوى',
-                                            'manage_podcasts' => 'إدارة البودكاست والتوبكس',
+                                            'manage_podcasts' => 'إدارة البودكاست والتوبك',
                                             'publish_levels' => 'نشر المستويات',
                                             default => $permission->name,
                                         };

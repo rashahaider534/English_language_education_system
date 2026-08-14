@@ -72,7 +72,7 @@ class PermissionController extends Controller
     {
         $this->roleservice->assignPermissions($user, $request->validated('permissions'));
         return redirect()
-            ->route('admin.admins.index')
+            ->route('admin.permission.show', $user->id)
             ->with('success', 'تم حفظ صلاحيات الأدمن بنجاح');
     }
 
@@ -80,7 +80,7 @@ class PermissionController extends Controller
     {
         $this->roleservice->revokePermissions($user, $request->validated('permissions'));
         return redirect()
-            ->route('admin.admins.index')
+            ->route('admin.permission.show', $user->id)
             ->with('success', 'تم سحب الصلاحية بنجاح');
     }
 }

@@ -115,7 +115,7 @@
                                   @if(!$isPublished) onsubmit="return confirm('حذف بودكاست &quot;{{ addslashes($podcast->name_ar) }}&quot; نهائيًا؟');" @endif>
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" title="{{ $isPublished ? 'ما فيك تحذفي بودكاست تحت توبك منشور' : 'حذف' }}" class="pd-action-btn"
+                                <button type="submit" title="{{ $isPublished ? ' لايمكن حذف  بودكاست تحت توبك منشور' : 'حذف' }}" class="pd-action-btn"
                                     @if($isPublished) disabled @endif
                                     style="display:flex; align-items:center; justify-content:center; width:37px; height:37px; border-radius:10px; border:none; background:rgba(229,72,77,0.1); color:#C2591A; cursor:{{ $isPublished ? 'not-allowed' : 'pointer' }}; opacity:{{ $isPublished ? 0.4 : 1 }};">
                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="m19 6-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path></svg>
