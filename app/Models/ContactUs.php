@@ -9,6 +9,7 @@ class ContactUs extends Model
 {
     protected $fillable = [
         'user_id',
+        'read',
         'text',
     ];
     public  function user() :BelongsTo
