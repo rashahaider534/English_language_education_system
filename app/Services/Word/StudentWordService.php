@@ -15,9 +15,8 @@ class StudentWordService
     public function getLessonWords(Lesson $lesson)
     {
         return $lesson->words()
-                    ->with('media')
-                    ->get();
-
+            ->with('media')
+            ->get();
     }
 
     public function saveWordStatus(User $user, Word $word, WordStatus $status)
@@ -67,7 +66,7 @@ class StudentWordService
     {
         return $user->words()
             ->wherePivot('status', WordStatus::KNOW)
-            ->with(['lesson','media'])
+            ->with(['lesson', 'media'])
             ->paginate(20);
     }
 
@@ -75,7 +74,7 @@ class StudentWordService
     {
         return $user->words()
             ->wherePivot('status', $status->value)
-           ->with(['lesson','media'])
+            ->with(['lesson', 'media'])
             ->paginate(20)->load('media');
     }
 
@@ -95,10 +94,14 @@ class StudentWordService
 
         $isCorrect = $word->id === $answerId;
 
+        if ($isCorrect) {
+            $user->studentProfile->increment('points', 5);
+        }
+
         return [
             'correct' => $isCorrect,
             'message' => $isCorrect
-                ? 'Answer is correct'
+                ? 'Answer is correct. You earned 5 points!'
                 : 'Answer is incorrect',
             'correct_answer_id' => $isCorrect ? null : $word->id,
         ];

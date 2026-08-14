@@ -59,7 +59,7 @@ class StudentCourseService
             'New Course Available',
             "A new course is now available: {$course->name_en}",
             [
-                'course_id' => $course->id,
+                'course_id' => $course,
             ],
             'course-opened'
         );
