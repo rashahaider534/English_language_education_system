@@ -18,7 +18,7 @@ class DashboardService
 
         $totalTeachers = User::role('teacher', 'api')->count();
         $totalCertificates = Certificate::count();
-        $totalAdmins = User::role(['admin', 'super-admin'], 'web')->count();
+        $totalAdmins = User::role('admin', 'web')->count();
         $totalPublishedLevels = Level::where('status', 'published')->count();
 
         $revenueMonthly = Payment::where('status', PaymentStatus::PAID)

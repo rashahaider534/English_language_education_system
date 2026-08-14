@@ -74,7 +74,7 @@ class AdminTopicService
             ]);
         } else {
             $topic->update(['status' => TopicStatus::PUBLISHED]);
-            $students = User::role('student')
+            $students = User::role('student', 'api')
                 ->pluck('id')
                 ->toArray();
             SendNotificationJob::dispatch(

@@ -81,7 +81,7 @@
                   @if(!$isPublished) onsubmit="return confirm('حذف بودكاست &quot;{{ addslashes($podcast->name_ar) }}&quot; نهائيًا؟');" @endif>
                 @csrf
                 @method('DELETE')
-                <button type="submit" @disabled($isPublished) title="{{ $isPublished ? 'ما فيك تحذفي بودكاست تحت توبك منشور' : 'حذف' }}" class="pc-action-btn" style="display:inline-flex; align-items:center; gap:8px; padding:11px 20px; border-radius:12px; border:1px solid rgba(255,255,255,0.2); background:rgba(229,72,77,0.18); color:#fff; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; cursor:{{ $isPublished ? 'not-allowed' : 'pointer' }}; opacity:{{ $isPublished ? 0.45 : 1 }};">
+                <button type="submit" @disabled($isPublished) title="{{ $isPublished ? 'لايمكن  حذف بودكاست تحت توبك منشور' : 'حذف' }}" class="pc-action-btn" style="display:inline-flex; align-items:center; gap:8px; padding:11px 20px; border-radius:12px; border:1px solid rgba(255,255,255,0.2); background:rgba(229,72,77,0.18); color:#fff; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; cursor:{{ $isPublished ? 'not-allowed' : 'pointer' }}; opacity:{{ $isPublished ? 0.45 : 1 }};">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path></svg>
                     حذف
                 </button>
@@ -97,7 +97,7 @@
             @else
                 <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:80px 20px; color:rgba(255,255,255,0.5);">
                     <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5v14l11-7Z"></path></svg>
-                    <p style="margin:0; font-size:13px; font-weight:600;">ما في فيديو مرفوع لهالبودكاست</p>
+                    <p style="margin:0; font-size:13px; font-weight:600;">لايوجد  فيديو مرفوع لهذا البودكاست</p>
                 </div>
             @endif
         </div>

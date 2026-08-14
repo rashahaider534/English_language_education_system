@@ -49,7 +49,7 @@
                         'manage_level_tests' => 'إدارة اختبارات تحديد المستوى',
                         'manage_placement_tests' => 'إدارة اختبارات القبول',
                         'manage_placement_questions' => 'إدارة بنك أسئلة تحديد المستوى',
-                        'manage_podcasts' => 'إدارة البودكاست والتوبكس',
+                        'manage_podcasts' => 'إدارة البودكاست والتوبك',
                         'publish_levels' => 'نشر المستويات',
                         default => $permission->name,
                     };
@@ -67,7 +67,7 @@
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
                 حفظ الصلاحيات
             </button>
-            <a href="{{ route('admin.admins.index') }}" style="display:inline-flex; align-items:center; padding:12px 20px; border-radius:999px; background:rgba(0,83,122,0.08); color:#00537A; text-decoration:none; font-family:'Poppins',sans-serif; font-weight:600; font-size:13px;">تخطي الآن</a>
+            <a href="{{ route('admin.permission.show', $user->id) }}" style="display:inline-flex; align-items:center; padding:12px 20px; border-radius:999px; background:rgba(0,83,122,0.08); color:#00537A; text-decoration:none; font-family:'Poppins',sans-serif; font-weight:600; font-size:13px;">تخطي الآن</a>
         </div>
     </form>
 </div>
