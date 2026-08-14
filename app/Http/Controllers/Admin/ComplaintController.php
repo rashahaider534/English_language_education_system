@@ -20,7 +20,7 @@ class ComplaintController extends Controller
 
     public function sendReply(Request $request, ContactUs $contactMessage)
     {
-        if (!auth()->user()->role('super-admin','web')) {
+        if (!auth()->user()->hasRole('super-admin','web')) {
              return  throw ValidationException::withMessages([
                 'error' => 'لا توجد صلاحيات لتنفيذ هذا الإجراء'
             ]);
@@ -43,7 +43,7 @@ class ComplaintController extends Controller
                 ->queue(new ReplyToContact($contactMessage, $validated['reply_text']));
 
            return redirect()->route('admin.complaints.index')
-                ->with('success', 'تم إرسال الرد بنجاح للطالب ✅');
+                ->with('success', 'تم إرسال الرد بنجاح للطالب ');
 
         } catch (\Exception $e) {
             return redirect()->back()

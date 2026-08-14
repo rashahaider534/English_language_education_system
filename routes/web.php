@@ -139,9 +139,9 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
 
     });
 
-    // Complaints inbox (contact_us table) — read-only listing, no actions yet.
+    // Complaints inbox (contact_us table)
     Route::get('/complaints', [ComplaintController::class, 'index'])->name('admin.complaints.index');
-    Route::post('/complaints/{contactMessage}/reply', [ComplaintController::class, 'sendReply']);
+    Route::post('/complaints/{contactMessage}/reply', [ComplaintController::class, 'sendReply'])->name('admin.complaints.reply');
 });
 
 Route::middleware(['auth:web'])->group(function () {

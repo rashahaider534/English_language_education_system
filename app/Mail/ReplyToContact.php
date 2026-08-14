@@ -43,7 +43,7 @@ class ReplyToContact extends Mailable
          return new Content(
             view: 'Emails.reply-to-contact',
             with: [
-                'studentName' => $this->contactMessage->user->name,
+                'studentName' => trim($this->contactMessage->user->first_name.' '.$this->contactMessage->user->last_name),
                 'originalMessage' => $this->contactMessage->text,
                 'replyText' => $this->replyText,
             ],

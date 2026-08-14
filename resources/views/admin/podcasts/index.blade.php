@@ -15,7 +15,10 @@
     use App\Enums\TopicStatus;
     $isPublished = $topic->status === TopicStatus::PUBLISHED;
 @endphp
-<div class="-mx-4 -my-6 px-4 py-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8" style="background:#DFF2F9; font-family:'Tajawal',sans-serif; min-height:100vh;" dir="rtl">
+<div
+    x-data="{ deleteModalOpen: false, deleteTargetId: null, deleteTargetName: '' }"
+    class="-mx-4 -my-6 px-4 py-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8" style="background:#DFF2F9; font-family:'Tajawal',sans-serif; min-height:100vh;" dir="rtl"
+>
 
     <div style="margin-bottom:18px;">
         <a href="{{ route('topics.index') }}" style="display:inline-flex; align-items:center; gap:6px; color:#00537A; font-size:13px; font-weight:600; text-decoration:none;">
@@ -111,16 +114,11 @@
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
                             </a>
 
-                            <form action="{{ route('podcasts.delete', $podcast) }}" method="POST" style="flex-shrink:0; margin-inline-start:auto;"
-                                  @if(!$isPublished) onsubmit="return confirm('حذف بودكاست &quot;{{ addslashes($podcast->name_ar) }}&quot; نهائيًا؟');" @endif>
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" title="{{ $isPublished ? ' لايمكن حذف  بودكاست تحت توبك منشور' : 'حذف' }}" class="pd-action-btn"
-                                    @if($isPublished) disabled @endif
-                                    style="display:flex; align-items:center; justify-content:center; width:37px; height:37px; border-radius:10px; border:none; background:rgba(229,72,77,0.1); color:#C2591A; cursor:{{ $isPublished ? 'not-allowed' : 'pointer' }}; opacity:{{ $isPublished ? 0.4 : 1 }};">
-                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="m19 6-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path></svg>
-                                </button>
-                            </form>
+                            <button type="button" title="{{ $isPublished ? ' لايمكن حذف  بودكاست تحت توبك منشور' : 'حذف' }}" class="pd-action-btn"
+                                @if($isPublished) disabled @else @click="deleteModalOpen = true; deleteTargetId = {{ $podcast->id }}; deleteTargetName = {{ Illuminate\Support\Js::from($podcast->name_ar) }}" @endif
+                                style="display:flex; align-items:center; justify-content:center; width:37px; height:37px; border-radius:10px; border:none; background:rgba(229,72,77,0.1); color:#C2591A; cursor:{{ $isPublished ? 'not-allowed' : 'pointer' }}; opacity:{{ $isPublished ? 0.4 : 1 }}; flex-shrink:0; margin-inline-start:auto;">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="m19 6-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path></svg>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -131,5 +129,34 @@
             {{ $podcasts->links() }}
         </div>
     @endif
+
+    {{-- ============ DELETE CONFIRM MODAL ============ --}}
+    <div x-show="deleteModalOpen" x-cloak
+         x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+         style="position:fixed; inset:0; z-index:50; background:rgba(1,42,63,0.5); backdrop-filter:blur(4px); overflow-y:auto;"
+         @click="deleteModalOpen = false">
+        <div style="min-height:100%; display:flex; align-items:center; justify-content:center; padding:24px;">
+            <div @click.stop
+                 x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                 style="width:100%; max-width:400px; background:#EFFAFD; border-radius:22px; padding:30px 26px; box-shadow:0 44px 100px rgba(1,42,63,0.4); text-align:center;">
+                <div style="width:58px; height:58px; border-radius:16px; background:rgba(229,72,77,0.14); color:#C2591A; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="m19 6-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path></svg>
+                </div>
+                <h3 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; color:#013C58;">حذف بودكاست "<span x-text="deleteTargetName"></span>" نهائيًا؟</h3>
+                <p style="margin:10px 0 0; font-size:13px; color:rgba(1,60,88,0.6); line-height:1.7;">     .</p>
+                <div style="display:flex; gap:10px; margin-top:22px;">
+                    <button type="button" @click="deleteModalOpen = false"
+                        style="flex:1; padding:11px; border-radius:11px; border:1.5px solid rgba(0,83,122,0.12); background:#EFFAFD; color:#013C58; font-family:'Poppins',sans-serif; font-weight:600; font-size:13px; cursor:pointer;">إلغاء</button>
+                    <form :action="'/podcasts/' + deleteTargetId + '/delete'" method="POST" style="flex:1;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit"
+                            style="width:100%; padding:11px; border-radius:11px; border:none; background:linear-gradient(90deg,#C1392B,#E05C4E); color:#fff; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; cursor:pointer;">تأكيد الحذف</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
