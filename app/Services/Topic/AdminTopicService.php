@@ -72,23 +72,31 @@ class AdminTopicService
             throw ValidationException::withMessages([
                 'topic' => 'This topic is already published.',
             ]);
-        } else {
-            $topic->update(['status' => TopicStatus::PUBLISHED]);
-            $students = User::role('student')
+        }
+        DB::transaction(function () use ($topic) {
+
+            $topic->update([
+                'status' => TopicStatus::PUBLISHED,
+            ]);
+
+            $students = User::role('student', 'api')
                 ->pluck('id')
                 ->toArray();
+
             SendNotificationJob::dispatch(
                 $students,
-                'New Topic Published',
-                "A new topic has been published: {$topic->name_en}.",
+               'New Topic Published',
+               "A new topic has been published: {$topic->name_en}.",
                 [
                     'topic_id' => $topic->id,
                 ],
                 'topic-published'
-            );
-            
-            return ['topic published successfully'];
-        }
+            )->afterCommit();
+        });
+
+        return [
+            'message' => 'Topic published successfully.',
+        ];
     }
 
     //في تابع النشر لا تنسيه

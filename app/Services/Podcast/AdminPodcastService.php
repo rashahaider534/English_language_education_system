@@ -47,7 +47,7 @@ class AdminPodcastService
 
             if ($topic->status === TopicStatus::PUBLISHED) {
 
-                $students = User::role('student')
+                $students = User::role('student','api')
                     ->pluck('id')
                     ->toArray();
 
@@ -56,8 +56,8 @@ class AdminPodcastService
                     'New Podcast Available',
                     "A new podcast has been added to the topic: {$topic->name_en}.",
                     [
-                        'podcast_id' => $podcast->id,
-                        'topic_id' => $topic->id,
+                        'podcast_id' => $podcast,
+                        'topic_id' => $topic,
                     ],
                     'podcast-created'
                 );

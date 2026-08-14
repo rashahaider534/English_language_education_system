@@ -3,6 +3,7 @@
 namespace App\Services\Level_Exception;
 
 use App\Enums\LevelExceptionStatus;
+use App\Jobs\SendNotificationJob;
 use App\Models\LevelException;
 use App\Models\User;
 use App\Services\FirebaseService;
@@ -11,10 +12,6 @@ use Illuminate\Support\Facades\DB;
 
 class AdminLevelExceptionService
 {
-      public function __construct(
-        private FirebaseService $firebaseService
-    ) {}
-
     public function index(?string $status = null)
     {
         return LevelException::query()
@@ -73,8 +70,8 @@ class AdminLevelExceptionService
 
         $student = User::find($levelException->user_id);
         if ($student) {
-            $this->firebaseService->sendToUser(
-                $student,
+            SendNotificationJob::dispatch(
+                [$student],
                 'Level Exception Approved',
                 'Your request to access the level has been approved.',
                 [
@@ -103,8 +100,8 @@ class AdminLevelExceptionService
 
         $student = User::find($levelException->user_id);
         if ($student) {
-            $this->firebaseService->sendToUser(
-                $student,
+                SendNotificationJob::dispatch(
+                [$student],
                 'Level Exception reject',
                  'Your request to access the level: ' . $levelException->requestedLevel->name_en . ' has been rejected.',
                 [

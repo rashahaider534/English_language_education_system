@@ -18,8 +18,8 @@ use Illuminate\Support\Facades\DB;
 class StudentLevelExceptionService
 {
     public function __construct(
-         private LevelAccessService $levelAccessService,
-         private NotificationService $notificationService
+        private LevelAccessService $levelAccessService,
+        private NotificationService $notificationService
     ) {}
     public function index(User $user, ?string $status = null)
     {
@@ -89,18 +89,25 @@ class StudentLevelExceptionService
                         ->toMediaCollection('attachments');
                 }
             }
+            $studentName = trim(
+                $user->first_name . ' ' . $user->last_name
+            );
 
-            $admin= User::role('super-admin')->pluck('id')->toArray();
+            $levelName = $level->name_ar;
+            $admin = User::role('super-admin', 'web')->pluck('id')->toArray();
             SendNotificationJob::dispatch(
                 $admin,
-                'New Level Exception Request',
-                'A student has submitted a request to access a locked level.',
-                [ 'level_exception_id' =>$levelException->id],
+                'طلب استثناء جديد',
+                "قام الطالب {$studentName} بتقديم طلب استثناء للوصول إلى المستوى {$levelName}.",
+                [
+                    'level_exception_id' => $levelException->id,
+                    'level_id' => $level->id,
+                    'user_id' => $user->id,
+                ],
                 'level-exception'
             );
 
             return $levelException;
-
         });
     }
     public function update(LevelException $levelException, array $data)
@@ -142,7 +149,7 @@ class StudentLevelExceptionService
 
         if (
             $media->model_id !== $levelException->id ||
-            $media->model_type !==Relation::getMorphAlias(LevelException::class)
+            $media->model_type !== Relation::getMorphAlias(LevelException::class)
         ) {
             abort(404);
         }
