@@ -55,8 +55,9 @@ class LevelExceptionController extends Controller
         Media $media
     ) {
         $this->service->deleteAttachment($levelException, $media);
+
         return response()->json([
-            'message' => __('messages.Attachment deleted successfully')
+            'message' => 'Attachment deleted successfully.'
         ]);
     }
 }

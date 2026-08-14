@@ -23,7 +23,7 @@ class CommentService
     {
         if ($lesson->status !== ContentStatus::PUBLISHED->value) {
             throw ValidationException::withMessages([
-                'comment' => __('messages.cannot_create_comment_for_lesson'),
+                'comment' => 'You cannot be create comment for this lesson.',
             ]);
         }
         return Comment::create([
@@ -38,7 +38,7 @@ class CommentService
     {
         if (in_array($comment->lesson->status, ['archived', 'closed'])) {
             throw ValidationException::withMessages([
-                'comment' => __('messages.cannot_update_comment_for_lesson'),
+                'comment' => 'Comments cannot be updated for this lesson.',
             ]);
         }
         $comment->update($data);

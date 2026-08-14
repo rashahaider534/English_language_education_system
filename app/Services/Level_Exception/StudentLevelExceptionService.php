@@ -51,7 +51,7 @@ class StudentLevelExceptionService
 
         if (! $lockedLevels->contains('id', $level->id)) {
             throw ValidationException::withMessages([
-                'level' => __('messages.only_request_locked_levels'),
+                'level' => 'You can only request locked levels.',
             ]);
         }
         $hasOpenRequest = LevelException::query()
@@ -65,14 +65,14 @@ class StudentLevelExceptionService
             ->exists();
         if ($hasOpenRequest) {
             throw ValidationException::withMessages([
-                'level' => __('messages.already_have_level_exception_request'),
+                'level' => 'You already have a level exception request .',
             ]);
         }
         return DB::transaction(function () use ($level, $user, $data) {
             $recommendedLevel = $this->levelAccessService->getRecommendedLevel($user);
             if (!$recommendedLevel) {
                 throw ValidationException::withMessages([
-                    'placement' => __('messages.must_complete_placement_test'),
+                    'placement' => 'You must complete the placement test first.',
                 ]);
             }
             $levelException = LevelException::create([
@@ -109,7 +109,7 @@ class StudentLevelExceptionService
             LevelExceptionStatus::PENDING,
         ])) {
             throw ValidationException::withMessages([
-                'level' => __('messages.cannot_update_request'),
+                'level' => 'This request cannot be updated.',
             ]);
         }
 
@@ -136,7 +136,7 @@ class StudentLevelExceptionService
     {
         if ($levelException->status !== LevelExceptionStatus::PENDING) {
             throw ValidationException::withMessages([
-                'level' => __('messages.cannot_update_request'),
+                'level' => 'This request cannot be updated.',
             ]);
         }
 
@@ -156,12 +156,10 @@ class StudentLevelExceptionService
             LevelExceptionStatus::PENDING,
         ])) {
             throw ValidationException::withMessages([
-                'level' => __('messages.cannot_delete_request'),
+                'level' => 'This request cannot be deleted.',
             ]);
         }
         $levelException->delete();
-        return [
-        'message' => __('messages.request_deleted_successfully')
-        ];
+        return ['request deleted successfully'];
     }
 }

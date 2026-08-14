@@ -29,7 +29,7 @@ class PaymentService
 
         if ($alreadyPaid) {
             throw ValidationException::withMessages([
-                'level' => __('messages.level_already_purchased'),
+                'level' => 'You have already purchased this level.',
             ]);
         }
         $allowedOrder = $this->levelAccessService->getAllowedOrder($user);
@@ -42,7 +42,7 @@ class PaymentService
 
         if (! $AvailableLevels->contains('id', $level->id)) {
             throw ValidationException::withMessages([
-                'level' =>__('messages.only_request_available_levels'),
+                'level' => 'You can only request available levels.',
             ]);
         }
 
@@ -76,7 +76,7 @@ class PaymentService
                 ],
             ]);
         } catch (ApiErrorException $e) {
-            throw new \Exception(__('messages.failed_to_create_payment', ['error' => $e->getMessage()]));
+            throw new \Exception('تعذر إنشاء عملية الدفع: ' . $e->getMessage());
         }
 
         Payment::create([

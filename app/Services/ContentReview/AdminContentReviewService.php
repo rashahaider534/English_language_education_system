@@ -14,7 +14,7 @@ use App\Services\Test\AdminTestService;
 use App\Services\Test\TestService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Cache;
+
 class AdminContentReviewService
 {
     public AdminTestService $adminTestService;
@@ -477,9 +477,8 @@ class AdminContentReviewService
             foreach ($allTests as $test) {
                 $this->publishTest($test);
             }
+
             $level->update(['status' => 'published']);
-            Cache::tags(['courses'])->flush();
-            Cache::tags(['levels'])->flush();
         });
     }
 
