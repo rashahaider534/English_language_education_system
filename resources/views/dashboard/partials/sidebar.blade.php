@@ -43,6 +43,7 @@
             </svg>
         </button>
 
+        {{-- Language toggle button hidden from sidebar by request — route/logic kept intact.
         @php
             $dashboardCurrentLocale = app()->getLocale();
             $dashboardNextLocale = $dashboardCurrentLocale === 'ar' ? 'en' : 'ar';
@@ -51,6 +52,7 @@
         <a href="{{ url('/language/'.$dashboardNextLocale) }}" class="dashboard-icon-button dashboard-topbar-accent dashboard-lang-toggle-compact" title="تبديل اللغة">
             {{ $dashboardLangLabel }}
         </a>
+        --}}
 
         @php
             $sidebarNotifications = $sidebarUser ? $sidebarUser->notifications()->orderBy('read')->orderByDesc('created_at')->take(8)->get() : collect();
