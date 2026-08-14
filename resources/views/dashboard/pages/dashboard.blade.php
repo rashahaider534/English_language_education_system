@@ -154,7 +154,7 @@
 
         <div class="db2-card db2-stat db2-stat-orange">
             <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:14px;">
-                <p style="margin:0; font-size:12.5px; font-weight:700; color:var(--navy-900);">دروس قيد المراجعة</p>
+                <p style="margin:0; font-size:12.5px; font-weight:700; color:var(--navy-900);">دروس بانتظار المراجعة</p>
                 <div class="db2-icon-circle" style="background:rgba(255,255,255,.65); color:#B25E00;">
                     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
                 </div>
@@ -165,7 +165,7 @@
 
         <div class="db2-card db2-stat db2-stat-green">
             <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:10px;">
-                <p style="margin:0; font-size:12.5px; font-weight:700; color:var(--navy-900);">نسبة الدروس المراجعة</p>
+                <p style="margin:0; font-size:12.5px; font-weight:700; color:var(--navy-900);">نسبة الدروس المدققة</p>
                 <div class="db2-icon-circle" style="background:rgba(255,255,255,.65); color:var(--green-600);">
                     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><path d="M22 4 12 14.01l-3-3"></path></svg>
                 </div>
@@ -191,8 +191,8 @@
             </div>
             <div style="display:flex; gap:16px; margin-bottom:14px; flex-wrap:wrap;">
                 <span style="display:flex; align-items:center; gap:6px; font-size:11.5px; font-weight:600; color:var(--muted);"><span class="db2-legend-dot" style="background:var(--blue-500);"></span>دروس منشورة</span>
-                <span style="display:flex; align-items:center; gap:6px; font-size:11.5px; font-weight:600; color:var(--muted);"><span class="db2-legend-dot" style="background:var(--orange-600);"></span>دروس قيد المراجعة</span>
-                <span style="display:flex; align-items:center; gap:6px; font-size:11.5px; font-weight:600; color:var(--muted);"><span class="db2-legend-dot" style="background:var(--green-600);"></span>دروس تمّت مراجعتها</span>
+                <span style="display:flex; align-items:center; gap:6px; font-size:11.5px; font-weight:600; color:var(--muted);"><span class="db2-legend-dot" style="background:var(--orange-600);"></span>دروس بانتظار التدقيق</span>
+                <span style="display:flex; align-items:center; gap:6px; font-size:11.5px; font-weight:600; color:var(--muted);"><span class="db2-legend-dot" style="background:var(--green-600);"></span>دروس تمّت تدقيقها</span>
             </div>
             <div style="overflow-x:auto;">
                 <svg viewBox="0 0 {{ $chartW }} {{ $chartH }}" style="width:100%; height:180px; min-width:480px;" preserveAspectRatio="none">
@@ -273,7 +273,7 @@
 
         <div class="db2-card" style="padding:22px;">
             <div class="db2-card-head">
-                <h3 class="db2-card-title">الدروس قيد المراجعة</h3>
+                <h3 class="db2-card-title">دروس بانتظار المراجعة</h3>
             </div>
             @forelse ($pendingLessonsList as $row)
                 <div class="db2-list-row" style="align-items:flex-start;">

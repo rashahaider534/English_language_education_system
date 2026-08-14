@@ -13,6 +13,16 @@
 
     .tp-action-btn { transition: transform 0.15s ease, background 0.15s ease; text-decoration:none; }
     .tp-action-btn:not(:disabled):hover { transform: translateY(-1px); }
+
+    .tp-tooltip-wrap { position:relative; display:inline-flex; }
+    .tp-tooltip-box {
+        position:absolute; top:calc(100% + 8px); left:50%; transform:translateX(-50%);
+        background:#fff; color:#0B2436; font-size:11px; font-weight:600; white-space:nowrap;
+        padding:7px 12px; border-radius:9px; border:1px solid rgba(0,83,122,0.14);
+        box-shadow:0 10px 22px rgba(1,60,88,0.16); opacity:0; pointer-events:none;
+        transition:opacity 0.15s ease; z-index:5;
+    }
+    .tp-tooltip-wrap:hover .tp-tooltip-box { opacity:1; }
 </style>
 @endpush
 
@@ -176,11 +186,16 @@
                                 @csrf
                                 @method('DELETE')
                             </form>
-                            <button type="button" title="{{ $isPublished ? 'ما فيك تحذفي توبك منشور' : 'حذف' }}" class="tp-action-btn"
-                                @if($isPublished) disabled @else @click="deleteModalOpen = true; deleteTarget = { id: {{ $topic->id }}, name: {{ \Illuminate\Support\Js::from($topic->name_ar) }} }" @endif
-                                style="display:flex; align-items:center; justify-content:center; width:37px; height:37px; border-radius:10px; border:none; background:rgba(229,72,77,0.1); color:#C2591A; cursor:{{ $isPublished ? 'not-allowed' : 'pointer' }}; opacity:{{ $isPublished ? 0.4 : 1 }}; flex-shrink:0; margin-inline-start:auto;">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="m19 6-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path></svg>
-                            </button>
+                            <span class="{{ $isPublished ? 'tp-tooltip-wrap' : '' }}" style="flex-shrink:0; margin-inline-start:auto;">
+                                <button type="button" title="{{ $isPublished ? '' : 'حذف' }}" class="tp-action-btn"
+                                    @if($isPublished) disabled @else @click="deleteModalOpen = true; deleteTarget = { id: {{ $topic->id }}, name: {{ \Illuminate\Support\Js::from($topic->name_ar) }} }" @endif
+                                    style="display:flex; align-items:center; justify-content:center; width:37px; height:37px; border-radius:10px; border:none; background:rgba(229,72,77,0.1); color:#C2591A; cursor:{{ $isPublished ? 'not-allowed' : 'pointer' }}; opacity:{{ $isPublished ? 0.4 : 1 }};">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="m19 6-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path></svg>
+                                </button>
+                                @if ($isPublished)
+                                    <span class="tp-tooltip-box">لا يمكن حذف توبك منشور</span>
+                                @endif
+                            </span>
                         </div>
                     </div>
                 </div>

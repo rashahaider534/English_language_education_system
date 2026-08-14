@@ -47,7 +47,7 @@ class AdminPodcastService
 
             if ($topic->status === TopicStatus::PUBLISHED) {
 
-                $students = User::role('student','api')
+                $students = User::role('student', 'api')
                     ->pluck('id')
                     ->toArray();
 

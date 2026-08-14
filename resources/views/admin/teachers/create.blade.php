@@ -45,7 +45,7 @@
         <div style="margin-bottom:22px;">
             <label style="display:block; font-size:12.5px; font-weight:700; color:#013C58; margin-bottom:6px;">كلمة المرور المبدئية</label>
             <input type="text" name="password" placeholder="8 أحرف على الأقل" style="width:100%; padding:10px 14px; border:1.5px solid rgba(0,83,122,0.14); border-radius:10px; background:#FBFEFF; color:#013C58; font-size:13px; font-family:'Tajawal',sans-serif; outline:none;">
-            <p style="margin:6px 0 0; font-size:11.5px; color:rgba(1,60,88,0.45);">رح تنبعت هالكلمة تلقائيًا للأستاذ عبر إيميل ترحيبي.</p>
+            <p style="margin:6px 0 0; font-size:11.5px; color:rgba(1,60,88,0.45);">سوف يتم ارسال كلمة المرور عبر إيميل ترحيبي</p>
         </div>
 
         <div style="display:flex; justify-content:flex-end; gap:10px;">

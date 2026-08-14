@@ -58,4 +58,12 @@ class UpdatePodcastRequest extends FormRequest
             ],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'name_en.unique' => 'هذا الاسم بالإنجليزية مُستخدَم من قبل.',
+            'name_ar.unique' => 'هذا الاسم بالعربية مُستخدَم من قبل.',
+        ];
+    }
 }

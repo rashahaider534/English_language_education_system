@@ -77,7 +77,7 @@
                     </div>
                 </div>
             @empty
-                <p style="color:rgba(1,60,88,0.45); font-size:13px;">ما في مستويات معرّفة بعد.</p>
+                <p style="color:rgba(1,60,88,0.45); font-size:13px;"> لايوجد مستويات معرّفة .</p>
             @endforelse
         </div>
     </div>
@@ -160,7 +160,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" style="padding:60px 20px; text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:14px;">ما في طلاب بهالفلتر</td>
+                        <td colspan="6" style="padding:60px 20px; text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:14px;">لايوجد طلاب داخل هذا المستوى</td>
                     </tr>
                 @endforelse
             </tbody>

@@ -64,7 +64,7 @@
                 <div style="display:flex; align-items:center; justify-content:center; width:64px; height:64px; border-radius:18px; background:rgba(168,232,249,0.25); color:#0E6A96;">
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15.5a2 2 0 0 1-2 2H8l-5 4V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v9.5Z" /></svg>
                 </div>
-                <p style="margin:0; font-size:14.5px; font-weight:700; color:#013C58;">ما في رسائل بصندوق الشكاوي حاليًا</p>
+                <p style="margin:0; font-size:14.5px; font-weight:700; color:#013C58;"> لايوجد رسائل بصندوق الشكاوي حاليًا</p>
             </div>
         @endforelse
     </div>

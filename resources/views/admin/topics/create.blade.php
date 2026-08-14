@@ -45,7 +45,7 @@
         </div>
     @endif
 
-    <form action="{{ route('topics.store') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('topics.store') }}" method="POST" enctype="multipart/form-data" x-data="{ imageFileName: '' }">
         @csrf
 
         <div style="background:#EFFAFD; border:1.5px solid rgba(0,83,122,0.16); border-radius:20px; padding:26px; box-shadow:0 10px 26px rgba(0,83,122,0.06);">
@@ -63,7 +63,15 @@
             </div>
 
             <label style="display:block; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.55); margin-bottom:6px;">صورة التوبك (اختياري)</label>
-            <div class="tp-field-wrap"><input type="file" name="image" accept="image/*"></div>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div class="tp-field-wrap" style="flex:1;">
+                    <input type="file" name="image" accept="image/*" x-ref="imageInput" @change="imageFileName = $refs.imageInput.files.length ? $refs.imageInput.files[0].name : ''">
+                </div>
+                <button type="button" x-show="imageFileName" x-cloak @click="imageFileName = ''; $refs.imageInput.value = ''"
+                    style="position:relative; width:34px; height:34px; padding:0; margin:0; box-sizing:border-box; border-radius:9px; border:1.5px solid rgba(226,60,60,0.25); background:rgba(226,60,60,0.08); color:#C23A3A; flex-shrink:0; cursor:pointer; line-height:0;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                </button>
+            </div>
             <p style="margin:8px 0 0; font-size:11px; color:rgba(1,60,88,0.45);">JPG أو PNG أو WEBP، حتى 2 ميغابايت.</p>
         </div>
 
