@@ -317,7 +317,7 @@
                                         </button>
                                     @endcan
                                 @endif
-                                <button type="button" title="{{ $canEdit ? 'تعديل' : 'ما فيك تعدّلي هالمستوى لأنه مش من إنشائك' }}"
+                                <button type="button" title="{{ $canEdit ? 'تعديل' : 'لايمكن   تعديل  هذا المستوى لأنه ليس من إنشائك' }}"
                                    @if($canEdit) @click="openEdit({{ Illuminate\Support\Js::from([
                                         'id' => $level->id,
                                         'name_en' => $level->name_en,
@@ -336,7 +336,7 @@
                                     type="button"
                                     @if($canArchive) @click="openArchive({{ $level->id }}, '{{ addslashes($level->name_ar) }}', {{ $hasInProgress ? 'true' : 'false' }})" @endif
                                     @if(!$canArchive) disabled @endif
-                                    title="{{ !$isOwner ? 'ما فيك تؤرشفي هالمستوى لأنه مش من إنشائك' : ($dimmed ? 'هالمستوى مغلق أو مؤرشف من قبل' : ($hasInProgress ? 'أرشفة (رح يصير مغلق)' : 'أرشفة')) }}"
+                                    title="{{ !$isOwner ? 'لايمكن   ارشفة هذا المستوى لأنه ليس  من إنشائك' : ($dimmed ? 'هذا المستوى مغلق أو مؤرشف من قبل' : ($hasInProgress ? 'أرشفة (رح يصير مغلق)' : 'أرشفة')) }}"
                                     style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; border:none; background:rgba(245,162,1,0.1); color:#C97F00; cursor:{{ $canArchive ? 'pointer' : 'not-allowed' }}; opacity:{{ $canArchive ? 1 : 0.35 }};"
                                 >
                                     <svg width="15.5" height="15.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l1.5-3h15L21 7"></path><path d="M4.5 7h15v12a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1V7Z"></path><path d="M9 12h6"></path></svg>
@@ -346,7 +346,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="9" style="padding:60px 20px; text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:14px;">ما في مستويات بعد</td>
+                        <td colspan="9" style="padding:60px 20px; text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:14px;">لايوجد مستويات معرّفة</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -536,7 +536,7 @@
             </div>
             <div x-show="!editIsLocked && editIsPublished" style="display:flex; align-items:center; gap:9px; background:rgba(255,211,91,0.14); color:#946200; border-radius:12px; padding:12px 16px; font-size:13px; font-weight:600; margin-bottom:18px;">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg>
-                <span>هالمستوى منشور حالياً، فبس فيك تعدّلي الاسم والمدة الزمنية.</span>
+                <span>هذا المستوى منشور حاليا يمكنك التعديل فقط الاسم والمدة الزمنية </span>
             </div>
 
             <form method="POST" :action="'/levels/' + editTarget.id">
