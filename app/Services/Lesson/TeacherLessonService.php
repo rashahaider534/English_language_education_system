@@ -6,6 +6,9 @@ use App\Models\Course;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use App\Enums\ContentStatus;
+use App\Enums\ReviewStatus;
+use App\Jobs\SendNotificationJob;
+use App\Models\ContentReview;
 use Illuminate\Support\Facades\DB;
 use App\Models\Lesson;
 use Illuminate\Validation\ValidationException;
@@ -20,18 +23,18 @@ class TeacherLessonService
         private StudentWordService $studentWordService
     ) {}
 
-//    public function index(Course $course)
-//    {
-//        if ($course->teacher_id !== auth()->id()) {
-//            throw ValidationException::withMessages([
-//                'course' => 'You are not allowed to view lessons in this course.',
-//            ]);
-//        }
-//                    return $course->lessons()
-//                        ->with('media')
-//                        ->orderBy('order')
-//                        ->paginate(10);
-//    }
+    //    public function index(Course $course)
+    //    {
+    //        if ($course->teacher_id !== auth()->id()) {
+    //            throw ValidationException::withMessages([
+    //                'course' => 'You are not allowed to view lessons in this course.',
+    //            ]);
+    //        }
+    //                    return $course->lessons()
+    //                        ->with('media')
+    //                        ->orderBy('order')
+    //                        ->paginate(10);
+    //    }
     public function index(Course $course)
     {
         if ($course->teacher_id !== auth()->id()) {
@@ -151,6 +154,24 @@ class TeacherLessonService
             ]);
         }
         //اشعار للادمن  اذا كانت حالته changes_requested
+        if ($lesson->status === ContentStatus::CHANGES_REQUESTED) {
+            // البحث عن آخر review للدرس
+            $review = ContentReview::where('reviewable_type', Lesson::class)
+                ->where('reviewable_id', $lesson->id)
+                ->where('status', ReviewStatus::CHANGES_REQUESTED)
+                ->latest()
+                ->first();
+            SendNotificationJob::dispatch(
+                [$review->reviewer_id],
+                'تم حذف الدرس',
+                "قام الأستاذ بحذف الدرس «{$lesson->title_en}» بعد طلب تعديلات عليه.",
+                [
+                    'lesson_id' => $lesson->id,
+                    'course_id' => $lesson->course_id,
+                ],
+                'delete_lesson'
+            );
+        }
         $lesson->delete();
         return response()->json(['message' => 'Lesson deleted successfully.']);
     }

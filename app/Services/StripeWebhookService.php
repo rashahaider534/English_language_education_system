@@ -6,6 +6,7 @@ use App\Models\Payment;
 use App\Models\Level;
 use App\Models\User;
 use App\Enums\PaymentStatus;
+use App\Jobs\SendNotificationJob;
 use App\Models\UserLevel;
 
 class StripeWebhookService
@@ -40,6 +41,16 @@ class StripeWebhookService
             'status' => 'in_progress',
             'enrolled_at' => now(),
         ]);
+
+        SendNotificationJob::dispatch(
+            [$payment->user_id],
+            'Level Unlocked',
+            "The level {$payment->level->name_en} has been successfully unlocked. You can now start learning.",
+            [
+                'level' => $payment->level,
+            ],
+            'level-opened'
+        );
     }
 
     private function markAsFailed($intent): void
