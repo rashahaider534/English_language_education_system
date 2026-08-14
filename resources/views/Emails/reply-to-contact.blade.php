@@ -1,4 +1,4 @@
-{{-- resources/views/emails/reply-to-contact.blade.php --}}
+
 <!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
@@ -75,7 +75,7 @@
         </div>
 
         <div class="content">
-            <p>مرحباً {{ $studentName }}،</p>
+            <p>مرحباً {{ $studentName }}</p>
 
             <p>شكراً لتواصلك معنا. لقد تلقينا رسالتك وقمنا بمراجعتها. إليك رد الفريق:</p>
 
