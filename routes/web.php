@@ -126,19 +126,17 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
     Route::patch('/comments/{comment}/block', [CommentController::class, 'block']);
     Route::patch('/comments/{comment}/block', [CommentController::class, 'block']);
 
-    // Teachers management & monitoring — index/lessons query real data;
-    // create/store/toggle-active are UI-only placeholders pending backend work.
+    // Teachers management
     Route::prefix('management/teachers')->name('admin.teachers.')->group(function () {
         Route::get('/', [TeacherManagementController::class, 'index'])->name('index');
         Route::get('/{teacher}/courses', [TeacherManagementController::class, 'courses'])->name('courses')->withTrashed();
         Route::patch('/{teacher}/toggle-active', [TeacherManagementController::class, 'toggleActive'])->name('toggle-active');
     });
 
-    // Students management & monitoring — index queries real data;
-    // ban is a UI-only placeholder, no ban system exists yet.
+    // Students management
     Route::prefix('management/students')->name('admin.students.')->group(function () {
         Route::get('/', [StudentManagementController::class, 'index'])->name('index');
-        Route::patch('/{student}/ban', [StudentManagementController::class, 'ban'])->name('ban');
+      
     });
 
     // Complaints inbox (contact_us table) — read-only listing, no actions yet.

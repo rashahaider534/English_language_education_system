@@ -86,7 +86,7 @@
                     <div style="position:relative; width:100%; height:100px; background:linear-gradient(135deg,#013C58,#0E6A96,#146B93); display:flex; align-items:center; justify-content:center;">
                         <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5v14l11-7Z"></path></svg>
                         <span style="position:absolute; top:10px; left:10px; display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:999px; background:{{ $hasVideo ? 'rgba(76,175,120,0.92)' : 'rgba(255,255,255,0.85)' }}; color:{{ $hasVideo ? '#fff' : '#946200' }}; font-size:10px; font-weight:700;">
-                            {{ $hasVideo ? 'فيه فيديو' : 'بدون فيديو' }}
+                            {{ $hasVideo ? 'يحتوي على فيديو  ' : 'بدون فيديو' }}
                         </span>
                         <span style="position:absolute; top:10px; right:10px; display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:999px; background:rgba(255,211,91,0.95); color:#013C58; font-size:10.5px; font-weight:800;">
                             <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="m12 2 2.9 6 6.6.9-4.8 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5-4.8-4.6 6.6-.9L12 2Z"></path></svg>

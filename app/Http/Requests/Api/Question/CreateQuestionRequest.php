@@ -25,6 +25,8 @@ class CreateQuestionRequest extends FormRequest
         return [
             'answers.*.left_text.regex' => 'the left text should only be in arabic',
             'answers.*.right_text.regex' => 'the right text should only be in english',
+            'audio.prohibits' => 'لا يمكن رفع صوت وصورة معًا.',
+            'image.prohibits' => 'لا يمكن رفع صوت وصورة معًا.',
         ];
     }
 

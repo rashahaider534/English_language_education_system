@@ -22,7 +22,7 @@ class StudentPodcastService
     {
         if ($topic->status !== TopicStatus::PUBLISHED) {
             throw ValidationException::withMessages([
-                'topic' => 'You cannot view podcasts for this topic.',
+                'topic' => __('messages.cannot_view_podcasts_for_topic'),
             ]);
         }
         $podcasts = $topic->podcasts()->get();
@@ -56,13 +56,13 @@ class StudentPodcastService
                 ->first();
             if ($profile->points < $podcast->point_required) {
                 throw ValidationException::withMessages([
-                    'points' => 'You do not have enough points to unlock this podcast.',
+                    'points' => __('messages.not_enough_points_to_unlock_podcast'),
                 ]);
             }
 
             if ($user->podcasts()->where('podcast_id', $podcast->id)->exists()) {
                 throw ValidationException::withMessages([
-                    'podcast' => 'Podcast is already unlocked.',
+                    'podcast' => __('messages.podcast_already_unlocked'),
                 ]);
             }
 
@@ -75,7 +75,7 @@ class StudentPodcastService
             $profile->refresh();
 
             return [
-                'message' => 'Podcast open successfully.',
+                'message' => __('messages.podcast_opened_successfully'),
                 'remaining_points' => $profile->points,
             ];
         });
@@ -89,7 +89,7 @@ class StudentPodcastService
 
         if (! $isOpened) {
             throw ValidationException::withMessages([
-                'podcast' => 'You must unlock this podcast first.',
+                'podcast' => __('messages.must_unlock_podcast_first'),
             ]);
         }
 

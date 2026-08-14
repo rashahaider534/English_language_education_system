@@ -20,6 +20,14 @@ class UpdateQuestionRequest extends FormRequest
         return true;
     }
 
+    public function messages()
+    {
+        return [
+            'audio.prohibits' => 'لا يمكن رفع صوت وصورة معًا.',
+            'image.prohibits' => 'لا يمكن رفع صوت وصورة معًا.',
+        ];
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *

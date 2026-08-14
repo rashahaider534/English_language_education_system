@@ -44,7 +44,7 @@ class CommentController extends Controller
         $this->authorize('delete', $comment);
         $this->service->delete($comment);
         return response()->json([
-            'message' => 'Comment deleted successfully.'
+            'message' => __('messages.comment_deleted_successfully')
         ]);
     }
 
