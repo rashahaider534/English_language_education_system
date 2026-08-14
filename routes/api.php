@@ -2,8 +2,11 @@
 
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\ChatSessionController;
+use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\ContentReviewController;
+use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\StudentProfileController;
@@ -120,6 +123,7 @@ Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
     Route::get('/getStudentLevels', [LevelController::class, 'getStudentLevels']);
     Route::get('/getPurchasableLevels', [LevelController::class, 'getPurchasableLevels']);
     Route::get('/getStudentcourses/{level}', [CourseController::class, 'index']);
+    Route::get('/placement-test/status', [LevelController::class, 'getStatus']);
 
     //lesson api
     Route::get('/lessons/{course}',[StudentLessonController::class,'index']);
@@ -184,6 +188,17 @@ Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
         Route::get('/sessions/{session}', [ChatSessionController::class, 'showHistorySession']);
         Route::get('/topics', [ChatSessionController::class, 'availableTopics']);
     });
+
+    //progress api
+    Route::get('/courses/{course}/progress', [ProgressController::class, 'courseProgress']);
+    Route::get('/levels/{level}/progress', [ProgressController::class, 'levelProgress']);
+
+    //certificate api
+    Route::get('/user-levels/{userLevel}/certificate', [CertificateController::class, 'getCertificate']);
+    Route::get('/certificates', [CertificateController::class, 'index']);
+
+    //contact us
+    Route::post('/contact-us', [ContactUsController::class, 'store']);
 });
 
 //Route::post('generateLevelTest', [AdminTestController::class, 'generateLevelTest']);
