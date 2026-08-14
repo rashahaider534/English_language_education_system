@@ -10,6 +10,7 @@ use App\Models\Test;
 use App\Models\User;
 use App\Models\UserAttempt;
 use App\Models\UserAttemptAnswer;
+use App\Models\UserLevel;
 use App\Services\Course\StudentCourseService;
 use App\Services\Lesson\StudentLessonService;
 use App\Services\Scoring\QuestionScorerFactory;
@@ -22,6 +23,7 @@ class AttemptService
     public StudentCourseService $studentCourseService;
     public StudentLessonService $studentLessonService;
     public QuestionScorerFactory $scorerFactory;
+
     public function __construct(StudentCourseService $studentCourseService, StudentLessonService $studentLessonService, QuestionScorerFactory $scorerFactory)
     {
         $this->studentCourseService = $studentCourseService;
@@ -94,7 +96,7 @@ class AttemptService
     public function startAttempt(Test $test): UserAttempt
     {
         return DB::transaction(function () use ($test) {
-            $user = auth()->user();
+            $user = User::where('id', auth()->id())->lockForUpdate()->first();
             if (!$user instanceof User) {
                 throw new AuthenticationException();
             }
@@ -142,7 +144,7 @@ class AttemptService
 
     public function finishAttempt(UserAttempt $attempt): array
     {
-        return DB::transaction(function () use ($attempt) {
+        $result = DB::transaction(function () use ($attempt) {
             if ($attempt->status !== AttemptStatus::IN_PROGRESS) {
                 throw ValidationException::withMessages([
                     'error' => 'This attempt is no longer active.',
@@ -160,7 +162,7 @@ class AttemptService
                 'completed_at' => now(),
                 'score'        => $percentage,
             ]);
-            $streakResult = app(StreakService::class)->recordActivity($attempt->user_id);
+            $streakResult = app(ProgressService::class)->recordActivity($attempt->user_id);
             $test = $attempt->test;
             $passed = $percentage >= $test->passing_score;
 
@@ -173,6 +175,7 @@ class AttemptService
                 $rewardResult = match ($test->testable_type) {
                     'lesson' => $this->handleLessonPass($test, $attempt->user),
                     'course' => $this->handleCoursePass($test, $attempt->user, $attempt),
+                    'level'  => $this->handleLevelPass($test, $attempt->user),
                     default  => $rewardResult,
                 };
             }
@@ -183,6 +186,21 @@ class AttemptService
                 'reward'    => $rewardResult,
             ];
     });
+        if (isset($result['reward']['user_level_id'])) {
+            $userLevelId = $result['reward']['user_level_id'];
+
+            try {
+                $certificate = app(CertificateService::class)->issueForUserLevel(
+                    UserLevel::findOrFail($userLevelId)
+                );
+                $result['reward']['certificate_download_url'] = $certificate->certificate_url;
+            } catch (\Throwable $e) {
+                report($e);
+                $result['reward']['certificate_download_url'] = null;
+            }
+        }
+
+        return $result;
 
 }
     private function handleLessonPass(Test $test, User $user): array
@@ -218,7 +236,7 @@ class AttemptService
     private function handleCoursePass(Test $test, User $user, UserAttempt $currentAttempt): array
     {
         $course = $test->testable;
-        $courseXpPoints = 50; // نقاط ثابتة عند اجتياز اختبار الكورس لأول مرة
+        $courseXpPoints = 50;
 
         $alreadyPassedBefore = UserAttempt::where('user_id', $user->id)
             ->where('test_id', $test->id)
@@ -251,6 +269,32 @@ class AttemptService
         return [
             'points_awarded'   => true,
             'points'           => $courseXpPoints,
+        ];
+    }
+    private function handleLevelPass(Test $test, User $user): array
+    {
+        $level = $test->testable;
+
+        $userLevel = UserLevel::where('user_id', $user->id)
+            ->where('level_id', $level->id)
+            ->first();
+
+        if (! $userLevel || $userLevel->status === 'completed') {
+            return [
+                'points_awarded' => false,
+                'points'         => 0,
+            ];
+        }
+
+        $userLevel->update([
+            'status'       => 'completed',
+            'completed_at' => now(),
+        ]);
+
+        return [
+            'points_awarded' => false,
+            'points'         => 0,
+            'user_level_id'  => $userLevel->id,
         ];
     }
     public function leaveAttempt(UserAttempt $attempt): UserAttempt

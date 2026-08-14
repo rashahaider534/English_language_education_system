@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Api\Profile\UpdateProfileRequest;
 use App\Http\Resources\Profile\StudentProfileResource;
 use App\Services\Profile\StudentProfileService;
-use App\Services\StreakService;
+use App\Services\ProgressService;
 use Illuminate\Http\JsonResponse;
 
 class StudentProfileController extends Controller
@@ -32,7 +32,7 @@ class StudentProfileController extends Controller
     {
         $userId = auth()->id();
 
-        $data = app(StreakService::class)->getWeeklyLessonActivity($userId);
+        $data = app(ProgressService::class)->getWeeklyLessonActivity($userId);
 
         return response()->json([
             'weekly_activity' => $data,

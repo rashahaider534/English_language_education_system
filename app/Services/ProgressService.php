@@ -2,12 +2,16 @@
 
 namespace App\Services;
 
+use App\Enums\ContentStatus;
+use App\Models\Course;
+use App\Models\Lesson;
+use App\Models\Level;
 use App\Models\StudentProfile;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
-class StreakService
+class ProgressService
 {
     public function recordActivity(int $userId): array
     {
@@ -74,4 +78,51 @@ class StreakService
 
         return $days;
     }
+
+    public function getCourseProgress(User $user, Course $course): float
+    {
+        $totalLessons = $course->lessons()
+            ->where('lessons.status', ContentStatus::PUBLISHED)
+            ->count();
+
+        if ($totalLessons === 0) {
+            return 0;
+        }
+
+        $completedLessons = $course->lessons()
+            ->where('lessons.status', ContentStatus::PUBLISHED)
+            ->join('user_lessons', 'user_lessons.lesson_id', '=', 'lessons.id')
+            ->where('user_lessons.user_id', $user->id)
+            ->where('user_lessons.status', 'completed')
+            ->count();
+
+
+        return $this->calculatePercentage($completedLessons, $totalLessons);
+    }
+
+    public function getLevelProgress(User $user, Level $level): float
+    {
+        $totalLessons = $level->lessons()
+            ->where('lessons.status', ContentStatus::PUBLISHED)
+            ->count();
+
+        if ($totalLessons === 0) {
+            return 0;
+        }
+
+        $completedLessons = $level->lessons()
+            ->where('lessons.status', ContentStatus::PUBLISHED )
+            ->join('user_lessons', 'user_lessons.lesson_id', '=', 'lessons.id')
+            ->where('user_lessons.user_id', $user->id)
+            ->where('user_lessons.status', 'completed')
+            ->count();
+
+        return $this->calculatePercentage($completedLessons, $totalLessons);
+    }
+
+    private function calculatePercentage(int $completed, int $total): float
+    {
+        return round(($completed / $total) * 100);
+    }
 }
+

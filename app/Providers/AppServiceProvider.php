@@ -48,6 +48,7 @@ class AppServiceProvider extends ServiceProvider
             'Podcast'=>'App\Models\Podcast',
             'student_profile' => 'App\Models\StudentProfile',
             'teacher_profile' => 'App\Models\TeacherProfile',
+            'certificate' => 'App\Models\Certificate',
         ]);
 
         Gate::before(function ($user, $ability) {

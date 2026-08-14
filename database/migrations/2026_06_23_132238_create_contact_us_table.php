@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('contact_us', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('user_id')->constrained('users')->onDelete('set null');
             $table->text('text');
             $table->timestamps();
         });

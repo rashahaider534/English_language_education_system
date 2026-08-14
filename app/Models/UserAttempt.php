@@ -11,7 +11,9 @@ class UserAttempt extends Model
 {
     protected $table = 'user_attempts';
     protected $fillable = ['user_id' , 'test_id' , 'score' , 'status' ,'started_at', 'completed_at'];
-    protected $casts = ['status' => AttemptStatus::class];
+    protected $casts = ['status' => AttemptStatus::class,
+                        'started_at'   => 'datetime',
+                        'completed_at' => 'datetime',];
      public function user():BelongsTo
     {
         return $this->belongsTo(User::class);

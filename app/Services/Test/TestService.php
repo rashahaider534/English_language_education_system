@@ -3,6 +3,7 @@
 namespace App\Services\Test;
  use App\Enums\ContentStatus;
  use App\Http\Resources\Test\TeacherTestResource;
+ use App\Jobs\SendNotificationJob;
  use App\Models\Course;
  use App\Models\Lesson;
  use App\Models\ContentReview;
@@ -260,6 +261,7 @@ namespace App\Services\Test;
 
              case ContentStatus::DRAFT:
              case ContentStatus::CHANGES_REQUESTED:
+                 SendNotificationJob::dispatch();
 //          $this->notify(
 //              $dependentTest->owner_id,
 //              "A question used in '{$dependentTest->title_en}' was removed from its source lesson test. Please review before submitting."
