@@ -97,7 +97,7 @@ class AdminCourseService
                 'New Course Assigned',
                 "You have been assigned to teach the course: {$course->name_en}",
                 [
-                    'course_id' => $course->id,
+                    'course_id' => $course,
                 ],
                 'course-assigned'
             );

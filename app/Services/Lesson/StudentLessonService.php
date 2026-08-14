@@ -2,6 +2,7 @@
 
 namespace App\Services\Lesson;
 
+use App\Jobs\SendNotificationJob;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\User;
@@ -13,7 +14,7 @@ class StudentLessonService
 {
     public function __construct(
         private CommentService $commentService,
-        private FirebaseService $firebaseService
+        //private FirebaseService $firebaseService
     ) {}
 
 
@@ -58,13 +59,12 @@ class StudentLessonService
             ]);
         }
 
-        $this->firebaseService->sendToUser(
-            $user,
+        SendNotificationJob::dispatch(
+            [$user->id],
             'New Lesson Available',
             "A new lesson is now available: {$lesson->title_en}",
             [
-                'lesson_id' => $lesson->id,
-                'course_id' => $course->id,
+                'lesson_id' => $lesson,
             ],
             'lesson-opened'
         );

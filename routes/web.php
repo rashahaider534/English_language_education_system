@@ -136,11 +136,12 @@ Route::middleware(['auth', 'role:admin|super-admin'])->group(function () {
     // Students management
     Route::prefix('management/students')->name('admin.students.')->group(function () {
         Route::get('/', [StudentManagementController::class, 'index'])->name('index');
-      
+
     });
 
     // Complaints inbox (contact_us table) — read-only listing, no actions yet.
     Route::get('/complaints', [ComplaintController::class, 'index'])->name('admin.complaints.index');
+    Route::post('/complaints/{contactMessage}/reply', [ComplaintController::class, 'sendReply']);
 });
 
 Route::middleware(['auth:web'])->group(function () {
