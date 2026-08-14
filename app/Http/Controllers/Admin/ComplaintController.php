@@ -9,19 +9,20 @@ use Illuminate\View\View;
 use App\Mail\ReplyToContact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+
 class ComplaintController extends Controller
 {
     public function index(): View
     {
-        $complaints = ContactUs::with('user')->latest()->paginate(10);
+        $complaints = ContactUs::where('read', 0)->with('user')->latest()->paginate(10);
 
         return view('admin.complaints.index', compact('complaints'));
     }
 
     public function sendReply(Request $request, ContactUs $contactMessage)
     {
-        if (!auth()->user()->hasRole('super-admin','web')) {
-             return  throw ValidationException::withMessages([
+        if (!auth()->user()->hasRole('super-admin', 'web')) {
+            return  throw ValidationException::withMessages([
                 'error' => 'لا توجد صلاحيات لتنفيذ هذا الإجراء'
             ]);
         }
@@ -36,20 +37,20 @@ class ComplaintController extends Controller
         try {
             if (!$contactMessage->user || !$contactMessage->user->email) {
                 return  throw ValidationException::withMessages([
-                     'error' => 'المستخدم غير موجود أو البريد الإلكتروني غير محدد',
+                    'error' => 'المستخدم غير موجود أو البريد الإلكتروني غير محدد',
                 ]);
             }
             Mail::to($contactMessage->user->email)
                 ->queue(new ReplyToContact($contactMessage, $validated['reply_text']));
 
-           return redirect()->route('admin.complaints.index')
+            $contactMessage->update(['read' => true]);
+            
+            return redirect()->route('admin.complaints.index')
                 ->with('success', 'تم إرسال الرد بنجاح للطالب ');
-
         } catch (\Exception $e) {
             return redirect()->back()
                 ->with('error', 'حدث خطأ أثناء إرسال الرد: ' . $e->getMessage())
                 ->withInput();
         }
     }
-
 }
