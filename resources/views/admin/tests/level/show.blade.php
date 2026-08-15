@@ -50,7 +50,7 @@
                 } else if (r.type === 'opaqueredirect' || r.ok) {
                     window.location.reload();
                 } else {
-                    this.toastMessage = 'صار خطأ غير متوقع، حاولي مرة تانية';
+                    this.toastMessage = 'صار خطأ غير متوقع، حاول  مرة تانية';
                     this.toastVisible = true;
                     setTimeout(() => this.toastVisible = false, 3000);
                 }
@@ -134,7 +134,7 @@
             <p style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:15px; color:{{ $isEligible ? '#2E7D55' : '#C2323A' }};">{{ $isEligible ? 'مؤهل' : 'غير مؤهل' }}</p>
             <p style="margin:4px 0 0; font-size:12.5px; color:rgba(1,60,88,0.6); line-height:1.6;">
                 {{ $isEligible
-                    ? 'كل أسئلة هالاختبار لسا مؤهلة (منتمية لكورسات هالمستوى ومعتمدة/منشورة).'
+                    ? 'كل أسئلة هذا الاختبار غير مؤهلة (منتمية لكورسات هالمستوى ومعتمدة/منشورة).'
                     : 'واحد أو أكثر من أسئلة هالاختبار ما عاد مؤهل (مثلاً تم حذفه من درس المصدر أو تغيرت حالته). قد يحتاج الاختبار مراجعة أو تعديل.' }}
             </p>
         </div>

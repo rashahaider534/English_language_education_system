@@ -279,7 +279,7 @@
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 19-7-7 7-7"></path></svg>
                 رجوع للدروس
             </a>
-            <a href="{{ route('lessons.tests.show', $lessonModel) }}" class="show-back-btn" style="display:inline-flex; align-items:center; gap:7px; padding:11px 18px; border-radius:11px; color:#00537A; background:rgba(168,232,249,0.22); font-family:'Poppins',sans-serif; font-weight:600; font-size:13px; text-decoration:none;">
+            <a href="{{ route('lessons.tests.show', $lessonModel) }}{{ $backFromReview ? '?from=review' : '' }}" class="show-back-btn" style="display:inline-flex; align-items:center; gap:7px; padding:11px 18px; border-radius:11px; color:#00537A; background:rgba(168,232,249,0.22); font-family:'Poppins',sans-serif; font-weight:600; font-size:13px; text-decoration:none;">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"></rect><path d="M8 2v4M16 2v4M3 10h18"></path></svg>
                 كل اختبارات الدرس
             </a>
