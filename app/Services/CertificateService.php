@@ -17,20 +17,24 @@ class CertificateService
     public function issueForUserLevel(UserLevel $userLevel): Certificate
     {
         $existing = Certificate::where('user_level_id', $userLevel->id)->first();
-        if ($existing) {
+        if ($existing && $existing->hasMedia('certificate') ) {
             return $existing;
         }
 
         $user = $userLevel->user;
         $level = $userLevel->level;
 
-        $certificate = Certificate::create([
-            'user_level_id'      => $userLevel->id,
-            'certificate_number' => $this->generateCertificateNumber(),
-            'student_name'       => $user->full_name,
-            'level_name'         => $level->name_en,
-            'issued_at'          => now(),
-        ]);
+        if ($existing) {
+            $certificate = $existing;
+        } else {
+            $certificate = Certificate::create([
+                'user_level_id'      => $userLevel->id,
+                'certificate_number' => $this->generateCertificateNumber(),
+                'student_name'       => $userLevel->user->full_name,
+                'level_name'         => $userLevel->level->name_en,
+                'issued_at'          => now(),
+            ]);
+        }
 
         $imagePath = $this->generateCertificateImage($certificate);
 
