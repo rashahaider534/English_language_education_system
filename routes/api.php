@@ -10,6 +10,7 @@ use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\StudentProfileController;
+use App\Http\Controllers\Teacher\TeacherStatsController;
 use App\Http\Controllers\TeacherProfileController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\Admin\TestController as AdminTestController;
@@ -114,8 +115,10 @@ Route::middleware(['auth:sanctum', 'role:teacher'])->group(function () {
 
     Route::get('lessons/{lesson}/history', [ContentReviewController::class, 'lessonReviewHistory']);
     Route::get('tests/{test}/history', [ContentReviewController::class, 'testReviewHistory']);
-//بس للتجريب
-   Route::get('/publishTest/{test}', [TestController::class, 'publishTest']);
+
+    //Stats api
+    Route::get('courses/{course}/stats', [TeacherStatsController::class, 'courseStats']);
+    Route::get('tests/{test}/stats', [TeacherStatsController::class, 'testStats']);
 });
 
 Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
