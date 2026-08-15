@@ -262,9 +262,6 @@
                             style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:14%;">
                             تاريخ الانضمام</th>
                         <th
-                            style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:14%;">
-                            الراتب</th>
-                        <th
                             style="text-align:center; font-size:11.5px; font-weight:700; color:rgba(1,60,88,0.45); text-transform:uppercase; padding:13px 12px; background:rgba(168,232,249,0.22); width:12%;">
                             الحالة</th>
                         <th
@@ -298,18 +295,6 @@
                             <td
                                 style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); text-align:center; font-size:12.5px; color:rgba(1,60,88,0.65);">
                                 {{ $teacher->created_at?->format('Y-m-d') }}</td>
-                            <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); text-align:center;">
-                                <span title="عمود الراتب تصميم فقط — بانتظار الربط بالباك-إند"
-                                    style="display:inline-flex; align-items:center; gap:4px; font-family:'Poppins',sans-serif; font-weight:700; font-size:12.5px; color:rgba(1,60,88,0.4);">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
-                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round">
-                                        <circle cx="12" cy="12" r="9"></circle>
-                                        <path d="M12 8v4l3 2"></path>
-                                    </svg>
-                                    قيد الانتظار
-                                </span>
-                            </td>
                             <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05); text-align:center;">
                                 @if ($teacher->deleted_at)
                                     <span
@@ -353,7 +338,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6"
+                            <td colspan="5"
                                 style="padding:60px 20px; text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:14px;">
                                 لايوجد اساتذة بهذا القسم </td>
                         </tr>
