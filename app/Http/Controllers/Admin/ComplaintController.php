@@ -12,11 +12,21 @@ use Illuminate\Support\Facades\Mail;
 
 class ComplaintController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $complaints = ContactUs::where('read', 0)->with('user')->latest()->paginate(10);
+        $status = $request->query('status');
 
-        return view('admin.complaints.index', compact('complaints'));
+        $complaints = ContactUs::with('user')
+            ->when($status === 'unread', fn ($query) => $query->where('read', 0))
+            ->when($status === 'read', fn ($query) => $query->where('read', 1))
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        $unreadCount = ContactUs::where('read', 0)->count();
+        $readCount = ContactUs::where('read', 1)->count();
+
+        return view('admin.complaints.index', compact('complaints', 'status', 'unreadCount', 'readCount'));
     }
 
     public function sendReply(Request $request, ContactUs $contactMessage)
