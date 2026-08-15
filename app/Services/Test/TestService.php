@@ -2,6 +2,7 @@
 
 namespace App\Services\Test;
  use App\Enums\ContentStatus;
+ use App\Enums\ReviewStatus;
  use App\Http\Resources\Test\TeacherTestResource;
  use App\Jobs\SendNotificationJob;
  use App\Models\Course;
@@ -10,6 +11,7 @@ namespace App\Services\Test;
  use App\Models\PlacementTest;
  use App\Models\Question;
  use App\Models\Test;
+ use App\Models\User;
  use Illuminate\Support\Arr;
  use Illuminate\Support\Facades\DB;
  use Illuminate\Validation\ValidationException;
@@ -191,6 +193,10 @@ namespace App\Services\Test;
                  if($test->status === ContentStatus::APPROVED)
                  {
                      $testData['status'] = ContentStatus::CHANGES_REQUESTED;
+                     $this->createSystemReview(
+                         $test,
+                         "Test '{$test->title_en}' was edited by its teacher after being approved, and has been automatically returned to 'changes requested'. Please re-review the updated content."
+                     );
                  }
                  if ($test->status === ContentStatus::PENDING) {
                      $testData['status'] = ContentStatus::DRAFT;
@@ -260,42 +266,49 @@ namespace App\Services\Test;
          switch ($dependentTest->status) {
 
              case ContentStatus::DRAFT:
+                 $this->notifyDependencyOwners(
+                     $dependentTest,
+                     'Test Content Alert',
+                     "One or more questions used in test '{$dependentTest->title_en}' were removed from their source lesson test. Please review before submitting.",
+                     $removedQuestionIds
+                 );
+                 break;
              case ContentStatus::CHANGES_REQUESTED:
-                 SendNotificationJob::dispatch();
-//          $this->notify(
-//              $dependentTest->owner_id,
-//              "A question used in '{$dependentTest->title_en}' was removed from its source lesson test. Please review before submitting."
-//          );
+                 $message = "An additional question : " .$this->formatQuestionsList($removedQuestionIds)
+                     . ") used in test '{$dependentTest->title_en}' was removed from its source lesson test. Please take this into account while making changes.";
+
+                 $this->attachSystemNoteToLatestReview($dependentTest, $message);
+
+                 $this->notifyDependencyOwners($dependentTest, 'Test Content Alert', $message, $removedQuestionIds);
                  break;
              case ContentStatus::PENDING:
-                 $dependentTest->update([
-                     'status' => ContentStatus::DRAFT,
-                 ]);
-                 //                 $this->notify(
-//                     $dependentTest->owner_id,
-//                     "Test '{$dependentTest->title_en}' was returned for draft because a question it depends on was removed from a lesson test."
-//                 );
+                 $dependentTest->update(['status' => ContentStatus::DRAFT]);
+
+                 $this->notifyDependencyOwners(
+                     $dependentTest,
+                     'Test Returned to Draft',
+                     "Test '{$dependentTest->title_en}' was automatically returned to draft because a question it depended on was removed from its source lesson test.",
+                     $removedQuestionIds
+                 );
                  break;
+
              case ContentStatus::APPROVED:
-                 $dependentTest->update([
-                     'status' => ContentStatus::CHANGES_REQUESTED,
-                      ]);
-//                 $this->notify(
-//                     $dependentTest->owner_id,
-//                     "Test '{$dependentTest->title_en}' was returned for changes because a question it depends on was removed from a lesson test."
-//                 );
+                 $dependentTest->update(['status' => ContentStatus::CHANGES_REQUESTED]);
+
+                 $message = "Test '{$dependentTest->title_en}' (previously approved) was automatically returned to 'changes requested' because question (name: "
+                     . $this->formatQuestionsList($removedQuestionIds)
+                     . ") it depended on was removed from its source lesson test. Please review and update the test.";
+
+                 $this->createSystemReview($dependentTest, $message);
+
+                 $this->notifyDependencyOwners($dependentTest, 'Test Requires Changes', $message, $removedQuestionIds);
                  break;
 
              case ContentStatus::IN_REVIEW:
-                    //تذكري انه اذا كان قيد التدقيق بدي ابعت اشعار للاستاذ و للمدقق انه صار تغيير عالاختبار والمعالجة لح تتم عن طريق تابع العرض للادمن عن طريق العلامة يلي لح ابعتها
-//                 $this->notify(
-//                     $dependentTest->reviewer_id,
-//                     "A question used in '{$dependentTest->title_en}' was removed from its source lesson test. Please review before approving."
-//                 );
-//                 $this->notify(
-//                     $dependentTest->owner_id,
-//                     "A question used in '{$dependentTest->title_en}' was removed from its source lesson test."
-//                 );
+                 $message = "A question ". $this->formatQuestionsList($removedQuestionIds)
+                     . ") used in test '{$dependentTest->title_en}', which is currently under review, was removed from its source lesson test. Please take this into account.";
+
+                 $this->notifyInReviewParties($dependentTest, 'Test Under Review Affected', $message, $removedQuestionIds);
                  break;
              case ContentStatus::PUBLISHED:
                  logger('published course', ['removedQuestionIds' => $removedQuestionIds]);
@@ -316,10 +329,12 @@ namespace App\Services\Test;
                      'questions' => $remainingQuestions,
                  ]);
 
-//                 $this->notify(
-//                     $dependentTest->owner_id,
-//                     "A question was removed from '{$dependentTest->title_en}' (published) because its source was deleted from a lesson test. A new draft version was created — please review and resubmit it."
-//                 );
+                 $this->notifyDependencyOwners(
+                     $dependentTest,
+                     'New Test Version Created',
+                     "A question was removed from your published test '{$dependentTest->title_en}' because it was deleted from its source lesson test. A new draft version has been created — please review and resubmit it.",
+                     $removedQuestionIds
+                 );
                  break;
          }
          }
@@ -383,5 +398,93 @@ namespace App\Services\Test;
 //         });
 //     }
 
+     public function createSystemReview(Test $test, string $message): void
+     {
+         $lastReview = $test->reviews()->latest('claimed_at')->first();
 
+         $review = $test->reviews()->create([
+             'reviewer_id' => $lastReview->reviewer_id,
+             'status' => ReviewStatus::CHANGES_REQUESTED,
+             'claimed_at' => now(),
+             'completed_at' => now(),
+         ]);
+
+         $review->notes()->create([
+             'reviewable_type' => $test->getMorphClass(),
+             'reviewable_id' => $test->id,
+             'admin_id' => null,
+             'message' => $message,
+             'is_system_generated' => true,
+         ]);
+     }
+     private function attachSystemNoteToLatestReview(Test $test, string $message): void
+     {
+         $latestReview = $test->reviews()->latest('claimed_at')->first();
+
+         $latestReview->notes()->create([
+             'reviewable_type' => $test->getMorphClass(),
+             'reviewable_id' => $test->id,
+             'admin_id' => null,
+             'message' => $message,
+             'is_system_generated' => true,
+         ]);
+     }
+     public function notifyDependencyOwners(Test $test, string $title, string $body, array $removedQuestionIds): void
+     {
+         $userIds = $test->testable_type === 'level'
+             ? User::permission('manage_level_tests')->pluck('id')->all()
+             : array_filter([$test->testable->teacher_id]);
+
+         if (empty($userIds)) {
+             return;
+         }
+
+         SendNotificationJob::dispatch(
+             array_values($userIds),
+             $title,
+             $body,
+             [
+                 'test_id' => $test->id,
+                 'removed_question_ids' => $removedQuestionIds,
+             ],
+             'content_dependency_change'
+         );
+     }
+     private function notifyInReviewParties(Test $test, string $title, string $body, array $removedQuestionIds): void
+     {
+         $reviewerId = $test->reviews()
+             ->where('status', ReviewStatus::IN_REVIEW)
+             ->latest('claimed_at')
+             ->value('reviewer_id');
+
+         $ownerIds = $test->testable_type === 'level'
+             ? User::permission('manage_level_tests')->pluck('id')->all()
+             : array_filter([$test->testable->teacher_id]);
+
+         $userIds = array_unique(array_filter(array_merge($ownerIds, [$reviewerId])));
+
+         if (empty($userIds)) {
+             return;
+         }
+
+         SendNotificationJob::dispatch(
+             array_values($userIds),
+             $title,
+             $body,
+             [
+                 'test_id' => $test->id,
+                 'removed_question_ids' => $removedQuestionIds,
+             ],
+             'content_dependency_change'
+         );
+     }
+
+     private function formatQuestionsList(array $questionIds): string
+     {
+         $titles = Question::whereIn('id', $questionIds)
+             ->pluck('title_question_en')
+             ->all();
+
+         return implode(', ', array_map(fn ($t) => "\"$t\"", $titles));
+     }
  }

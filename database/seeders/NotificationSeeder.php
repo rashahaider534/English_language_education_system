@@ -138,6 +138,34 @@ class NotificationSeeder extends Seeder
                 'created_at' => now()->subHours(3),
                 'updated_at' => now(),
             ],
+
+             [
+                 'id' => (string) Str::uuid(),
+                 'user_id' => 6,
+                 'title' => 'Test Content Alert',
+                 'body' => "One or more questions used in test 'Lesson Test' were removed from their source lesson test. Please review before submitting.",
+                 'data' => json_encode(['test_id' => 2, 'removed_question_ids' => [5]]),
+                 'type' => 'content_dependency_change',
+                 'read' => false,
+                 'read_at' => null,
+                 'created_at' => now()->subMinutes(5),
+                 'updated_at' => now(),
+             ],
+
+             [
+                 'id' => (string) Str::uuid(),
+                 'user_id' => 6,
+                 'title' => 'Test Requires Changes',
+                 'body' => "Test 'Course Test' (previously approved) was automatically returned to 'changes requested' because question (name : choose) it depended on was removed from its source lesson test. Please review and update the test.",
+                 'data' => json_encode(['test_id' => 1, 'removed_question_ids' => [5]]),
+                 'type' => 'content_dependency_change',
+                 'read' => false,
+                 'read_at' => null,
+                 'created_at' => now()->subMinutes(3),
+                 'updated_at' => now(),
+             ],
         ]);
+
+
     }
 }
