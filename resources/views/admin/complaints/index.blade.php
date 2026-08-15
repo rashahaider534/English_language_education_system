@@ -50,9 +50,19 @@
             <div>
                 <p style="margin:0; font-size:11.5px; font-weight:700; letter-spacing:1.4px; text-transform:uppercase; color:rgba(168,232,249,0.8);">ملاحظات المستخدمين</p>
                 <h1 style="margin:6px 0 0; font-family:'Poppins',sans-serif; font-weight:800; font-size:23px; color:#fff;">صندوق الشكاوي</h1>
-                <p style="margin:8px 0 0; font-size:12.5px; color:rgba(255,255,255,0.7);">إجمالي الرسائل: {{ $complaints->total() }}</p>
+                <p style="margin:8px 0 0; font-size:12.5px; color:rgba(255,255,255,0.7);">إجمالي الرسائل: {{ $unreadCount + $readCount }}</p>
             </div>
         </div>
+    </div>
+
+    {{-- ============ FILTER TABS ============ --}}
+    @php
+        $tabBase = 'display:inline-flex; align-items:center; gap:7px; padding:10px 18px; border-radius:11px; font-size:12.5px; font-weight:700; text-decoration:none; transition:background 0.15s ease;';
+    @endphp
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px;">
+        <a href="{{ route('admin.complaints.index') }}" style="{{ $tabBase }} {{ !$status ? 'background:#013C58; color:#fff;' : 'background:#EFFAFD; color:rgba(1,60,88,0.6);' }}">الكل ({{ $unreadCount + $readCount }})</a>
+        <a href="{{ route('admin.complaints.index', ['status' => 'unread']) }}" style="{{ $tabBase }} {{ $status === 'unread' ? 'background:#013C58; color:#fff;' : 'background:#EFFAFD; color:rgba(1,60,88,0.6);' }}">غير مقروءة ({{ $unreadCount }})</a>
+        <a href="{{ route('admin.complaints.index', ['status' => 'read']) }}" style="{{ $tabBase }} {{ $status === 'read' ? 'background:#013C58; color:#fff;' : 'background:#EFFAFD; color:rgba(1,60,88,0.6);' }}">مقروءة ({{ $readCount }})</a>
     </div>
 
     {{-- ============ COMPLAINTS LIST ============ --}}
@@ -62,17 +72,22 @@
                 $sender = $complaint->user;
                 $senderName = $sender ? (trim(($sender->first_name ?? '').' '.($sender->last_name ?? '')) ?: $sender->email) : 'مستخدم محذوف';
                 $initials = $sender ? strtoupper(substr($sender->first_name ?? $sender->email, 0, 1).substr($sender->last_name ?? '', 0, 1)) : '?';
+                $isRead = (bool) $complaint->read;
             @endphp
-            <div class="cmp-card" style="position:relative; overflow:hidden; background:#FFF9F6; border:1.5px solid rgba(255,138,101,0.32); border-radius:18px; padding:18px 22px 18px 26px; display:flex; gap:16px; align-items:flex-start; box-shadow:0 10px 24px rgba(229,72,77,0.06);">
-                <div style="position:absolute; top:0; bottom:0; left:0; width:5px; background:linear-gradient(180deg,#FF8A65,#C2591A);"></div>
+            <div class="cmp-card" style="position:relative; overflow:hidden; background:{{ $isRead ? '#F7FAFB' : '#FFF9F6' }}; border:1.5px solid {{ $isRead ? 'rgba(0,83,122,0.12)' : 'rgba(255,138,101,0.32)' }}; border-radius:18px; padding:18px 22px 18px 26px; display:flex; gap:16px; align-items:flex-start; box-shadow:0 10px 24px rgba(229,72,77,0.06);">
+                <div style="position:absolute; top:0; bottom:0; left:0; width:5px; background:{{ $isRead ? 'rgba(0,83,122,0.2)' : 'linear-gradient(180deg,#FF8A65,#C2591A)' }};"></div>
 
-                <div style="position:relative; display:flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:13px; background:rgba(255,138,101,0.16); color:#C2591A; flex-shrink:0;">
+                <div style="position:relative; display:flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:13px; background:{{ $isRead ? 'rgba(0,83,122,0.08)' : 'rgba(255,138,101,0.16)' }}; color:{{ $isRead ? '#00537A' : '#C2591A' }}; flex-shrink:0;">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                 </div>
                 <div style="flex:1; min-width:0;">
                     <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:9px;">
                         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                            <span style="display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:999px; background:rgba(255,138,101,0.16); color:#C2591A; font-size:10.5px; font-weight:800; letter-spacing:0.3px;">شكوى</span>
+                            @if ($isRead)
+                                <span style="display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:999px; background:rgba(76,175,120,0.16); color:#2E7D55; font-size:10.5px; font-weight:800; letter-spacing:0.3px;">تم الرد</span>
+                            @else
+                                <span style="display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:999px; background:rgba(255,138,101,0.16); color:#C2591A; font-size:10.5px; font-weight:800; letter-spacing:0.3px;">شكوى</span>
+                            @endif
                             <p style="margin:0; display:flex; align-items:center; gap:7px; font-family:'Poppins',sans-serif; font-weight:700; font-size:13.5px; color:#013C58;">
                                 <span style="display:flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:7px; background:#C2591A; color:#fff; font-family:'Poppins',sans-serif; font-weight:700; font-size:9.5px; flex-shrink:0;">{{ $initials }}</span>
                                 {{ $senderName }}
@@ -85,7 +100,7 @@
                     </div>
                     <p style="margin:0; font-size:13.5px; color:rgba(1,60,88,0.75); line-height:1.7; background:rgba(255,255,255,0.6); border-radius:10px; padding:10px 12px;">{{ $complaint->text }}</p>
 
-                    @if ($canReply && $sender)
+                    @if ($canReply && $sender && !$isRead)
                         <div style="margin-top:12px; display:flex; justify-content:flex-end;">
                             <button type="button"
                                 @click="replyModalOpen = true; replyTargetId = {{ $complaint->id }}; replyTargetName = {{ Illuminate\Support\Js::from($senderName) }}"

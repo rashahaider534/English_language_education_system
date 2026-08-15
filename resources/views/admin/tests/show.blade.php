@@ -44,6 +44,11 @@
     $canPublish = auth()->user()->can('publish_levels');
     $isNewVersion = !is_null($test->previous_test_id);
     $showPublishButton = $isNewVersion && $statusVal === 'approved';
+
+    $backFromReview = request()->query('from') === 'review';
+    $backHref = ($backFromReview && $test->testable_type === 'lesson')
+        ? route('lessons.tests.show', $testable) . '?from=review'
+        : url()->previous();
 @endphp
 <div x-data="{
         toastVisible: false,
@@ -67,7 +72,7 @@
     }" class="-mx-4 -my-6 px-4 py-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8" style="background:#DFF2F9; font-family:'Tajawal',sans-serif; min-height:100vh;" dir="rtl">
 
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; flex-wrap:wrap; gap:12px;">
-        <a href="{{ url()->previous() }}" style="display:inline-flex; align-items:center; gap:6px; color:#00537A; font-size:13px; font-weight:600; text-decoration:none;">
+        <a href="{{ $backHref }}" style="display:inline-flex; align-items:center; gap:6px; color:#00537A; font-size:13px; font-weight:600; text-decoration:none;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 19-7-7 7-7"></path></svg>
             رجوع
         </a>

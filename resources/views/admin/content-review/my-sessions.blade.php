@@ -46,7 +46,7 @@
     <div style="margin-bottom:18px;">
         <a href="{{ route('admin.content-review.pending-queue') }}" style="display:inline-flex; align-items:center; gap:6px; color:#00537A; font-size:13px; font-weight:600; text-decoration:none;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 19-7-7 7-7"></path></svg>
-            العودة لطابور المراجعة
+            العودة الى المهام  التي تحتاج الى مراجعة  
         </a>
     </div>
 

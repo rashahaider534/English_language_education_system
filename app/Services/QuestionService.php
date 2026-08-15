@@ -159,7 +159,7 @@ class QuestionService
                 if (!$question->isUsedInPublishedTests() && !$question->isUsedInClosedTests()) {
                     $question->delete();
                 }
-                $this->cascadeStatusOnQuestionEdit($relatedTests);
+                $this->cascadeStatusOnQuestionEdit($relatedTests , $question);
 
                 $relinkableTests = Test::whereIn('id', $relatedTests->pluck('id'))
                     ->whereIn('status', [
@@ -188,7 +188,7 @@ class QuestionService
             $question->update($data);
             //  dd($data['answers']);
             $this->syncAnswersAndMedia($question, $question, $data, $isUpdate = true);
-            $this->cascadeStatusOnQuestionEdit($relatedTests);
+            $this->cascadeStatusOnQuestionEdit($relatedTests,$question);
             return [
                 'status' => 'updated',
                 'message' => 'question updated successfully.',
@@ -198,31 +198,70 @@ class QuestionService
 
     }
 
+//    private function syncAnswersAndMedia(Question $oldQuestion, Question $newQuestion, array $data, $isUpdate = false)
+//    {
+//
+//        $relation = $newQuestion->getAnswersRelationName();
+//        // dd($relation);
+//        if (isset($data['answers'])) {
+//            if ($isUpdate) {
+//
+//                $newQuestion->{$relation}()->delete();
+//            }
+//                $newQuestion->{$relation}()->createMany($data['answers']);
+//
+//            if (isset($data['image'])) {
+//                $newQuestion->addMedia($data['image'])->toMediaCollection('image');
+//            } else {
+//                if(!$isUpdate)
+//                {$oldQuestion->getFirstMedia('image')?->copy($newQuestion, 'image');}
+//                }
+//
+//            if (isset($data['audio'])) {
+//                $newQuestion->addMedia($data['audio'])->toMediaCollection('audio');
+//            } else {
+//                if(!$isUpdate)
+//                $oldQuestion->getFirstMedia('audio')?->copy($newQuestion, 'audio');
+//            }
+//        }
+//    }
+
     private function syncAnswersAndMedia(Question $oldQuestion, Question $newQuestion, array $data, $isUpdate = false)
     {
-
         $relation = $newQuestion->getAnswersRelationName();
-        // dd($relation);
-        if (isset($data['answers'])) {
-            if ($isUpdate) {
 
-                $newQuestion->{$relation}()->delete();
-            }
-                $newQuestion->{$relation}()->createMany($data['answers']);
+        if ($isUpdate) {
+            $newQuestion->{$relation}()->delete();
+        }
+        $newQuestion->{$relation}()->createMany($data['answers']);
 
-            if (isset($data['image'])) {
+        $this->syncImageAndAudio($oldQuestion, $newQuestion, $data, $isUpdate);
+    }
+
+    private function syncImageAndAudio(Question $oldQuestion, Question $newQuestion, array $data, bool $isUpdate): void
+    {
+        $hasNewImage = isset($data['image']);
+        $hasNewAudio = isset($data['audio']);
+
+        if ($isUpdate) {
+            if ($hasNewImage) {
+                $newQuestion->clearMediaCollection('image');
+                $newQuestion->clearMediaCollection('audio');
                 $newQuestion->addMedia($data['image'])->toMediaCollection('image');
-            } else {
-                if(!$isUpdate)
-                {$oldQuestion->getFirstMedia('image')?->copy($newQuestion, 'image');}
-                }
-
-            if (isset($data['audio'])) {
+            } elseif ($hasNewAudio) {
+                $newQuestion->clearMediaCollection('audio');
+                $newQuestion->clearMediaCollection('image');
                 $newQuestion->addMedia($data['audio'])->toMediaCollection('audio');
-            } else {
-                if(!$isUpdate)
-                $oldQuestion->getFirstMedia('audio')?->copy($newQuestion, 'audio');
             }
+            return;
+        }
+        if ($hasNewImage) {
+            $newQuestion->addMedia($data['image'])->toMediaCollection('image');
+        } elseif ($hasNewAudio) {
+            $newQuestion->addMedia($data['audio'])->toMediaCollection('audio');
+        } else {
+            $oldQuestion->getFirstMedia('image')?->copy($newQuestion, 'image');
+            $oldQuestion->getFirstMedia('audio')?->copy($newQuestion, 'audio');
         }
     }
 
@@ -243,7 +282,7 @@ class QuestionService
                         'error' => 'You cannot delete this question because it is used in published tests.',
                     ]);
                 }
-                $this->cascadeStatusOnQuestionEdit($relatedTests);
+                $this->cascadeStatusOnQuestionEdit($relatedTests , $question);
 
                 if ($question->isUsedInArchivedTests()) {
                     return $question->delete();
@@ -263,13 +302,32 @@ class QuestionService
 //                    ->update(['status' => ContentStatus::CHANGES_REQUESTED]);
 //            }
 //        }
-    private function cascadeStatusOnQuestionEdit($tests): void
+    private function cascadeStatusOnQuestionEdit($tests, Question $question): void
     {
-        Test::whereIn('id', $tests->where('status', ContentStatus::APPROVED)->pluck('id'))
+        $approvedTests = $tests->where('status', ContentStatus::APPROVED);
+        $pendingTests = $tests->where('status', ContentStatus::PENDING);
+
+        Test::whereIn('id', $approvedTests->pluck('id'))
             ->update(['status' => ContentStatus::CHANGES_REQUESTED]);
 
-        Test::whereIn('id', $tests->where('status', ContentStatus::PENDING)->pluck('id'))
+        Test::whereIn('id', $pendingTests->pluck('id'))
             ->update(['status' => ContentStatus::DRAFT]);
+
+        foreach ($approvedTests as $test) {
+            $this->testService->createSystemReview(
+                $test,
+                "Test '{$test->title_en}' was automatically returned to 'changes requested' because question (name: {$question->title_question_en}) used in it was edited. Please re-review the updated content."
+            );
+        }
+
+        foreach ($pendingTests as $test) {
+            $this->testService->notifyDependencyOwners(
+                $test,
+                'Test Returned to Draft',
+                "Test '{$test->title_en}' was automatically returned to draft because question (name: {$question->title_question_en}) used in it was edited.",
+                [$question->id]
+            );
+        }
     }
     public function blockingTests(Question $question)
     {

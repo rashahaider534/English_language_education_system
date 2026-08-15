@@ -54,6 +54,7 @@ class UserAttemptController extends Controller
         $result = $this->attemptService->finishAttempt($attempt);
 
         $attempt = $result['attempt'];
+        $reward  = $result['reward'];
 
         return response()->json([
             'attempt_id' => $attempt->id,
@@ -64,8 +65,10 @@ class UserAttemptController extends Controller
                 'increased' => $result['increased'],
             ],
             'reward' => [
-                'points_awarded'   => $result['reward']['points_awarded'],
-                'points'           => $result['reward']['points'],
+                'points_awarded' => $reward['points_awarded'],
+                'points'         => $reward['points'],
+                'user_level_id'  => $reward['user_level_id'] ?? null,
+                'certificate_url' => $reward['certificate_download_url'] ?? null,
             ],
         ]);
     }
