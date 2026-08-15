@@ -16,13 +16,36 @@ class TopicSeeder extends Seeder
     {
 
         $topic = Topic::create([
-            'name_en' => 'Technology',
-            'name_ar' => 'التكنولوجيا',
-            'status' => TopicStatus::PUBLISHED,
+            'name_en' => 'Education',
+            'name_ar' => 'التعليم',
+            'status' => TopicStatus::PENDING,
             'created_by' => 1,
         ]);
 
-        $topic->addMedia(database_path('seeders/images/podcast.webp'))
+        $topic->addMedia(database_path('seeders/images/Education.webp'))
+            ->preservingOriginal()
+            ->toMediaCollection('topic_image');
+
+
+        $topic = Topic::create([
+            'name_en' => 'Travel',
+            'name_ar' => 'السفر',
+            'status' => TopicStatus::PENDING,
+            'created_by' => 1,
+        ]);
+
+        $topic->addMedia(database_path('seeders/images/travel.webp'))
+            ->preservingOriginal()
+            ->toMediaCollection('topic_image');
+
+        $topic = Topic::create([
+            'name_en' => 'Technology',
+            'name_ar' => 'التكنولوجيا',
+            'status' => TopicStatus::PENDING,
+            'created_by' => 1,
+        ]);
+
+        $topic->addMedia(database_path('seeders/images/Technology.webp'))
             ->preservingOriginal()
             ->toMediaCollection('topic_image');
 
@@ -30,7 +53,7 @@ class TopicSeeder extends Seeder
         $topic = Topic::create([
             'name_en' => 'Business',
             'name_ar' => 'الأعمال',
-            'status' => TopicStatus::PUBLISHED,
+            'status' => TopicStatus::PENDING,
             'created_by' => 1,
         ]);
 
@@ -49,5 +72,6 @@ class TopicSeeder extends Seeder
         $topic->addMedia(database_path('seeders/images/podcast.webp'))
             ->preservingOriginal()
             ->toMediaCollection('topic_image');
+
     }
 }

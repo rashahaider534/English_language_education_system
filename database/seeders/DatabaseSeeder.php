@@ -38,9 +38,9 @@ class DatabaseSeeder extends Seeder
             TopicSeeder::class,
             PodcastSeeder::class,
             UserPodcastSeeder::class,
-            NotificationSeeder::class,
             ContentReviewSeeder::class,
-            ChatTopicSeeder::class
+            ChatTopicSeeder::class,
+            PaymentSeeder::class
 
         ]);
     }
