@@ -17,6 +17,12 @@ class Payment extends Model
         'paid_at',
     ];
 
+     protected $casts = [
+        'paid_at' => 'datetime',
+        'amount' => 'decimal:2',
+        'status' => PaymentStatus::class,
+    ];
+    
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -26,7 +32,7 @@ class Payment extends Model
     {
         return $this->belongsTo(Level::class);
     }
-    
+
       protected function casts(): array
     {
         return [

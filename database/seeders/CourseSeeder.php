@@ -13,152 +13,176 @@ class CourseSeeder extends Seeder
      */
     public function run(): void
     {
-
-
         $courses = [
 
-            // A1
+            // =====================================================
+            // A1 - Beginner
+            // =====================================================
+
             [
                 'id' => 1,
-                'name_en' => 'Basic Grammar',
-                'name_ar' => 'القواعد الأساسية',
+                'name_en' => 'English Foundations',
+                'name_ar' => 'أساسيات اللغة الإنجليزية',
                 'level_id' => 1,
                 'teacher_id' => 6,
                 'order' => 1,
                 'estimated_duration' => 10,
                 'status' => 'pending',
                 'created_by' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
             [
                 'id' => 2,
-                'name_en' => 'Daily Vocabulary',
-                'name_ar' => 'المفردات اليومية',
+                'name_en' => 'Basic Grammar',
+                'name_ar' => 'القواعد الأساسية',
                 'level_id' => 1,
                 'teacher_id' => 5,
                 'order' => 2,
                 'estimated_duration' => 12,
                 'status' => 'pending',
-                'created_by' => 5,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_by' => 1,
             ],
-
-            // A2
             [
                 'id' => 3,
-                'name_en' => 'Past Tenses',
-                'name_ar' => 'أزمنة الماضي',
+                'name_en' => 'Everyday Vocabulary',
+                'name_ar' => 'المفردات اليومية',
                 'level_id' => 1,
-                'teacher_id' => 2,
-                'order' => 5,
+                'teacher_id' => 6,
+                'order' => 3,
                 'estimated_duration' => 12,
                 'status' => 'pending',
-                'created_by' => 5,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_by' => 1,
             ],
             [
                 'id' => 4,
-                'name_en' => 'Listening Skills',
-                'name_ar' => 'مهارات الاستماع',
+                'name_en' => 'Basic Conversation',
+                'name_ar' => 'المحادثة الأساسية',
+                'level_id' => 1,
+                'teacher_id' => 5,
+                'order' => 4,
+                'estimated_duration' => 10,
+                'status' => 'pending',
+                'created_by' => 1,
+            ],
+
+
+            // =====================================================
+            // A2 - Elementary
+            // =====================================================
+
+            [
+                'id' => 5,
+                'name_en' => 'Past and Future Tenses',
+                'name_ar' => 'أزمنة الماضي والمستقبل',
+                'level_id' => 2,
+                'teacher_id' => 2,
+                'order' => 1,
+                'estimated_duration' => 12,
+                'status' => 'pending',
+                'created_by' => 1,
+            ],
+            [
+                'id' => 6,
+                'name_en' => 'Practical Vocabulary',
+                'name_ar' => 'المفردات العملية',
                 'level_id' => 2,
                 'teacher_id' => 2,
                 'order' => 2,
-                'estimated_duration' => 10,
-                'status' => 'published',
+                'estimated_duration' => 12,
+                'status' => 'pending',
                 'created_by' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
             [
-                'id' => 5,
-                'name_en' => 'Writing Basics',
-                'name_ar' => 'أساسيات الكتابة',
+                'id' => 7,
+                'name_en' => 'Listening and Understanding',
+                'name_ar' => 'الاستماع والفهم',
                 'level_id' => 2,
                 'teacher_id' => 2,
                 'order' => 3,
                 'estimated_duration' => 10,
-                'status' => 'published',
+                'status' => 'pending',
                 'created_by' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
+            ],
+            [
+                'id' => 8,
+                'name_en' => 'Everyday English Conversation',
+                'name_ar' => 'المحادثة الإنجليزية اليومية',
+                'level_id' => 2,
+                'teacher_id' => 2,
+                'order' => 4,
+                'estimated_duration' => 12,
+                'status' => 'pending',
+                'created_by' => 1,
             ],
 
-            // B1
+
+            // =====================================================
+            // B1 - Intermediate
+            // =====================================================
+
             [
-                'id' => 6,
-                'name_en' => 'Advanced Grammar',
-                'name_ar' => 'القواعد المتقدمة',
+                'id' => 9,
+                'name_en' => 'Intermediate Grammar',
+                'name_ar' => 'القواعد المتوسطة',
                 'level_id' => 3,
                 'teacher_id' => 3,
                 'order' => 1,
                 'estimated_duration' => 14,
-                'status' => 'published',
+                'status' => 'pending',
                 'created_by' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
             [
-                'id' => 7,
-                'name_en' => 'Business English',
-                'name_ar' => 'الإنجليزية للأعمال',
+                'id' => 10,
+                'name_en' => 'Intermediate Conversation',
+                'name_ar' => 'المحادثة المتوسطة',
                 'level_id' => 3,
                 'teacher_id' => 3,
                 'order' => 2,
                 'estimated_duration' => 12,
-                'status' => 'published',
+                'status' => 'pending',
                 'created_by' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'id' => 8,
-                'name_en' => 'Conversation',
-                'name_ar' => 'المحادثة',
-                'level_id' => 3,
-                'teacher_id' => 3,
-                'order' => 3,
-                'estimated_duration' => 12,
-                'status' => 'published',
-                'created_by' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
 
-            // B2
+
+
+            // =====================================================
+            // B2 - Upper Intermediate
+            // =====================================================
+
             [
-                'id' => 9,
-                'name_en' => 'Academic English',
-                'name_ar' => 'الإنجليزية الأكاديمية',
+                'id' => 11,
+                'name_en' => 'Advanced Grammar',
+                'name_ar' => 'القواعد المتقدمة',
                 'level_id' => 4,
                 'teacher_id' => 5,
                 'order' => 1,
                 'estimated_duration' => 15,
-                'status' => 'published',
+                'status' => 'pending',
                 'created_by' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
+            
             [
-                'id' => 10,
-                'name_en' => 'IELTS Preparation',
-                'name_ar' => 'التحضير للآيلتس',
+                'id' => 12,
+                'name_en' => 'Advanced Conversation',
+                'name_ar' => 'المحادثة المتقدمة',
                 'level_id' => 4,
                 'teacher_id' => 5,
                 'order' => 2,
-                'estimated_duration' => 18,
-                'status' => 'published',
+                'estimated_duration' => 14,
+                'status' => 'pending',
                 'created_by' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
+
         ];
+
         foreach ($courses as $courseData) {
 
+            $courseData['created_at'] = now();
+            $courseData['updated_at'] = now();
+
             $course = Course::create($courseData);
+
             $path = database_path('seeders/images/test.webp');
+
             $course->addMedia($path)
                 ->preservingOriginal()
                 ->toMediaCollection('course_image');

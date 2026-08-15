@@ -14,7 +14,7 @@ class CommentSeeder extends Seeder
      */
     public function run(): void
     {
-        $users = User::all();
+        $users = User::role('student')->get();
         $lessons = Lesson::all();
 
         foreach ($lessons as $lesson) {
@@ -26,8 +26,7 @@ class CommentSeeder extends Seeder
                     'user_id' => $users->random()->id,
                     'lesson_id' => $lesson->id,
                     'comment' => fake()->sentence(10),
-                    'created_at'=>now()
+                    'created_at' => now(),
                 ]);
-
             }}}
 }

@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
 use App\Models\StudentProfile;
+
 class UserSeeder extends Seeder
 {
     /**
@@ -22,6 +23,7 @@ class UserSeeder extends Seeder
             'is_active' => true,
         ]);
         $superadmin->assignRole(Role::findByName('super-admin', 'web'));
+
         $student = User::create([
             'first_name' => 'rasha',
             'last_name' => 'haider',
@@ -30,14 +32,14 @@ class UserSeeder extends Seeder
             'is_active' => true,
             'email_verified_at' => now(),
         ]);
-         StudentProfile::create([
+        StudentProfile::create([
             'user_id' => $student->id,
             'bio' => 'طالب معلوماتية ',
-            'points'=>80,
+            'points' => 80,
             'streak' => 5,
         ]);
-         $student->assignRole('student');
-         
+        $student->assignRole('student');
+
         $admins = [
             [
                 'first_name' => 'Admin1',
@@ -97,6 +99,88 @@ class UserSeeder extends Seeder
         foreach ($teachers as $teacherData) {
             $user =  User::create($teacherData);
             $user->assignRole('teacher');
+        }
+
+        
+        $students = [
+            [
+                'first_name' => 'Rasha',
+                'last_name' => 'Haider',
+                'email' => 'student1@gmail.com',
+                'password' => bcrypt('87654321'),
+            ],
+            [
+                'first_name' => 'Ahmad',
+                'last_name' => 'Ali',
+                'email' => 'student2@gmail.com',
+                'password' => bcrypt('87654321'),
+            ],
+            [
+                'first_name' => 'Sara',
+                'last_name' => 'Khaled',
+                'email' => 'student3@gmail.com',
+                'password' => bcrypt('87654321'),
+            ],
+            [
+                'first_name' => 'Omar',
+                'last_name' => 'Hassan',
+                'email' => 'student4@gmail.com',
+                'password' => bcrypt('87654321'),
+            ],
+            [
+                'first_name' => 'Lina',
+                'last_name' => 'Sami',
+                'email' => 'student5@gmail.com',
+                'password' => bcrypt('87654321'),
+            ],
+            [
+                'first_name' => 'Mohammad',
+                'last_name' => 'Saleh',
+                'email' => 'student6@gmail.com',
+                'password' => bcrypt('87654321'),
+            ],
+            [
+                'first_name' => 'Nour',
+                'last_name' => 'Yousef',
+                'email' => 'student7@gmail.com',
+                'password' => bcrypt('87654321'),
+            ],
+            [
+                'first_name' => 'Yazan',
+                'last_name' => 'Ahmad',
+                'email' => 'student8@gmail.com',
+                'password' => bcrypt('87654321'),
+            ],
+            [
+                'first_name' => 'Maya',
+                'last_name' => 'Tarek',
+                'email' => 'student9@gmail.com',
+                'password' => bcrypt('87654321'),
+            ],
+            [
+                'first_name' => 'Kareem',
+                'last_name' => 'Fadi',
+                'email' => 'student10@gmail.com',
+                'password' => bcrypt('87654321'),
+            ],
+        ];
+
+        foreach ($students as $studentData) {
+
+            $student = User::create([
+                ...$studentData,
+                'is_active' => true,
+                'email_verified_at' => now(),
+            ]);
+
+            StudentProfile::create([
+                'user_id' => $student->id,
+                'bio' => 'طالب',
+                'points' => 80,
+                'streak' => 5,
+            ]);
+
+            $student->assignRole('student');
         }
     }
 }
