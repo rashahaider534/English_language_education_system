@@ -18,6 +18,15 @@
         border-color: rgba(0,83,122,0.06);
         background: rgba(0,83,122,0.04);
     }
+    .course-file-input { padding:7px; font-size:12.5px; color:rgba(1,60,88,0.55); }
+    .course-file-input::file-selector-button {
+        margin-inline-end:10px; padding:8px 16px; border:none; border-radius:8px;
+        background:linear-gradient(90deg,#0E6A96,#146B93); color:#fff; font-family:'Tajawal',sans-serif;
+        font-weight:700; font-size:12.5px; cursor:pointer; transition:transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .course-file-input::file-selector-button:hover {
+        transform:translateY(-1px); box-shadow:0 6px 14px rgba(14,106,150,0.28);
+    }
     .modal-scroll::-webkit-scrollbar { width: 8px; }
     .modal-scroll::-webkit-scrollbar-track { background: transparent; }
     .modal-scroll::-webkit-scrollbar-thumb { background: rgba(1,60,88,0.14); border-radius: 999px; }
@@ -297,9 +306,9 @@
                 <span x-text="archiveIsDelete ? 'حذف كورس \"' + archiveName + '\" نهائياً؟' : 'أرشفة كورس \"' + archiveName + '\"؟'"></span>
             </h3>
             <p style="margin:10px 0 0; font-size:13px; color:rgba(1,60,88,0.6); line-height:1.7;">
-                <span x-show="archiveIsDelete">هالكورس لسا ما فيه دروس أو طلاب، فبينحذف نهائياً من قاعدة البيانات بدل الأرشفة.</span>
+                <span x-show="archiveIsDelete">هذا الكورس لايوجد داخله دروس أو طلاب، سوف يتم حذفه بشكل نهائي</span>
                 <span x-show="!archiveIsDelete && archiveHasInProgress">في طلاب عم يدرسو هلق هالكورس، فبيصير "مغلق" لحتى يخلّصو. ما رح يقبل طلاب جدد.</span>
-                <span x-show="!archiveIsDelete && !archiveHasInProgress"> </span>
+                <span x-show="!archiveIsDelete && !archiveHasInProgress">سيتم أرشفة الكورس، وسيختفي عن الطلاب ولن يقبل تسجيلات جديدة.</span>
             </p>
             <div style="display:flex; gap:10px; margin-top:22px;">
                 <button type="button" @click="archiveModalOpen = false" style="flex:1; padding:11px; border-radius:11px; border:1.5px solid rgba(0,83,122,0.12); background:#EFFAFD; color:#013C58; font-family:'Poppins',sans-serif; font-weight:600; font-size:13px; cursor:pointer;">إلغاء</button>
@@ -398,7 +407,7 @@
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"></rect><circle cx="9" cy="10" r="2"></circle><path d="m21 16-5-5-4 4-3-3-4 4"></path></svg>
                     </div>
                     <div style="flex:1;">
-                        <input type="file" name="image" accept="image/*" style="font-size:12.5px; color:rgba(1,60,88,0.6); width:100%;">
+                        <input type="file" name="image" accept="image/*" class="course-file-input" style="width:100%;">
                         <p style="margin:6px 0 0; font-size:11px; color:rgba(1,60,88,0.4);">JPG أو PNG أو WEBP، حتى 2 ميغابايت</p>
                     </div>
                 </div>
@@ -522,7 +531,7 @@
                             </div>
                         </template>
                         <div style="flex:1;">
-                            <input type="file" name="image" accept="image/*" :disabled="editIsLocked" style="font-size:12.5px; color:rgba(1,60,88,0.6); width:100%;">
+                            <input type="file" name="image" accept="image/*" :disabled="editIsLocked" class="course-file-input" style="width:100%;">
                             <p style="margin:6px 0 0; font-size:11px; color:rgba(1,60,88,0.4);">JPG أو PNG أو WEBP، حتى 2 ميغابايت — قابلة للتعديل حتى لو الكورس منشور</p>
                         </div>
                     </div>

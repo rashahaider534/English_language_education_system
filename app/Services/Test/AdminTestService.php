@@ -156,7 +156,7 @@ class AdminTestService
         $isValid = empty($remaining);
         if (!$isValid && $throwOnFailure) {
             throw ValidationException::withMessages([
-                'questions' => 'One or more questions are not eligible for this level test.',
+                'questions' => 'بعض الأسئلة المختارة غير مؤهلة لاختبار هذا المستوى.',
             ]);
         }
 

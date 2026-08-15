@@ -57,9 +57,10 @@ class CourseController extends Controller
     }
      public  function archive(Course $course)
     {
-        $course = $this->service->archive($course);
+        $level = $course->level;
+        $this->service->archive($course);
          return redirect()
-        ->route('courses.index', $course->level)
+        ->route('courses.index', $level)
         ->with('success', 'Course archived successfully.');
     }
 }

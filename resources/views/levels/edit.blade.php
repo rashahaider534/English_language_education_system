@@ -32,7 +32,9 @@
         </a>
         <div>
             <h1 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:22px; color:#013C58;">تعديل المستوى</h1>
-            <p style="margin:4px 0 0; font-size:13px; color:rgba(1,60,88,0.55);">حدّثي تفاصيل هالمستوى</p>
+            <p style="margin:4px 0 0; font-size:13px; color:rgba(1,60,88,0.55);">حدّث تفاصيل هالمستوى
+
+</p>
         </div>
     </div>
 
@@ -63,7 +65,7 @@
         @if ($isLocked)
             <div style="display:flex; align-items:center; gap:9px; background:rgba(1,60,88,0.06); color:#00537A; border-radius:12px; padding:12px 16px; font-size:13px; font-weight:600; margin-bottom:18px;">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10.5" width="16" height="10" rx="2.5"></rect><path d="M7.5 10.5V7a4.5 4.5 0 0 1 9 0v3.5"></path></svg>
-                <span>هالمستوى مغلق أو مؤرشف، فما فيك تعدّلي عليه — بس فيك تشوفي تفاصيله.</span>
+                <span>هذا المستوى مغلق أو مؤرشف، لايمكن  تعدّيل عليه — يمكن فقط  رؤية تفاصيله.</span>
             </div>
         @elseif ($isPublished)
             <div style="display:flex; align-items:center; gap:9px; background:rgba(255,211,91,0.14); color:#946200; border-radius:12px; padding:12px 16px; font-size:13px; font-weight:600; margin-bottom:18px;">

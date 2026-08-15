@@ -77,7 +77,7 @@
                 } else if (r.type === 'opaqueredirect' || r.ok) {
                     window.location.reload();
                 } else {
-                    this.toastMessage = 'صار خطأ غير متوقع، حاولي مرة تانية';
+                    this.toastMessage = 'صار خطأ غير متوقع، حاول مرة اخرى';
                     this.toastVisible = true;
                     setTimeout(() => this.toastVisible = false, 3000);
                 }
@@ -304,18 +304,14 @@
                                     </a>
                                 @endcan
                                 @if ($level->status === 'pending')
-                                    @can('publish_levels', 'web')
+                                    @if(auth()->user()->hasRole('admin'))
                                         <form @submit.prevent="submitGuarded($event, 'لا تملك صلاحية كافية لنشر المستوى')" action="{{ route('admin.content-review.levels.publish', $level) }}" method="POST">
                                             @csrf
                                             <button type="submit" title="نشر المستوى" style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; border:none; background:rgba(76,175,120,0.16); color:#2E7D55; cursor:pointer;">
                                                 <svg width="15.5" height="15.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"></path><path d="m5 12 7-7 7 7"></path></svg>
                                             </button>
                                         </form>
-                                    @else
-                                        <button type="button" title="نشر المستوى" @click="toastMessage = 'لا تملك صلاحية كافية لنشر المستوى'; toastVisible = true; setTimeout(() => toastVisible = false, 3000)" style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; border:none; background:rgba(76,175,120,0.16); color:#2E7D55; cursor:pointer;">
-                                            <svg width="15.5" height="15.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"></path><path d="m5 12 7-7 7 7"></path></svg>
-                                        </button>
-                                    @endcan
+                                    @endif
                                 @endif
                                 <button type="button" title="{{ $canEdit ? 'تعديل' : 'لايمكن   تعديل  هذا المستوى لأنه ليس من إنشائك' }}"
                                    @if($canEdit) @click="openEdit({{ Illuminate\Support\Js::from([
@@ -374,7 +370,7 @@
             <h3 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:17px; color:#013C58;">أرشفة مستوى "<span x-text="archiveTargetName"></span>"؟</h3>
             <p style="margin:10px 0 0; font-size:13px; color:rgba(1,60,88,0.6); line-height:1.7;">
                 <span x-show="archiveTargetLocked">      يوجد طلاب تقوم بدراسة هذا المستوى لذلك ستتحول حالة هذا المستوى الى مغلق </span>
-                <span x-show="!archiveTargetLocked"></span>
+                <span x-show="!archiveTargetLocked">سيتم أرشفة هذا المستوى، ولن يظهر للطلاب الجدد.</span>
             </p>
             <div style="display:flex; gap:10px; margin-top:22px;">
                 <button type="button" @click="archiveModalOpen = false" style="flex:1; padding:11px; border-radius:11px; border:1.5px solid rgba(0,83,122,0.12); background:#EFFAFD; color:#013C58; font-family:'Poppins',sans-serif; font-weight:600; font-size:13px; cursor:pointer;">إلغاء</button>
@@ -509,7 +505,9 @@
 
             <div style="text-align:center; margin-bottom:22px;">
                 <h1 style="margin:0; font-family:'Poppins',sans-serif; font-weight:800; font-size:20px; color:#013C58;">تعديل المستوى</h1>
-                <p style="margin:6px 0 0; font-size:13px; color:rgba(1,60,88,0.5);">حدّثي تفاصيل هالمستوى</p>
+                <p style="margin:6px 0 0; font-size:13px; color:rgba(1,60,88,0.5);">حدّث تفاصيل هالمستوى
+
+</p>
             </div>
 
             @if ($errors->any() && old('form_type') === 'levels-edit')
@@ -532,7 +530,7 @@
 
             <div x-show="editIsLocked" style="display:flex; align-items:center; gap:9px; background:rgba(1,60,88,0.06); color:#00537A; border-radius:12px; padding:12px 16px; font-size:13px; font-weight:600; margin-bottom:18px;">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10.5" width="16" height="10" rx="2.5"></rect><path d="M7.5 10.5V7a4.5 4.5 0 0 1 9 0v3.5"></path></svg>
-                <span>هالمستوى مغلق أو مؤرشف، فما فيك تعدّلي عليه — بس فيك تشوفي تفاصيله.</span>
+                <span>هذا المستوى مغلق أو مؤرشف، لايمكن تعديل  عليه — يمكن فقط   رؤية تفاصيله.</span>
             </div>
             <div x-show="!editIsLocked && editIsPublished" style="display:flex; align-items:center; gap:9px; background:rgba(255,211,91,0.14); color:#946200; border-radius:12px; padding:12px 16px; font-size:13px; font-weight:600; margin-bottom:18px;">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg>
