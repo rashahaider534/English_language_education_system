@@ -79,7 +79,7 @@
                 </div>
             </div>
         @empty
-            <p style="text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:13px; padding:40px 0;">ما في سجل تدقيق لهالمحتوى لسا</p>
+            <p style="text-align:center; color:rgba(1,60,88,0.45); font-weight:600; font-size:13px; padding:40px 0;">لايوجد  سجل تدقيق لهذا المحتوى </p>
         @endforelse
     </div>
 </div>

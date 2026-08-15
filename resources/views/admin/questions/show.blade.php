@@ -329,7 +329,7 @@
                     @csrf
                     @method('DELETE')
                 </form>
-                <button type="button" @disabled(!$canDelete) @if($canDelete) @click="deleteModalOpen = true" @endif title="{{ $canDelete ? 'حذف' : 'ما فيك تحذفي سؤال مستخدم بامتحان منشور أو مغلق' }}" class="show-danger-btn" style="display:inline-flex; align-items:center; gap:7px; padding:11px 18px; border-radius:11px; border:1.5px solid rgba(229,72,77,0.3); background:transparent; color:#C2591A; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; cursor:{{ $canDelete ? 'pointer' : 'not-allowed' }}; opacity:{{ $canDelete ? 1 : 0.4 }};">
+                <button type="button" @disabled(!$canDelete) @if($canDelete) @click="deleteModalOpen = true" @endif title="{{ $canDelete ? 'حذف' : 'لايمكن حذف  سؤال مستخدم بامتحان منشور أو مغلق' }}" class="show-danger-btn" style="display:inline-flex; align-items:center; gap:7px; padding:11px 18px; border-radius:11px; border:1.5px solid rgba(229,72,77,0.3); background:transparent; color:#C2591A; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; cursor:{{ $canDelete ? 'pointer' : 'not-allowed' }}; opacity:{{ $canDelete ? 1 : 0.4 }};">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path></svg>
                     حذف
                 </button>

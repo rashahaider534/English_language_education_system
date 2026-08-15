@@ -20,5 +20,6 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'manage_placement_questions', 'guard_name' => 'web']);
         Permission::create(['name' => 'manage_podcasts', 'guard_name' => 'web']);
         Permission::create(['name' => 'publish_levels', 'guard_name' => 'web']);
+        Permission::create(['name' => 'manage_comment', 'guard_name' => 'web']);
     }
 }

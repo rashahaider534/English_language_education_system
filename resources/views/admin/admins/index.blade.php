@@ -88,6 +88,18 @@
 @endpush
 
 @section('content')
+    @php
+        $permissionLabels = [
+            'manage_levels' => 'إدارة المستويات',
+            'manage_courses' => 'إدارة الكورسات',
+            'manage_level_tests' => 'إدارة اختبارات تحديد المستوى',
+            'manage_placement_tests' => 'إدارة اختبارات القبول',
+            'manage_placement_questions' => 'إدارة بنك أسئلة تحديد المستوى',
+            'manage_podcasts' => 'إدارة البودكاست والتوبكس',
+            'publish_levels' => 'نشر المستويات',
+            'manage_comment' => 'التحكم بالتعليقات',
+        ];
+    @endphp
     <div x-data="{ createModalOpen: {{ $errors->any() ? 'true' : 'false' }}, deactivateModalOpen: false, deactivateTargetId: null, deactivateTargetName: '' }" class="-mx-4 -my-6 px-4 py-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
         style="background:#DFF2F9; font-family:'Tajawal',sans-serif; min-height:100vh;" dir="rtl">
 
@@ -277,7 +289,7 @@
                             <td style="padding:14px 12px; border-bottom:1px solid rgba(0,83,122,0.05);">
                                 @forelse ($admin->permissions as $permission)
                                     <span
-                                        style="display:inline-flex; margin:2px; padding:4px 10px; border-radius:999px; background:rgba(14,106,150,0.1); color:#0E6A96; font-size:10.5px; font-weight:700; white-space:nowrap;">{{ $permission->name }}</span>
+                                        style="display:inline-flex; margin:2px; padding:4px 10px; border-radius:999px; background:rgba(14,106,150,0.1); color:#0E6A96; font-size:10.5px; font-weight:700; white-space:nowrap;">{{ $permissionLabels[$permission->name] ?? $permission->name }}</span>
                                 @empty
                                     <span style="font-size:11.5px; color:rgba(1,60,88,0.4);">ما في صلاحيات</span>
                                 @endforelse
