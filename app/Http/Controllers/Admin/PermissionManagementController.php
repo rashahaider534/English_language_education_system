@@ -24,6 +24,7 @@ class PermissionManagementController extends Controller
             'manage_placement_questions' => 'إدارة بنك أسئلة تحديد المستوى',
             'manage_podcasts' => 'إدارة البودكاست والتوبكس',
             'publish_levels' => 'نشر المستويات',
+            'manage_comment'=>'ادارة التعليقات',
         ];
 
         return view('admin.permissions.index', compact('admins', 'permissions', 'permissionLabels'));
