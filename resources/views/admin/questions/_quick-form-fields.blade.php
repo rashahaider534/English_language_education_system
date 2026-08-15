@@ -96,7 +96,7 @@
 {{-- ============ FILL ============ --}}
 <div class="q-panel" x-show="type === 'FILL'" x-cloak style="background:#EFFAFD; border:1.5px solid rgba(14,106,150,0.35); border-radius:20px; padding:26px; margin-bottom:22px; box-shadow:0 10px 26px rgba(0,83,122,0.06);">
     <h3 style="margin:0 0 6px; font-family:'Poppins',sans-serif; font-weight:800; font-size:14px; color:#013C58;">نص السؤال والفراغات</h3>
-    <p style="margin:0 0 16px; font-size:11.5px; color:rgba(1,60,88,0.5);">اكتبي نص السؤال، وحطي المؤشر مكان الفراغ واكبسي "إضافة فراغ" — رح يتحط الرقم تلقائي.</p>
+    <p style="margin:0 0 16px; font-size:11.5px; color:rgba(1,60,88,0.5);">اكتب نص السؤال، وضع  المؤشر مكان الفراغ واكبس "إضافة فراغ" —  سوف يتم وضع  الرقم تلقائي.</p>
     <div class="q-field-wrap" style="margin-bottom:10px;">
         <textarea x-model="fillText" name="text_question" rows="3" placeholder="e.g. there {1} a cat over {2}" :required="type === 'FILL'"></textarea>
     </div>
