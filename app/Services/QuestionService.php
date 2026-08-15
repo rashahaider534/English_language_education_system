@@ -198,31 +198,70 @@ class QuestionService
 
     }
 
+//    private function syncAnswersAndMedia(Question $oldQuestion, Question $newQuestion, array $data, $isUpdate = false)
+//    {
+//
+//        $relation = $newQuestion->getAnswersRelationName();
+//        // dd($relation);
+//        if (isset($data['answers'])) {
+//            if ($isUpdate) {
+//
+//                $newQuestion->{$relation}()->delete();
+//            }
+//                $newQuestion->{$relation}()->createMany($data['answers']);
+//
+//            if (isset($data['image'])) {
+//                $newQuestion->addMedia($data['image'])->toMediaCollection('image');
+//            } else {
+//                if(!$isUpdate)
+//                {$oldQuestion->getFirstMedia('image')?->copy($newQuestion, 'image');}
+//                }
+//
+//            if (isset($data['audio'])) {
+//                $newQuestion->addMedia($data['audio'])->toMediaCollection('audio');
+//            } else {
+//                if(!$isUpdate)
+//                $oldQuestion->getFirstMedia('audio')?->copy($newQuestion, 'audio');
+//            }
+//        }
+//    }
+
     private function syncAnswersAndMedia(Question $oldQuestion, Question $newQuestion, array $data, $isUpdate = false)
     {
-
         $relation = $newQuestion->getAnswersRelationName();
-        // dd($relation);
-        if (isset($data['answers'])) {
-            if ($isUpdate) {
 
-                $newQuestion->{$relation}()->delete();
-            }
-                $newQuestion->{$relation}()->createMany($data['answers']);
+        if ($isUpdate) {
+            $newQuestion->{$relation}()->delete();
+        }
+        $newQuestion->{$relation}()->createMany($data['answers']);
 
-            if (isset($data['image'])) {
+        $this->syncImageAndAudio($oldQuestion, $newQuestion, $data, $isUpdate);
+    }
+
+    private function syncImageAndAudio(Question $oldQuestion, Question $newQuestion, array $data, bool $isUpdate): void
+    {
+        $hasNewImage = isset($data['image']);
+        $hasNewAudio = isset($data['audio']);
+
+        if ($isUpdate) {
+            if ($hasNewImage) {
+                $newQuestion->clearMediaCollection('image');
+                $newQuestion->clearMediaCollection('audio');
                 $newQuestion->addMedia($data['image'])->toMediaCollection('image');
-            } else {
-                if(!$isUpdate)
-                {$oldQuestion->getFirstMedia('image')?->copy($newQuestion, 'image');}
-                }
-
-            if (isset($data['audio'])) {
+            } elseif ($hasNewAudio) {
+                $newQuestion->clearMediaCollection('audio');
+                $newQuestion->clearMediaCollection('image');
                 $newQuestion->addMedia($data['audio'])->toMediaCollection('audio');
-            } else {
-                if(!$isUpdate)
-                $oldQuestion->getFirstMedia('audio')?->copy($newQuestion, 'audio');
             }
+            return;
+        }
+        if ($hasNewImage) {
+            $newQuestion->addMedia($data['image'])->toMediaCollection('image');
+        } elseif ($hasNewAudio) {
+            $newQuestion->addMedia($data['audio'])->toMediaCollection('audio');
+        } else {
+            $oldQuestion->getFirstMedia('image')?->copy($newQuestion, 'image');
+            $oldQuestion->getFirstMedia('audio')?->copy($newQuestion, 'audio');
         }
     }
 
