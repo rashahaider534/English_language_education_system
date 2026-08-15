@@ -62,7 +62,7 @@ class CommentPolicy
     public function delete(User $user, Comment $comment): bool
     {
         return $comment->user_id === $user->id
-            || $user->can('archive lesson');
+            || $user->can('manage_comment');
     }
 
     /**
