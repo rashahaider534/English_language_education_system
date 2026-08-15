@@ -204,13 +204,17 @@ class TeacherStatsService
             return null;
         }
 
-        return match (true) {
-            $difficulty === 'EASY' && $ratio < 60 => 'unexpected_high_error',
-            $difficulty === 'HARD' && $ratio > 90 => 'unexpectedly_easy',
-            default => null,
+        return match ($difficulty) {
+            'EASY'   => $ratio < 60 ? 'unexpected_high_error' : null,
+            'MEDIUM' => match (true) {
+                $ratio < 40  => 'unexpected_high_error',
+                $ratio > 95  => 'unexpectedly_easy',
+                default      => null,
+            },
+            'HARD'   => $ratio > 90 ? 'unexpectedly_easy' : null,
+            default  => null,
         };
     }
-
     private function lessonsFunnel(Course $course): array
     {
         return $course->lessons()
