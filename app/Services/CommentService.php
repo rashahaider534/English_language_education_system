@@ -21,7 +21,7 @@ class CommentService
 
     public function create(Lesson $lesson, User $user, array $data)
     {
-        if ($lesson->status !== ContentStatus::PUBLISHED->value) {
+        if ($lesson->status !== ContentStatus::PUBLISHED) {
             throw ValidationException::withMessages([
                 'comment' => 'You cannot be create comment for this lesson.',
             ]);
