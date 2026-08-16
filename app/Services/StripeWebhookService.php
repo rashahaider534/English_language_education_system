@@ -8,9 +8,14 @@ use App\Models\User;
 use App\Enums\PaymentStatus;
 use App\Jobs\SendNotificationJob;
 use App\Models\UserLevel;
+use App\Services\Course\StudentCourseService;
 
 class StripeWebhookService
 {
+    public function __construct(
+        private StudentCourseService $studentCourseService
+    ) {}
+
     public function handle($event): void
     {
         $intent = $event->data->object;
@@ -41,6 +46,8 @@ class StripeWebhookService
             'status' => 'in_progress',
             'enrolled_at' => now(),
         ]);
+
+        $this->studentCourseService->openNextCourse($payment->level, $payment->user);
 
         SendNotificationJob::dispatch(
             [$payment->user_id],

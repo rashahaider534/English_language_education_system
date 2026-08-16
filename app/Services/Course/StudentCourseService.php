@@ -5,14 +5,10 @@ namespace App\Services\Course;
 use App\Models\User;
 use App\Models\Level;
 use App\Models\Course;
-use App\Services\FirebaseService;
+use App\Jobs\SendNotificationJob;
 
 class StudentCourseService
 {
-
-    public function __construct(
-        protected FirebaseService $firebaseService
-    ) {}
 
     private function getAllowedOrder(Level $level, User $user)
     {
@@ -54,12 +50,12 @@ class StudentCourseService
             ]);
         }
 
-        $this->firebaseService->sendToUser(
-            $user,
+        SendNotificationJob::dispatch(
+            [$user->id],
             'New Course Available',
             "A new course is now available: {$course->name_en}",
             [
-                'course_id' => $course,
+                'course_id' => $course->id,
             ],
             'course-opened'
         );
