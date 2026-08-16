@@ -6,9 +6,13 @@ use App\Models\User;
 use App\Models\Level;
 use App\Models\Course;
 use App\Jobs\SendNotificationJob;
+use App\Services\Lesson\StudentLessonService;
 
 class StudentCourseService
 {
+    public function __construct(
+        private StudentLessonService $studentlessonService
+    ) {}
 
     private function getAllowedOrder(Level $level, User $user)
     {
@@ -49,7 +53,8 @@ class StudentCourseService
                 ]
             ]);
         }
-
+        $this->studentlessonService->openNextLesson($course, $user);
+        
         SendNotificationJob::dispatch(
             [$user->id],
             'New Course Available',
