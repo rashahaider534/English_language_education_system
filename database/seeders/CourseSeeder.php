@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Course;
+use App\Models\Rate;
 
 class CourseSeeder extends Seeder
 {
@@ -171,6 +172,18 @@ class CourseSeeder extends Seeder
                 'status' => 'pending',
                 'created_by' => 1,
             ],
+            //C1
+            [
+                'id' => 13,
+                'name_en' => 'Advanced English Skills',
+                'name_ar' => 'مهارات اللغة الإنجليزية المتقدمة',
+                'level_id' => 5,
+                'teacher_id' => 8,
+                'order' => 1,
+                'estimated_duration' => 16,
+                'status' => 'pending',
+                'created_by' => 1,
+            ],
 
         ];
 
@@ -180,6 +193,12 @@ class CourseSeeder extends Seeder
             $courseData['updated_at'] = now();
 
             $course = Course::create($courseData);
+
+            Rate::create([
+                'course_id' => $course->id,
+                'user_id' => 2,
+                'stars' => rand(3, 5),
+            ]);
 
             $path = database_path('seeders/images/test.webp');
 

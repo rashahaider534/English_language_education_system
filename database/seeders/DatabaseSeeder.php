@@ -25,10 +25,10 @@ class DatabaseSeeder extends Seeder
             ArrangeAnswerSeeder::class,
             FillAnswerSeeder::class,
             PairAnswerSeeder::class,
+            PlacementQuestionSeeder::class,
             TestSeeder::class,
             PermissionSeeder::class,
             RolePermissionSeeder::class,
-            PlacementQuestionSeeder::class,
             PlacementTestSeeder::class,
             UserAttemptSeeder::class,
             UserLevelSeeder::class,
@@ -42,6 +42,7 @@ class DatabaseSeeder extends Seeder
             ContentReviewSeeder::class,
             ChatTopicSeeder::class,
             PaymentSeeder::class ,
+            CertificateSeeder::class,
 
 
         ]);
