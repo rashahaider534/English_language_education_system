@@ -101,7 +101,7 @@ class UserSeeder extends Seeder
             $user->assignRole('teacher');
         }
 
-        
+
         $students = [
             [
                 'first_name' => 'Rasha',

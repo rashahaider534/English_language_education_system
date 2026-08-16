@@ -15,9 +15,9 @@ class TeacherWordService
     {
          return DB::transaction(function () use ($lesson, $data) {
         if (!in_array($lesson->status, [
-            ContentStatus::DRAFT->value,
-            ContentStatus::PENDING->value,
-            ContentStatus::CHANGES_REQUESTED->value
+            ContentStatus::DRAFT,
+            ContentStatus::PENDING,
+            ContentStatus::CHANGES_REQUESTED
         ])) {
             throw ValidationException::withMessages([
                 'word' => 'You cannot add word to this lesson.',
@@ -43,9 +43,9 @@ class TeacherWordService
     {
         return DB::transaction(function () use ($word, $data) {
         if (!in_array($word->lesson->status, [
-            ContentStatus::DRAFT->value,
-            ContentStatus::PENDING->value,
-            ContentStatus::CHANGES_REQUESTED->value
+            ContentStatus::DRAFT,
+            ContentStatus::PENDING,
+            ContentStatus::CHANGES_REQUESTED
         ])) {
             throw ValidationException::withMessages([
                 'word' => 'You cannot update word .',
@@ -71,9 +71,9 @@ class TeacherWordService
     public function delete(Word $word)
     {
         if (!in_array($word->lesson->status, [
-            ContentStatus::DRAFT->value,
-            ContentStatus::PENDING->value,
-            ContentStatus::CHANGES_REQUESTED->value
+            ContentStatus::DRAFT,
+            ContentStatus::PENDING,
+            ContentStatus::CHANGES_REQUESTED
         ])) {
             throw ValidationException::withMessages([
                 'word' => 'You cannot update word .',
