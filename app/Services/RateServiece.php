@@ -25,7 +25,7 @@ class RateServiece
                 'course' => 'You cannot rate this course.',
             ]);
         }
-        Cache::tags(['courses'])->flush();
+       // Cache::tags(['courses'])->flush();
         return Rate::updateOrCreate(
             [
                 'course_id' => $course->id,
@@ -44,7 +44,7 @@ class RateServiece
             ]);
         }
         $rate->delete();
-        Cache::tags(['courses'])->flush();
+       // Cache::tags(['courses'])->flush();
        return ['rate deleted successfully'];
     }
 }
