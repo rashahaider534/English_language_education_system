@@ -74,7 +74,7 @@ class UpdateQuestionRequest extends FormRequest
                     },
                 ],
 
-                'audio' => 'nullable|file|mimes:mp3,wav,ogg|max:5120|prohibits:image',
+                'audio' => 'nullable|file|mimes:mp3,wav,ogg,m4a|max:5120|prohibits:image',
                 'image' => 'nullable|file|mimes:jpeg,jpg,png|max:5120|prohibits:audio',
 
                 'answers' => 'sometimes|array',

@@ -51,7 +51,7 @@ class CreateQuestionRequest extends FormRequest
                 ),
             ],
             'difficulty'=> ['required', 'string' ,Rule::in(['EASY','MEDIUM','HARD'])],
-            'audio' => 'nullable|file|mimes:mp3,wav,ogg|max:5120|prohibits:image',
+            'audio' => 'nullable|file|mimes:mp3,wav,ogg,m4a|max:5120|prohibits:image',
             'image' => 'nullable|file|mimes:jpeg,jpg,png|max:5120|prohibits:audio',
             'score' => [
                 'required',
