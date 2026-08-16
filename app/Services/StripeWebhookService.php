@@ -47,7 +47,7 @@ class StripeWebhookService
             'Level Unlocked',
             "The level {$payment->level->name_en} has been successfully unlocked. You can now start learning.",
             [
-                'level' => $payment->level,
+                'level_id' => $payment->level_id,
             ],
             'level-opened'
         );
