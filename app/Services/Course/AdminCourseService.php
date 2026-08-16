@@ -176,7 +176,7 @@ class AdminCourseService
 
                 $course->delete();
 
-                Cache::tags(['courses'])->flush();
+              //  Cache::tags(['courses'])->flush();
 
                 return null;
             }

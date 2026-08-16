@@ -165,7 +165,7 @@
 
         <div class="db2-card db2-stat db2-stat-green">
             <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:10px;">
-                <p style="margin:0; font-size:12.5px; font-weight:700; color:var(--navy-900);">نسبة الدروس المدققة</p>
+                <p style="margin:0; font-size:12.5px; font-weight:700; color:var(--navy-900);">نسبة الدروس قيد المراجعة</p>
                 <div class="db2-icon-circle" style="background:rgba(255,255,255,.65); color:var(--green-600);">
                     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><path d="M22 4 12 14.01l-3-3"></path></svg>
                 </div>
