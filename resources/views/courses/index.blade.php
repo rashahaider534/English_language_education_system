@@ -49,7 +49,9 @@
 
     $currentUser = auth()->user();
     $isSuperAdmin = $currentUser->hasRole('super-admin', 'web');
-    $canCreate = $level->status !== 'published' && ($isSuperAdmin || $level->created_by === $currentUser->id);
+    $levelIsPublished = $level->status === 'published';
+    $hasCreatePermission = $isSuperAdmin || $currentUser->hasRole('admin', 'web') || $currentUser->can('manage_courses');
+    $canCreate = !$levelIsPublished && $hasCreatePermission;
 
     $nameOf = function ($user) {
         if (! $user) return '—';
@@ -145,7 +147,11 @@
             @else
                 <div style="display:flex; align-items:center; gap:8px; background:rgba(255,211,91,0.14); color:#FFD35B; border-radius:12px; padding:11px 16px; font-size:12.5px; font-weight:600;">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10.5" width="16" height="10" rx="2.5"></rect><path d="M7.5 10.5V7a4.5 4.5 0 0 1 9 0v3.5"></path></svg>
-                    المستوى منشور ولا يوجد لديك صلاحية إضافة كورس
+                    @if ($levelIsPublished)
+                        المستوى منشور ولا يمكن إضافة كورس له
+                    @else
+                        لا تملك صلاحية إضافة كورس لهذا المستوى
+                    @endif
                 </div>
             @endif
         </div>
@@ -181,13 +187,14 @@
         @forelse ($courses as $i => $course)
             @php
                 $sc = $statusColors[$course->status] ?? $statusColors['pending'];
-                $canArchive = !in_array($course->status, ['closed', 'archived']) && ($isSuperAdmin || auth()->id() === $course->created_by);
+                $hasCourseManagePermission = $isSuperAdmin || auth()->user()->hasRole('admin', 'web') || auth()->user()->can('manage_courses');
+                $canArchive = !in_array($course->status, ['closed', 'archived']) && $hasCourseManagePermission;
                 $hasInProgress = $course->usercourses()->wherePivot('status', 'in_progress')->exists();
                 $hasLessons = $course->lessons()->exists();
                 $isHardDelete = $course->status === 'pending' && !$hasLessons;
                 $avatarColor = $avatarPalette[$i % count($avatarPalette)];
                 $dimmed = in_array($course->status, ['closed', 'archived']);
-                $canEditCourse = $isSuperAdmin || auth()->id() === $course->created_by;
+                $canEditCourse = $hasCourseManagePermission;
                 $imageUrl = $course->getFirstMediaUrl('course_image');
             @endphp
             <div style="position:relative; background:#EFFAFD; border:1.5px solid rgba(0,83,122,0.16); border-radius:20px; overflow:hidden; box-shadow:0 10px 26px rgba(0,83,122,0.06); transition:transform 0.25s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s;"
@@ -273,7 +280,7 @@
                         @endif
                         <button type="button"
                             @if($canArchive) @click="openArchive({{ $course->id }}, '{{ addslashes($course->name_ar) }}', {{ $isHardDelete ? 'true' : 'false' }}, {{ $hasInProgress ? 'true' : 'false' }})" @else disabled @endif
-                            title="{{ !$isSuperAdmin && auth()->id() !== $course->created_by ? 'ما فيك تؤرشفي هالكورس لأنه مش من إنشائك' : (!$canArchive ? 'مغلق أو مؤرشف من قبل' : ($isHardDelete ? 'حذف نهائي' : 'أرشفة')) }}"
+                            title="{{ $canArchive ? ($isHardDelete ? 'حذف نهائي' : 'أرشفة') : (!$hasCourseManagePermission ? 'ما تملك صلاحية أرشفة هذا الكورس' : 'مغلق أو مؤرشف من قبل') }}"
                             style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:9px; border-radius:10px; border:none; cursor:{{ $canArchive ? 'pointer' : 'not-allowed' }}; opacity:{{ $canArchive ? 1 : 0.35 }}; background:rgba(245,162,1,0.1); color:#C97F00; font-family:'Poppins',sans-serif; font-weight:600; font-size:12px;">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l1.5-3h15L21 7"></path><path d="M4.5 7h15v12a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1V7Z"></path><path d="M9 12h6"></path></svg>
                             {{ $isHardDelete ? 'حذف' : 'أرشفة' }}

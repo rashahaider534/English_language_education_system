@@ -104,6 +104,10 @@
         </div>
     @endif
 
+    @php
+        $canCreateLevel = auth()->user()->hasRole('super-admin', 'web') || auth()->user()->hasRole('admin', 'web') || auth()->user()->can('manage_levels');
+    @endphp
+
     {{-- ============ HEADER BANNER ============ --}}
     <div style="position:relative; overflow:hidden; background:linear-gradient(135deg,#013C58 0%, #00537A 60%, #0E6A96 130%); border-radius:26px; padding:32px 34px 26px; margin-bottom:22px; box-shadow:0 24px 55px rgba(1,60,88,0.22);">
         <div style="position:absolute; width:420px; height:420px; right:-120px; top:-160px; border-radius:50%; background:radial-gradient(circle, rgba(168,232,249,0.25) 0%, rgba(168,232,249,0) 70%); pointer-events:none;"></div>
@@ -114,13 +118,20 @@
                 <h1 style="margin:8px 0 0; font-family:'Poppins',sans-serif; font-weight:800; font-size:27px; color:#fff;">المستويات</h1>
                 <p style="margin:8px 0 0; font-size:13.5px; color:rgba(168,232,249,0.75); max-width:440px; line-height:1.6;">إدارة مستويات التعلّم، ترتيبها، ونطاقات الدرجات الخاصة فيها</p>
             </div>
-            <button type="button" @click="createModalOpen = true"
-               style="display:flex; align-items:center; gap:8px; background:linear-gradient(90deg,#F5A201,#FFBA42); color:#013C58; border:none; border-radius:13px; padding:13px 22px; font-family:'Poppins',sans-serif; font-weight:700; font-size:14px; cursor:pointer; box-shadow:0 12px 26px rgba(0,0,0,0.18); transition:transform 0.15s, box-shadow 0.15s;"
-               onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 16px 32px rgba(0,0,0,0.24)';"
-               onmouseout="this.style.transform=''; this.style.boxShadow='0 12px 26px rgba(0,0,0,0.18)';">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
-                إضافة مستوى جديد
-            </button>
+            @if ($canCreateLevel)
+                <button type="button" @click="createModalOpen = true"
+                   style="display:flex; align-items:center; gap:8px; background:linear-gradient(90deg,#F5A201,#FFBA42); color:#013C58; border:none; border-radius:13px; padding:13px 22px; font-family:'Poppins',sans-serif; font-weight:700; font-size:14px; cursor:pointer; box-shadow:0 12px 26px rgba(0,0,0,0.18); transition:transform 0.15s, box-shadow 0.15s;"
+                   onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 16px 32px rgba(0,0,0,0.24)';"
+                   onmouseout="this.style.transform=''; this.style.boxShadow='0 12px 26px rgba(0,0,0,0.18)';">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+                    إضافة مستوى جديد
+                </button>
+            @else
+                <div style="display:flex; align-items:center; gap:8px; background:rgba(255,211,91,0.14); color:#FFD35B; border-radius:12px; padding:11px 16px; font-size:12.5px; font-weight:600;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10.5" width="16" height="10" rx="2.5"></rect><path d="M7.5 10.5V7a4.5 4.5 0 0 1 9 0v3.5"></path></svg>
+                    لا تملك صلاحية إضافة مستوى جديد
+                </div>
+            @endif
         </div>
 
         {{-- stat cards --}}
@@ -232,9 +243,9 @@
                     @php
                         $sc = $statusColors[$level->status] ?? $statusColors['pending'];
                         $dimmed = in_array($level->status, ['closed', 'archived']);
-                        $isOwner = $isSuperAdmin || $level->created_by === auth()->id();
-                        $canArchive = !$dimmed && $isOwner;
-                        $canEdit = !$dimmed && $isOwner;
+                        $hasLevelManagePermission = $isSuperAdmin || auth()->user()->hasRole('admin', 'web') || auth()->user()->can('manage_levels');
+                        $canArchive = !$dimmed && $hasLevelManagePermission;
+                        $canEdit = !$dimmed && $hasLevelManagePermission;
                         $hasInProgress = $level->userLevels()->where('status', 'in_progress')->exists();
                         $avatarColor = $avatarPalette[$i % count($avatarPalette)];
                     @endphp
@@ -313,7 +324,7 @@
                                         </form>
                                     @endif
                                 @endif
-                                <button type="button" title="{{ $canEdit ? 'تعديل' : 'لايمكن   تعديل  هذا المستوى لأنه ليس من إنشائك' }}"
+                                <button type="button" title="{{ $canEdit ? 'تعديل' : (!$hasLevelManagePermission ? 'لا تملك صلاحية تعديل هذا المستوى' : 'هذا المستوى مغلق أو مؤرشف من قبل') }}"
                                    @if($canEdit) @click="openEdit({{ Illuminate\Support\Js::from([
                                         'id' => $level->id,
                                         'name_en' => $level->name_en,
@@ -332,7 +343,7 @@
                                     type="button"
                                     @if($canArchive) @click="openArchive({{ $level->id }}, '{{ addslashes($level->name_ar) }}', {{ $hasInProgress ? 'true' : 'false' }})" @endif
                                     @if(!$canArchive) disabled @endif
-                                    title="{{ !$isOwner ? 'لايمكن   ارشفة هذا المستوى لأنه ليس  من إنشائك' : ($dimmed ? 'هذا المستوى مغلق أو مؤرشف من قبل' : ($hasInProgress ? 'أرشفة (رح يصير مغلق)' : 'أرشفة')) }}"
+                                    title="{{ $canArchive ? ($hasInProgress ? 'أرشفة (رح يصير مغلق)' : 'أرشفة') : (!$hasLevelManagePermission ? 'لا تملك صلاحية أرشفة هذا المستوى' : 'هذا المستوى مغلق أو مؤرشف من قبل') }}"
                                     style="display:flex; align-items:center; justify-content:center; width:33px; height:33px; border-radius:10px; border:none; background:rgba(245,162,1,0.1); color:#C97F00; cursor:{{ $canArchive ? 'pointer' : 'not-allowed' }}; opacity:{{ $canArchive ? 1 : 0.35 }};"
                                 >
                                     <svg width="15.5" height="15.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l1.5-3h15L21 7"></path><path d="M4.5 7h15v12a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1V7Z"></path><path d="M9 12h6"></path></svg>

@@ -57,6 +57,7 @@ class AdminLevelService
             $user = auth()->user();
             if (
                 !$user->hasRole('super-admin')
+                && !$user->hasRole('admin')
                 && !$user->hasPermissionTo('manage_levels')
             ) {
                 throw ValidationException::withMessages([
@@ -84,8 +85,8 @@ class AdminLevelService
             $user = auth()->user();
             if (
                 !$user->hasRole('super-admin')
+                && !$user->hasRole('admin')
                 && !$user->hasPermissionTo('manage_levels')
-                && $level->created_by !== $user->id
             ) {
                 throw ValidationException::withMessages([
                     'level' => 'You are not allowed to edit this level.',
@@ -118,8 +119,8 @@ class AdminLevelService
         $user = auth()->user();
         if (
             !$user->hasRole('super-admin')
+            && !$user->hasRole('admin')
             && !$user->hasPermissionTo('manage_levels')
-            && $level->created_by !== $user->id
         ) {
             throw ValidationException::withMessages([
                 'level' => 'You are not allowed to archive this level.',
