@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
 use App\Models\StudentProfile;
+use App\Models\TeacherProfile;
 
 class UserSeeder extends Seeder
 {
@@ -99,6 +100,11 @@ class UserSeeder extends Seeder
         foreach ($teachers as $teacherData) {
             $user =  User::create($teacherData);
             $user->assignRole('teacher');
+             TeacherProfile::create([
+                'user_id' => $user->id,
+                'bio' => null,
+                
+            ]);
         }
 
 
