@@ -269,7 +269,7 @@ class AdminContentReviewService
 
         if ($review->reviewer_id !== auth()->id()) {
             throw ValidationException::withMessages([
-                'error' => 'أنتِ لستِ المراجع المكلَّف بهذه المهمة.',
+                'error' => 'أنت لست المراجع المكلَّف بهذه المهمة.',
             ]);
         }
     }
@@ -286,7 +286,7 @@ class AdminContentReviewService
 
             if ($review->reviewer_id !== auth()->id()) {
                 throw ValidationException::withMessages([
-                    'error' => 'أنتِ لستِ المراجع المكلَّف بهذه المهمة.',
+                    'error' => 'أنت لست المراجع المكلَّف بهذه المهمة.',
                 ]);
             }
 

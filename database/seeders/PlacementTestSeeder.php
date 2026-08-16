@@ -15,24 +15,24 @@ class PlacementTestSeeder extends Seeder
     public function run(): void
     {
         DB::transaction(function () {
-            $creator = User::findOrFail(2);
+            $creator = User::findOrFail(3);
 
-            // Published / active placement test — uses questions 1 through 9
+            // Published placement test — uses questions 145 through 149
             $this->createPlacementTest(
                 creator: $creator,
                 titleEn: 'General English Placement Test',
                 titleAr: 'اختبار تحديد المستوى العام',
                 status: ContentStatus::PUBLISHED,
-                questionIds: range(1, 9),
+                questionIds: range(145, 149),
             );
 
-            // Archived / inactive placement test — uses questions 10 through 18
+            // Archived placement test — uses questions 150 through 154
             $this->createPlacementTest(
                 creator: $creator,
                 titleEn: 'General English Placement Test (Old)',
                 titleAr: 'اختبار تحديد المستوى العام (قديم)',
                 status: ContentStatus::ARCHIVED,
-                questionIds: range(10, 18),
+                questionIds: range(150, 154),
             );
         });
     }
@@ -49,7 +49,7 @@ class PlacementTestSeeder extends Seeder
         ]);
 
         $test = Test::create([
-            'testable_type' => 'placement_test', // adjust to match your Relation::morphMap() alias
+            'testable_type' => 'placement_test',
             'testable_id' => $placementTest->id,
             'passing_score' => 0,
             'title_en' => $titleEn,

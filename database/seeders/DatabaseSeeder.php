@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             TestSeeder::class,
             PermissionSeeder::class,
             RolePermissionSeeder::class,
+            PlacementQuestionSeeder::class,
             PlacementTestSeeder::class,
             UserAttemptSeeder::class,
             UserLevelSeeder::class,
@@ -40,7 +41,8 @@ class DatabaseSeeder extends Seeder
             UserPodcastSeeder::class,
             ContentReviewSeeder::class,
             ChatTopicSeeder::class,
-            PaymentSeeder::class
+            PaymentSeeder::class ,
+
 
         ]);
     }

@@ -32,7 +32,7 @@ class ContentReviewService
 
             if ($draftTests->count() > 1) {
                 throw ValidationException::withMessages([
-                    'error' => 'يوجد أكثر من مسودة اختبار لهذا الدرس، الرجاء تحديد واحدة وحذف الباقي.',
+                    'error' => 'There is more than one draft test please pick one and delete the others.',
                     'draft_test_ids' => $draftTests->pluck('id'),
                 ]);
             }
@@ -41,13 +41,13 @@ class ContentReviewService
 
             if (!$test) {
                 throw ValidationException::withMessages([
-                    'error' => 'هذا الدرس ليس له اختبار مرتبط به — خلل في البيانات.',
+                    'error' => 'This lesson does not have a draft test.',
                 ]);
             }
 
             if ($lesson->status !== ContentStatus::DRAFT) {
                 throw ValidationException::withMessages([
-                    'error' => 'لا يمكن إرسال هذا الدرس للمراجعة من حالته الحالية.',
+                    'error' => 'You cant submit this lesson from ots current status',
                 ]);
             }
 
@@ -68,7 +68,7 @@ class ContentReviewService
 
             if ($lesson->status !== ContentStatus::CHANGES_REQUESTED) {
                 throw ValidationException::withMessages([
-                    'error' => 'هذا الدرس ليس بانتظار إعادة إرسال.',
+                    'error' => 'This lesson is not waiting for resubmission.',
                 ]);
             }
 
@@ -86,7 +86,7 @@ class ContentReviewService
     {
         if (!$lesson->getFirstMedia('videos')) {
             throw ValidationException::withMessages([
-                'error' => 'يجب رفع فيديو لهذا الدرس قبل الإرسال.',
+                'error' => 'You have to upload a video first.',
             ]);
         }
     }
@@ -98,7 +98,7 @@ class ContentReviewService
 
             if ($test->status !== ContentStatus::DRAFT) {
                 throw ValidationException::withMessages([
-                    'error' => 'لا يمكن إرسال هذا الاختبار للمراجعة من حالته الحالية.',
+                    'error' => 'You cant submit this test from ots current status ',
                 ]);
             }
             $this->validateTestForSubmission($test);
@@ -116,7 +116,7 @@ class ContentReviewService
 
             if ($test->status !== ContentStatus::CHANGES_REQUESTED) {
                 throw ValidationException::withMessages([
-                    'error' => 'هذا الاختبار ليس بانتظار إعادة إرسال.',
+                    'error' => 'This test is not waiting for resubmission.',
                 ]);
             }
 
@@ -153,7 +153,7 @@ class ContentReviewService
         $deletedQuestions = $questions->filter(fn ($q) => $q->trashed());
         if ($deletedQuestions->isNotEmpty()) {
             throw ValidationException::withMessages([
-                'error' => 'هذا الاختبار يحتوي على سؤال (أو أكثر) لم يعد موجودًا، الرجاء استبداله.',
+                'error' => 'This test has one (or more) question that is deleted please review.',
                 'deleted_question_ids' => $deletedQuestions->pluck('id'),
             ]);
         }
@@ -161,7 +161,7 @@ class ContentReviewService
         $outdatedQuestions = $questions->filter(fn ($q) => $q->nextVersion !== null);
         if ($outdatedQuestions->isNotEmpty()) {
             throw ValidationException::withMessages([
-                'error' => 'هذا الاختبار يستخدم نسخة قديمة من سؤال (أو أكثر)، الرجاء تحديثها لآخر نسخة قبل الإرسال.',
+                'error' => 'This test has one (or more) question that is outdated please review.',
                 'outdated_question_ids' => $outdatedQuestions->pluck('id'),
             ]);
         }
