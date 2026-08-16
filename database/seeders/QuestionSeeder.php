@@ -42,19 +42,20 @@ class QuestionSeeder extends Seeder
         ];
 
         // lesson_id => teacher_id (نفس المعلمين المستخدمين بـ CourseSeeder لكل كورس)
+        // lesson_id => teacher_id (نفس المعلمين الحقيقيين المستخدمين بـ CourseSeeder لكل كورس)
         $lessonTeacher = [];
-        foreach (range(1, 3)   as $id) $lessonTeacher[$id] = 6;  // Course 1
-        foreach (range(4, 6)   as $id) $lessonTeacher[$id] = 5;  // Course 2
-        foreach (range(7, 9)   as $id) $lessonTeacher[$id] = 6;  // Course 3
-        foreach (range(10, 12) as $id) $lessonTeacher[$id] = 5;  // Course 4
-        foreach (range(13, 15) as $id) $lessonTeacher[$id] = 2;  // Course 5
-        foreach (range(16, 18) as $id) $lessonTeacher[$id] = 2;  // Course 6
-        foreach (range(19, 21) as $id) $lessonTeacher[$id] = 2;  // Course 7
-        foreach (range(22, 24) as $id) $lessonTeacher[$id] = 2;  // Course 8
-        foreach (range(25, 27) as $id) $lessonTeacher[$id] = 3;  // Course 9
-        foreach (range(28, 30) as $id) $lessonTeacher[$id] = 3;  // Course 10
-        foreach (range(31, 33) as $id) $lessonTeacher[$id] = 5;  // Course 11
-        foreach (range(34, 36) as $id) $lessonTeacher[$id] = 5;  // Course 12
+        foreach (range(1, 3)   as $id) $lessonTeacher[$id] = 6;  // Course 1  - English Foundations
+        foreach (range(4, 6)   as $id) $lessonTeacher[$id] = 7;  // Course 2  - Basic Grammar
+        foreach (range(7, 9)   as $id) $lessonTeacher[$id] = 8;  // Course 3  - Everyday Vocabulary
+        foreach (range(10, 12) as $id) $lessonTeacher[$id] = 6;  // Course 4  - Basic Conversation
+        foreach (range(13, 15) as $id) $lessonTeacher[$id] = 6;  // Course 5  - Past and Future Tenses
+        foreach (range(16, 18) as $id) $lessonTeacher[$id] = 7;  // Course 6  - Practical Vocabulary
+        foreach (range(19, 21) as $id) $lessonTeacher[$id] = 8;  // Course 7  - Listening and Understanding
+        foreach (range(22, 24) as $id) $lessonTeacher[$id] = 7;  // Course 8  - Everyday English Conversation
+        foreach (range(25, 27) as $id) $lessonTeacher[$id] = 6;  // Course 9  - Intermediate Grammar
+        foreach (range(28, 30) as $id) $lessonTeacher[$id] = 7;  // Course 10 - Intermediate Conversation
+        foreach (range(31, 33) as $id) $lessonTeacher[$id] = 6;  // Course 11 - Advanced Grammar
+        foreach (range(34, 36) as $id) $lessonTeacher[$id] = 8;  // Course 12 - Advanced Conversation
 
         // مستوى الصعوبة حسب مستوى الدرس (A1 أسهل ... B2 أصعب)
         $lessonDifficulty = [
