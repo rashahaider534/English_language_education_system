@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Course;
-
+use App\Models\Rate;
 class CourseSeeder extends Seeder
 {
     /**
@@ -180,6 +180,12 @@ class CourseSeeder extends Seeder
             $courseData['updated_at'] = now();
 
             $course = Course::create($courseData);
+            
+            Rate::create([
+                'course_id' => $course->id,
+                'user_id' => 2,
+                'stars' => rand(3, 5),
+            ]);
 
             $path = database_path('seeders/images/test.webp');
 
