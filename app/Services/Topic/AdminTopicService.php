@@ -90,7 +90,7 @@ class AdminTopicService
                 [
                     'topic_id' => $topic->id,
                 ],
-                'topic-published'
+                'podcast'
             )->afterCommit();
         });
 
