@@ -216,7 +216,7 @@ class TestSeeder extends Seeder
                 'passing_score' => 60,
                 'title_en' => 'Test: ' . $lesson->title_en,
                 'title_ar' => 'اختبار: ' . $lesson->title_ar,
-                'status' => 'pending',
+                'status' => 'draft',
             ]);
 
             $lessonQuestionIds = [];
@@ -255,7 +255,7 @@ class TestSeeder extends Seeder
                 'passing_score' => 70,
                 'title_en' => 'Course Test: ' . $course->name_en,
                 'title_ar' => 'اختبار الكورس: ' . $course->name_ar,
-                'status' => 'pending',
+                'status' => 'draft',
             ]);
 
             $pool = $flattenedCoursePools[$course->id] ?? [];
@@ -290,7 +290,7 @@ class TestSeeder extends Seeder
                 'passing_score' => 75,
                 'title_en' => 'Level Test: ' . $level->name_en,
                 'title_ar' => 'اختبار المستوى: ' . $level->name_ar,
-                'status' => 'pending',
+                'status' => 'draft',
             ]);
 
             $pool = $flattenedLevelPools[$level->id] ?? [];
@@ -322,7 +322,7 @@ class TestSeeder extends Seeder
             'passing_score' => 60,
             'title_en' => 'Test: ' . $c1Lesson->title_en,
             'title_ar' => 'اختبار: ' . $c1Lesson->title_ar,
-            'status' => 'pending',
+            'status' => 'draft',
         ]);
 
         foreach ($c1QuestionIds as $index => $qId) {
@@ -344,7 +344,7 @@ class TestSeeder extends Seeder
             'passing_score' => 70,
             'title_en' => 'Course Test: ' . $c1Course->name_en,
             'title_ar' => 'اختبار الكورس: ' . $c1Course->name_ar,
-            'status' => 'pending',
+            'status' => 'draft',
         ]);
 
         foreach ($c1QuestionIds as $index => $qId) {
@@ -366,7 +366,7 @@ class TestSeeder extends Seeder
             'passing_score' => 75,
             'title_en' => 'Level Test: ' . $c1Level->name_en,
             'title_ar' => 'اختبار المستوى: ' . $c1Level->name_ar,
-            'status' => 'pending',
+            'status' => 'draft',
         ]);
 
         foreach ($c1QuestionIds as $index => $qId) {
