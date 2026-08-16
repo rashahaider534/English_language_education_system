@@ -120,6 +120,10 @@ class LessonSeeder extends Seeder
                 ['en' => 'Discussing Complex Topics', 'ar' => 'مناقشة المواضيع المعقدة'],
                 ['en' => 'Speaking Fluently and Naturally', 'ar' => 'التحدث بطلاقة وبشكل طبيعي'],
             ],
+            //
+             13 => [
+                ['en' => 'Advanced Vocabulary in Context', 'ar' => 'المفردات المتقدمة في سياقها'],
+            ],
         ];
 
         $id = 1;
