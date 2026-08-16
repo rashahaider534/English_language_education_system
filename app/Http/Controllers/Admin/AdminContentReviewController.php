@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\web\ContentReview\RequestChangesRequest;
+use App\Http\Requests\Web\ContentReview\RequestChangesRequest;
 use App\Models\ContentReview;
 use App\Models\Course;
 use App\Models\Lesson;
