@@ -217,7 +217,7 @@ class AttemptService
         }
 
         if ($userLesson) {
-            $userLesson->update([
+            $userLesson->pivot->update([
                 'status' => 'completed',
                 'completed_at' => now(),
             ]);
