@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Password;
 use Spatie\Permission\Models\Role;
 use App\Mail\AdminCreatedMail;
 use App\Mail\AccountCreatedMail;
+use App\Models\TeacherProfile;
 use Spatie\Permission\Models\Permission;
 
 class PermissionService
@@ -81,6 +82,11 @@ class PermissionService
                 'password' => Hash::make($data['password']),
                 'email_verified_at' => null,
             ]
+        );
+        TeacherProfile::create([
+        'user_id'=>$teacher->id,
+        'bio'=>null,
+        ]
         );
         $teacher->assignRole(Role::findByName('teacher', 'api'));
         Mail::to($teacher->email)->send(new AccountCreatedMail($teacher, $plainPassword));

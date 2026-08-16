@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Course;
+use App\Models\Rate;
 
 class CourseSeeder extends Seeder
 {
@@ -35,7 +36,7 @@ class CourseSeeder extends Seeder
                 'name_en' => 'Basic Grammar',
                 'name_ar' => 'القواعد الأساسية',
                 'level_id' => 1,
-                'teacher_id' => 6,
+                'teacher_id' => 7,
                 'order' => 2,
                 'estimated_duration' => 12,
                 'status' => 'pending',
@@ -46,7 +47,7 @@ class CourseSeeder extends Seeder
                 'name_en' => 'Everyday Vocabulary',
                 'name_ar' => 'المفردات اليومية',
                 'level_id' => 1,
-                'teacher_id' => 6,
+                'teacher_id' => 8,
                 'order' => 3,
                 'estimated_duration' => 12,
                 'status' => 'pending',
@@ -74,7 +75,7 @@ class CourseSeeder extends Seeder
                 'name_en' => 'Past and Future Tenses',
                 'name_ar' => 'أزمنة الماضي والمستقبل',
                 'level_id' => 2,
-                'teacher_id' => 7,
+                'teacher_id' => 6,
                 'order' => 1,
                 'estimated_duration' => 12,
                 'status' => 'pending',
@@ -96,7 +97,7 @@ class CourseSeeder extends Seeder
                 'name_en' => 'Listening and Understanding',
                 'name_ar' => 'الاستماع والفهم',
                 'level_id' => 2,
-                'teacher_id' => 7,
+                'teacher_id' => 8,
                 'order' => 3,
                 'estimated_duration' => 10,
                 'status' => 'pending',
@@ -124,7 +125,7 @@ class CourseSeeder extends Seeder
                 'name_en' => 'Intermediate Grammar',
                 'name_ar' => 'القواعد المتوسطة',
                 'level_id' => 3,
-                'teacher_id' => 8,
+                'teacher_id' => 6,
                 'order' => 1,
                 'estimated_duration' => 14,
                 'status' => 'pending',
@@ -135,7 +136,7 @@ class CourseSeeder extends Seeder
                 'name_en' => 'Intermediate Conversation',
                 'name_ar' => 'المحادثة المتوسطة',
                 'level_id' => 3,
-                'teacher_id' => 8,
+                'teacher_id' => 7,
                 'order' => 2,
                 'estimated_duration' => 12,
                 'status' => 'pending',
@@ -153,7 +154,7 @@ class CourseSeeder extends Seeder
                 'name_en' => 'Advanced Grammar',
                 'name_ar' => 'القواعد المتقدمة',
                 'level_id' => 4,
-                'teacher_id' => 8,
+                'teacher_id' => 6,
                 'order' => 1,
                 'estimated_duration' => 15,
                 'status' => 'pending',
@@ -171,6 +172,18 @@ class CourseSeeder extends Seeder
                 'status' => 'pending',
                 'created_by' => 1,
             ],
+            //C1
+            [
+                'id' => 13,
+                'name_en' => 'Advanced English Skills',
+                'name_ar' => 'مهارات اللغة الإنجليزية المتقدمة',
+                'level_id' => 5,
+                'teacher_id' => 8,
+                'order' => 1,
+                'estimated_duration' => 16,
+                'status' => 'pending',
+                'created_by' => 1,
+            ],
 
         ];
 
@@ -180,6 +193,12 @@ class CourseSeeder extends Seeder
             $courseData['updated_at'] = now();
 
             $course = Course::create($courseData);
+
+            Rate::create([
+                'course_id' => $course->id,
+                'user_id' => 2,
+                'stars' => rand(3, 5),
+            ]);
 
             $path = database_path('seeders/images/test.webp');
 

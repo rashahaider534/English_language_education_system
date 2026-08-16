@@ -12,6 +12,7 @@ class TeacherProfile extends Model implements HasMedia
     use InteractsWithMedia;
      protected $fillable =
      [
+        'user_id',
         'bio',
      ];
      public function user():BelongsTo

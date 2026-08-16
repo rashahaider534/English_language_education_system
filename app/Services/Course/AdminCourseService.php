@@ -16,46 +16,48 @@ class AdminCourseService
 {
     public function getCourses(Level $level, ?string $status = null)
     {
-        $page = request('page', 1);
-        return Cache::tags(['courses'])
-            ->remember(
-                "courses.level.{$level->id}.status.{$status}.page.{$page}",
-                3600,
-                function () use ($status, $level) {
-                    Log::info('QUERY EXECUTED');
-                    $query = Course::query()
-                        ->with(['teacher'])
-                        ->withAvg('rates', 'stars')
-                        ->where('level_id', $level->id)
-                        ->when($status, function ($query) use ($status) {
-                            $query->where('status', $status);
-                        })
-                        ->orderBy('order');
-                    return $query->paginate(10);
-                }
-            );
+        // $page = request('page', 1);
+        // return Cache::tags(['courses'])
+        //     ->remember(
+        //         "courses.level.{$level->id}.status.{$status}.page.{$page}",
+        //         3600,
+        return DB::transaction(
+            function () use ($status, $level) {
+                Log::info('QUERY EXECUTED');
+                $query = Course::query()
+                    ->with(['teacher'])
+                    ->withAvg('rates', 'stars')
+                    ->where('level_id', $level->id)
+                    ->when($status, function ($query) use ($status) {
+                        $query->where('status', $status);
+                    })
+                    ->orderBy('order');
+                return $query->paginate(10);
+            }
+        );
     }
     public function getStatisticsCourses(Level $level)
     {
-        return Cache::tags(['courses'])
-            ->remember(
-                "courses.level.{$level->id}.statistics",
-                3600,
-                function () use ($level) {
-                    return Course::where('level_id', $level->id)->selectRaw("
+        // return Cache::tags(['courses'])
+        //     ->remember(
+        //         "courses.level.{$level->id}.statistics",
+        //         3600,
+        return DB::transaction(
+            function () use ($level) {
+                return Course::where('level_id', $level->id)->selectRaw("
                     COUNT(*) as all_count,
                     SUM(status = 'pending') as pending,
                     SUM(status = 'closed') as closed,
                     SUM(status = 'approved') as approved,
                     SUM(status = 'published') as published,
                     SUM(status = 'archived') as archived")->first();
-                }
-            );
+            }
+        );
     }
 
     public  function create(array $data, Level $level)
     {
-        $course= DB::transaction(function () use ($data, $level) {
+        $course = DB::transaction(function () use ($data, $level) {
             $user = auth()->user();
             if (
                 !$user->hasRole('super-admin') &&
@@ -86,7 +88,7 @@ class AdminCourseService
                     ->addMedia($data['image'])
                     ->toMediaCollection('course_image');
             }
-            Cache::tags(['courses'])->flush();
+           // Cache::tags(['courses'])->flush();
             return $course;
         });
 
@@ -101,7 +103,6 @@ class AdminCourseService
                 ],
                 'course-assigned'
             );
-
         }
 
         return $course;
@@ -143,7 +144,7 @@ class AdminCourseService
                     ->toMediaCollection('course_image');
             }
             $course->update($data);
-            Cache::tags(['courses'])->flush();
+          //  Cache::tags(['courses'])->flush();
             return $course->fresh();
         });
     }
@@ -175,7 +176,7 @@ class AdminCourseService
 
                 $course->delete();
 
-                Cache::tags(['courses'])->flush();
+              //  Cache::tags(['courses'])->flush();
 
                 return null;
             }
@@ -192,7 +193,7 @@ class AdminCourseService
                 'status' => $newStatus,
             ]);
 
-            Cache::tags(['courses'])->flush();
+         //   Cache::tags(['courses'])->flush();
 
             return $course;
         });

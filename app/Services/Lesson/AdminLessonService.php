@@ -22,6 +22,7 @@ class AdminLessonService
     {
                     $query = Lesson::query()
                         ->where('course_id', $course->id)
+                        ->where('status', '!=', ContentStatus::DRAFT)
                         ->when($status, function ($query) use ($status) {
                             $query->where('status', $status);
                         })

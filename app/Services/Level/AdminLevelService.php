@@ -17,12 +17,12 @@ class AdminLevelService
 {
     public function getLevels(?string $status = null)
     {
-        $page = request('page', 1);
-        return Cache::tags(['levels'])
-            ->remember(
-                "levels.$status.page.$page",
-                3600,
-                function () use ($status) {
+        // $page = request('page', 1);
+        // return Cache::tags(['levels'])
+        //     ->remember(
+        //         "levels.$status.page.$page",
+        //         3600,
+                return DB::transaction( function () use ($status) {
                     $query = Level::with(['creator','tests:id'])
                         ->when($status, function ($query) use ($status) {
                             $query->where('status', $status);
@@ -36,11 +36,11 @@ class AdminLevelService
 
     public function getStatisticsLevel()
     {
-        return Cache::tags(['levels'])
-            ->remember(
-                "levels.statistics",
-                3600,
-                function () {
+        // return Cache::tags(['levels'])
+        //     ->remember(
+        //         "levels.statistics",
+        //         3600,
+                return DB::transaction( function () {
                     return Level::selectRaw("
                     COUNT(*) as all_count,
                     SUM(status = 'pending') as pending,
@@ -75,7 +75,7 @@ class AdminLevelService
                 'estimated_duration' => $data['estimated_duration'],
                 'created_by' => auth()->id(),
             ]);
-            Cache::tags(['levels'])->flush();
+           // Cache::tags(['levels'])->flush();
             return $level;
         });
     }
@@ -110,7 +110,7 @@ class AdminLevelService
                 );
             }
             $level->update($data);
-            Cache::tags(['levels'])->flush();
+           // Cache::tags(['levels'])->flush();
             return $level;
         });
     }
@@ -155,7 +155,7 @@ class AdminLevelService
                 'status' => $status,
             ]);
         });
-        Cache::tags(['levels'])->flush();
+       // Cache::tags(['levels'])->flush();
         return $level;
     }
 }
