@@ -56,8 +56,8 @@ class AdminPodcastService
                     'New Podcast Available',
                     "A new podcast has been added to the topic: {$topic->name_en}.",
                     [
-                        'podcast_id' => $podcast,
-                        'topic_id' => $topic,
+                        'podcast_id' => $podcast->id,
+                        'topic_id' => $topic->id,
                     ],
                     'podcast-created'
                 );

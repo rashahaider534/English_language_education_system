@@ -35,11 +35,11 @@
         @forelse ($notifications as $notification)
             <div style="display:flex; align-items:flex-start; gap:14px; padding:18px 22px; border-bottom:1px solid rgba(0,83,122,0.06); {{ $notification->read ? '' : 'background:rgba(255,211,91,0.06);' }}">
                 <span style="margin-top:5px; display:inline-block; width:9px; height:9px; border-radius:50%; flex-shrink:0; background:{{ $notification->read ? 'rgba(0,83,122,0.2)' : '#F5A201' }};"></span>
-                <div style="flex:1; min-width:0;">
+                <x-notification-link :notification="$notification" style="flex:1; min-width:0; text-decoration:none; display:block;">
                     <p style="margin:0; font-size:14px; font-weight:{{ $notification->read ? '600' : '700' }}; color:{{ $notification->read ? 'rgba(1,60,88,0.6)' : '#013C58' }};">{{ $notification->title }}</p>
                     <p style="margin:5px 0 0; font-size:13px; color:rgba(1,60,88,0.55); line-height:1.6;">{{ $notification->body }}</p>
                     <p style="margin:7px 0 0; font-size:11px; color:rgba(0,83,122,0.4);">{{ $notification->created_at->diffForHumans() }}</p>
-                </div>
+                </x-notification-link>
                 <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
                     @unless ($notification->read)
                         <form action="{{ route('notifications.read', $notification->id) }}" method="POST">
