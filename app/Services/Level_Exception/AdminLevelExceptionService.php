@@ -71,11 +71,11 @@ class AdminLevelExceptionService
         $student = User::find($levelException->user_id);
         if ($student) {
             SendNotificationJob::dispatch(
-                [$student],
+                [$student->id],
                 'Level Exception Approved',
                 'Your request to access the level has been approved.',
                 [
-                    'level_exception' => $levelException,
+                    'level_exception_id' => $levelException->id,
                 ],
                 'level-exception-approved'
             );
@@ -101,11 +101,11 @@ class AdminLevelExceptionService
         $student = User::find($levelException->user_id);
         if ($student) {
                 SendNotificationJob::dispatch(
-                [$student],
+                [$student->id],
                 'Level Exception reject',
                  'Your request to access the level: ' . $levelException->requestedLevel->name_en . ' has been rejected.',
                 [
-                    'level_exception_id' => $levelException,
+                    'level_exception_id' => $levelException->id,
                 ],
                 'level-exception-reject'
             );

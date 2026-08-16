@@ -83,13 +83,13 @@
                 <div class="dashboard-notification-panel__list">
                     @forelse ($sidebarNotifications as $notification)
                         @if ($notification->read)
-                            <div class="dashboard-notification-item">
+                            <x-notification-link :notification="$notification" class="dashboard-notification-item" style="text-decoration:none;">
                                 <span class="dashboard-notification-item__dot" style="background:rgba(0,83,122,0.2);"></span>
                                 <div>
                                     <p style="margin:0; font-size:13px; font-weight:600; color:rgba(1,60,88,0.6);">{{ $notification->title }}</p>
                                     <p style="margin:2px 0 0; font-size:11px; color:rgba(0,83,122,0.45);">{{ $notification->created_at->diffForHumans() }}</p>
                                 </div>
-                            </div>
+                            </x-notification-link>
                         @else
                             <form action="{{ route('notifications.read', $notification->id) }}" method="POST">
                                 @csrf

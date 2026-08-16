@@ -64,7 +64,7 @@ class StudentLessonService
             'New Lesson Available',
             "A new lesson is now available: {$lesson->title_en}",
             [
-                'lesson_id' => $lesson,
+                'lesson_id' => $lesson->id,
             ],
             'lesson-opened'
         );
