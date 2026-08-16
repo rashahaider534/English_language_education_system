@@ -22,7 +22,7 @@ class WordPolicy
      */
     public function view(User $user,  Lesson $lesson): bool
     {
-        return $user->hasRole('teacher')
+        return $user->hasRole('teacher','api')
         && $lesson->course->teacher_id === $user->id
         ||
         $user->lessons()
