@@ -153,6 +153,7 @@ class QuestionService
                 $data['type'] = $question->type;
                 $data['previous_question_id'] = $question->id;
                 $data['user_id'] = auth()->id();
+                $data['is_placement_question'] = $question->is_placement_question;
                 $newQuestion = Question::create($data);
                 $this->syncAnswersAndMedia($question, $newQuestion, $data);
 
