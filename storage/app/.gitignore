@@ -1,5 +1,14 @@
+#*
+#!private/
+#!public/
+#!.gitignore
+#/storage/app/firebase/firebase-credentials.json
+
 *
-!private/
-!public/
 !.gitignore
-/storage/app/firebase/firebase-credentials.json
+
+!certificates/
+!certificates/**
+
+!fonts/
+!fonts/**
